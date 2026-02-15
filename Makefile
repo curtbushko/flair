@@ -1,22 +1,8 @@
-.PHONY: all build test lint arch-lint install clean
+# Proxy all make commands to go-task
+.DEFAULT_GOAL := _default
 
-all: build test lint arch-lint
-.DEFAULT_GOAL := all
+_default:
+	@task
 
-build:
-	@task build
-
-test:
-	@task test
-
-lint:
-	@task lint
-
-arch-lint:
-	@task lint:arch
-
-install:
-	@task install
-
-clean:
-	@task clean
+%:
+	@task $@
