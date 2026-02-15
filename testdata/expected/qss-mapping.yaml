@@ -1,0 +1,166 @@
+rules:
+    - selector: QWidget
+      properties:
+        background-color: '#1a1b26'
+        color: '#c0caf5'
+    - selector: QMainWindow
+      properties:
+        background-color: '#1a1b26'
+        color: '#c0caf5'
+    - selector: QPushButton
+      properties:
+        background-color: '#1f2335'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QLineEdit
+      properties:
+        background-color: '#16161e'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QTextEdit
+      properties:
+        background-color: '#16161e'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QPlainTextEdit
+      properties:
+        background-color: '#16161e'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QComboBox
+      properties:
+        background-color: '#1f2335'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QMenuBar
+      properties:
+        background-color: '#16161e'
+        color: '#c0caf5'
+    - selector: QMenu
+      properties:
+        background-color: '#16161e'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QMenu::item:selected
+      properties:
+        background-color: '#292e42'
+        color: '#c0caf5'
+    - selector: QToolBar
+      properties:
+        background-color: '#16161e'
+        border: none
+        color: '#c0caf5'
+    - selector: QStatusBar
+      properties:
+        background-color: '#16161e'
+        color: '#a9b1d6'
+    - selector: QTabWidget::pane
+      properties:
+        background-color: '#1a1b26'
+        border: '1px solid #32364e'
+    - selector: QTabBar::tab
+      properties:
+        background-color: '#1f2335'
+        border: '1px solid #32364e'
+        color: '#a9b1d6'
+    - selector: QTabBar::tab:selected
+      properties:
+        background-color: '#1a1b26'
+        border-bottom: '2px solid #7aa2f7'
+        color: '#c0caf5'
+    - selector: QCheckBox
+      properties:
+        color: '#c0caf5'
+    - selector: QRadioButton
+      properties:
+        color: '#c0caf5'
+    - selector: QGroupBox
+      properties:
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QScrollBar
+      properties:
+        background-color: '#1f2335'
+    - selector: QScrollBar::handle
+      properties:
+        background-color: '#32364e'
+    - selector: QToolTip
+      properties:
+        background-color: '#16161e'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QProgressBar
+      properties:
+        background-color: '#1f2335'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QProgressBar::chunk
+      properties:
+        background-color: '#7aa2f7'
+    - selector: QDockWidget
+      properties:
+        background-color: '#16161e'
+        color: '#a9b1d6'
+    - selector: QHeaderView::section
+      properties:
+        background-color: '#1f2335'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QTreeView
+      properties:
+        background-color: '#16161e'
+        color: '#c0caf5'
+    - selector: QListView
+      properties:
+        background-color: '#16161e'
+        color: '#c0caf5'
+    - selector: QTableView
+      properties:
+        background-color: '#16161e'
+        color: '#c0caf5'
+    - selector: QTreeView::item:selected
+      properties:
+        background-color: '#7aa2f7'
+        color: '#1a1b26'
+    - selector: QSpinBox
+      properties:
+        background-color: '#16161e'
+        border: '1px solid #32364e'
+        color: '#c0caf5'
+    - selector: QSlider::groove
+      properties:
+        background-color: '#1f2335'
+    - selector: QSlider::handle
+      properties:
+        background-color: '#7aa2f7'
+    - selector: QLabel
+      properties:
+        color: '#c0caf5'
+    - selector: QLineEdit:focus
+      properties:
+        border: '1px solid #5d7ab8'
+    - selector: QTextEdit:focus
+      properties:
+        border: '1px solid #5d7ab8'
+    - selector: QPushButton:hover
+      properties:
+        background-color: '#292e42'
+        color: '#c0caf5'
+    - selector: QPushButton:pressed
+      properties:
+        background-color: '#2d3650'
+        color: '#c0caf5'
+    - selector: QComboBox:hover
+      properties:
+        background-color: '#292e42'
+    - selector: QTabBar::tab:hover
+      properties:
+        background-color: '#292e42'
+    - selector: QCheckBox::indicator:checked
+      properties:
+        background-color: '#7aa2f7'
+        color: '#1a1b26'
+    - selector: QRadioButton::indicator:checked
+      properties:
+        background-color: '#7aa2f7'
+        color: '#1a1b26'

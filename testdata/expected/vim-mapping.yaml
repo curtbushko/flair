@@ -1,0 +1,801 @@
+highlights:
+    '@boolean':
+        fg: '#ff9e64'
+    '@character':
+        fg: '#9ece6a'
+    '@character.special':
+        fg: '#bb9af7'
+    '@comment':
+        link: Comment
+    '@constant':
+        fg: '#ff9e64'
+    '@constant.builtin':
+        fg: '#ff9e64'
+    '@constant.macro':
+        fg: '#ff9e64'
+    '@constructor':
+        fg: '#c8acf8'
+    '@define':
+        fg: '#bb9af7'
+    '@exception':
+        fg: '#bb9af7'
+    '@function':
+        fg: '#7aa2f7'
+    '@function.builtin':
+        fg: '#7aa2f7'
+    '@function.call':
+        fg: '#7aa2f7'
+    '@function.macro':
+        fg: '#ff9e64'
+    '@include':
+        fg: '#bb9af7'
+    '@keyword':
+        fg: '#bb9af7'
+    '@keyword.conditional':
+        fg: '#bb9af7'
+    '@keyword.coroutine':
+        fg: '#bb9af7'
+    '@keyword.exception':
+        fg: '#bb9af7'
+    '@keyword.function':
+        fg: '#bb9af7'
+    '@keyword.import':
+        fg: '#bb9af7'
+    '@keyword.operator':
+        fg: '#8db6fa'
+    '@keyword.repeat':
+        fg: '#bb9af7'
+    '@keyword.return':
+        fg: '#bb9af7'
+    '@label':
+        fg: '#bb9af7'
+    '@lsp.type.class':
+        link: '@type'
+    '@lsp.type.comment':
+        link: '@comment'
+    '@lsp.type.decorator':
+        link: '@function'
+    '@lsp.type.enum':
+        link: '@type'
+    '@lsp.type.enumMember':
+        link: '@constant'
+    '@lsp.type.event':
+        link: '@type'
+    '@lsp.type.function':
+        link: '@function'
+    '@lsp.type.interface':
+        link: '@type'
+    '@lsp.type.keyword':
+        link: '@keyword'
+    '@lsp.type.macro':
+        link: '@constant'
+    '@lsp.type.method':
+        link: '@function'
+    '@lsp.type.modifier':
+        link: '@keyword'
+    '@lsp.type.namespace':
+        link: '@type'
+    '@lsp.type.number':
+        link: '@number'
+    '@lsp.type.operator':
+        link: '@operator'
+    '@lsp.type.parameter':
+        link: '@parameter'
+    '@lsp.type.property':
+        link: '@property'
+    '@lsp.type.regexp':
+        link: '@string.regex'
+    '@lsp.type.string':
+        link: '@string'
+    '@lsp.type.struct':
+        link: '@type'
+    '@lsp.type.type':
+        link: '@type'
+    '@lsp.type.typeParameter':
+        link: '@type'
+    '@lsp.type.variable':
+        link: '@variable'
+    '@markup.heading':
+        fg: '#7aa2f7'
+        bold: true
+    '@markup.italic':
+        italic: true
+    '@markup.link':
+        fg: '#7dcfff'
+    '@markup.link.url':
+        fg: '#7dcfff'
+    '@markup.list':
+        fg: '#ff9e64'
+    '@markup.quote':
+        fg: '#565f89'
+        italic: true
+    '@markup.raw':
+        fg: '#9ece6a'
+    '@markup.strikethrough':
+        fg: '#565f89'
+    '@markup.strong':
+        bold: true
+    '@method':
+        fg: '#7aa2f7'
+    '@method.call':
+        fg: '#7aa2f7'
+    '@module':
+        fg: '#e0af68'
+    '@namespace':
+        fg: '#e0af68'
+    '@number':
+        fg: '#ff9e64'
+    '@number.float':
+        fg: '#ff9e64'
+    '@operator':
+        fg: '#8db6fa'
+    '@parameter':
+        fg: '#e9c582'
+    '@preproc':
+        fg: '#bb9af7'
+    '@property':
+        fg: '#afd67a'
+    '@punctuation.bracket':
+        fg: '#a9b1d6'
+    '@punctuation.delimiter':
+        fg: '#c0caf5'
+    '@punctuation.special':
+        fg: '#7aa2f7'
+    '@string':
+        fg: '#9ece6a'
+    '@string.escape':
+        fg: '#bb9af7'
+    '@string.regex':
+        fg: '#7dcfff'
+    '@string.special':
+        fg: '#bb9af7'
+    '@tag':
+        fg: '#f7768e'
+    '@tag.attribute':
+        fg: '#afd67a'
+    '@tag.delimiter':
+        fg: '#a9b1d6'
+    '@text':
+        link: Normal
+    '@text.danger':
+        link: ErrorMsg
+    '@text.emphasis':
+        italic: true
+    '@text.note':
+        link: Todo
+    '@text.strike':
+        link: Underlined
+    '@text.strong':
+        bold: true
+    '@text.title':
+        link: Title
+    '@text.todo':
+        link: Todo
+    '@text.underline':
+        link: Underlined
+    '@text.uri':
+        link: Underlined
+    '@text.warning':
+        link: WarningMsg
+    '@type':
+        fg: '#e0af68'
+    '@type.builtin':
+        fg: '#e0af68'
+    '@type.definition':
+        fg: '#e0af68'
+    '@type.qualifier':
+        fg: '#bb9af7'
+    '@variable':
+        fg: '#c0caf5'
+    '@variable.builtin':
+        fg: '#c0caf5'
+    '@variable.member':
+        fg: '#afd67a'
+    '@variable.parameter':
+        fg: '#e9c582'
+    Boolean:
+        fg: '#ff9e64'
+    BufferLineBackground:
+        fg: '#565f89'
+        bg: '#16161e'
+    BufferLineBufferSelected:
+        fg: '#c0caf5'
+        bold: true
+    BufferLineBufferVisible:
+        fg: '#565f89'
+    BufferLineFill:
+        bg: '#16161e'
+    Character:
+        fg: '#9ece6a'
+    CmpItemAbbr:
+        fg: '#c0caf5'
+    CmpItemAbbrDeprecated:
+        fg: '#565f89'
+        strikethrough: true
+    CmpItemAbbrMatch:
+        fg: '#7aa2f7'
+        bold: true
+    CmpItemAbbrMatchFuzzy:
+        fg: '#7aa2f7'
+        bold: true
+    CmpItemKind:
+        fg: '#bb9af7'
+    CmpItemKindClass:
+        fg: '#e0af68'
+    CmpItemKindConstant:
+        fg: '#ff9e64'
+    CmpItemKindFunction:
+        fg: '#7aa2f7'
+    CmpItemKindKeyword:
+        fg: '#bb9af7'
+    CmpItemKindMethod:
+        fg: '#7aa2f7'
+    CmpItemKindProperty:
+        fg: '#afd67a'
+    CmpItemKindSnippet:
+        fg: '#7aa2f7'
+    CmpItemKindVariable:
+        fg: '#c0caf5'
+    CmpItemMenu:
+        fg: '#565f89'
+    ColorColumn:
+        bg: '#292e42'
+    Comment:
+        fg: '#565f89'
+        italic: true
+    Conceal:
+        fg: '#565f89'
+    Conditional:
+        fg: '#bb9af7'
+    Constant:
+        fg: '#ff9e64'
+    CurSearch:
+        fg: '#1a1b26'
+        bg: '#7aa2f7'
+    Cursor:
+        reverse: true
+    CursorColumn:
+        bg: '#292e42'
+    CursorIM:
+        reverse: true
+    CursorLine:
+        bg: '#292e42'
+    CursorLineNr:
+        fg: '#7aa2f7'
+        bold: true
+    DashboardCenter:
+        fg: '#bb9af7'
+    DashboardFooter:
+        fg: '#565f89'
+        italic: true
+    DashboardHeader:
+        fg: '#7aa2f7'
+        bold: true
+    DashboardShortCut:
+        fg: '#7aa2f7'
+    Debug:
+        fg: '#e9c582'
+    Define:
+        fg: '#bb9af7'
+    Delimiter:
+        fg: '#c0caf5'
+    DiagnosticError:
+        fg: '#ff899d'
+    DiagnosticFloatingError:
+        fg: '#ff899d'
+    DiagnosticFloatingHint:
+        fg: '#97d8f8'
+    DiagnosticFloatingInfo:
+        fg: '#97d8f8'
+    DiagnosticFloatingWarn:
+        fg: '#e9c582'
+    DiagnosticHint:
+        fg: '#97d8f8'
+    DiagnosticInfo:
+        fg: '#97d8f8'
+    DiagnosticSignError:
+        fg: '#ff899d'
+    DiagnosticSignHint:
+        fg: '#97d8f8'
+    DiagnosticSignInfo:
+        fg: '#97d8f8'
+    DiagnosticSignWarn:
+        fg: '#e9c582'
+    DiagnosticUnderlineError:
+        sp: '#ff899d'
+        undercurl: true
+    DiagnosticUnderlineHint:
+        sp: '#97d8f8'
+        undercurl: true
+    DiagnosticUnderlineInfo:
+        sp: '#97d8f8'
+        undercurl: true
+    DiagnosticUnderlineWarn:
+        sp: '#e9c582'
+        undercurl: true
+    DiagnosticVirtualTextError:
+        fg: '#ff899d'
+        italic: true
+    DiagnosticVirtualTextHint:
+        fg: '#97d8f8'
+        italic: true
+    DiagnosticVirtualTextInfo:
+        fg: '#97d8f8'
+        italic: true
+    DiagnosticVirtualTextWarn:
+        fg: '#e9c582'
+        italic: true
+    DiagnosticWarn:
+        fg: '#e9c582'
+    DiffAdd:
+        bg: '#3b4837'
+    DiffChange:
+        bg: '#282f45'
+    DiffDelete:
+        fg: '#ff899d'
+        bg: '#513240'
+    DiffText:
+        bg: '#282f45'
+        bold: true
+    Directory:
+        fg: '#7aa2f7'
+    EndOfBuffer:
+        fg: '#1a1b26'
+    Error:
+        fg: '#ff899d'
+    ErrorMsg:
+        fg: '#ff899d'
+    Exception:
+        fg: '#bb9af7'
+    Float:
+        fg: '#ff9e64'
+    FloatBorder:
+        fg: '#32364e'
+        bg: '#16161e'
+    FloatTitle:
+        fg: '#7aa2f7'
+        bg: '#16161e'
+        bold: true
+    FoldColumn:
+        fg: '#565f89'
+        bg: '#1a1b26'
+    Folded:
+        fg: '#565f89'
+        bg: '#1f2335'
+    Function:
+        fg: '#7aa2f7'
+    GitSignsAdd:
+        fg: '#afd67a'
+    GitSignsAddLn:
+        bg: '#3b4837'
+    GitSignsAddNr:
+        fg: '#afd67a'
+    GitSignsChange:
+        fg: '#8db6fa'
+    GitSignsChangeLn:
+        bg: '#282f45'
+    GitSignsChangeNr:
+        fg: '#8db6fa'
+    GitSignsCurrentLineBlame:
+        fg: '#383d58'
+        italic: true
+    GitSignsDelete:
+        fg: '#ff899d'
+    GitSignsDeleteLn:
+        bg: '#513240'
+    GitSignsDeleteNr:
+        fg: '#ff899d'
+    IblIndent:
+        fg: '#1f2335'
+    IblScope:
+        fg: '#7aa2f7'
+    Identifier:
+        fg: '#c0caf5'
+    Ignore: {}
+    IncSearch:
+        fg: '#1a1b26'
+        bg: '#7aa2f7'
+    Include:
+        fg: '#bb9af7'
+    IndentBlanklineChar:
+        fg: '#1f2335'
+    IndentBlanklineContextChar:
+        fg: '#7aa2f7'
+    IndentBlanklineContextStart:
+        underline: true
+    Keyword:
+        fg: '#bb9af7'
+    Label:
+        fg: '#bb9af7'
+    LazyButton:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    LazyButtonActive:
+        fg: '#1a1b26'
+        bg: '#7aa2f7'
+        bold: true
+    LazyComment:
+        fg: '#565f89'
+    LazyDimmed:
+        fg: '#383d58'
+    LazyH1:
+        fg: '#1a1b26'
+        bg: '#7aa2f7'
+        bold: true
+    LazyH2:
+        fg: '#7aa2f7'
+        bold: true
+    LazyProgressDone:
+        fg: '#7aa2f7'
+    LazyProgressTodo:
+        fg: '#383d58'
+    LazySpecial:
+        fg: '#bb9af7'
+    LineNr:
+        fg: '#565f89'
+    Macro:
+        fg: '#ff9e64'
+    MasonHeader:
+        fg: '#1a1b26'
+        bg: '#7aa2f7'
+        bold: true
+    MasonHighlight:
+        fg: '#7aa2f7'
+    MasonHighlightBlock:
+        fg: '#1a1b26'
+        bg: '#7aa2f7'
+    MasonHighlightBlockBold:
+        fg: '#1a1b26'
+        bg: '#7aa2f7'
+        bold: true
+    MasonMuted:
+        fg: '#565f89'
+    MasonMutedBlock:
+        fg: '#565f89'
+        bg: '#1f2335'
+    MatchParen:
+        fg: '#7aa2f7'
+        bold: true
+    ModeMsg:
+        fg: '#c0caf5'
+        bold: true
+    MoreMsg:
+        fg: '#7aa2f7'
+    NeoTreeDimText:
+        fg: '#565f89'
+    NeoTreeFileName:
+        fg: '#c0caf5'
+    NeoTreeGitAdded:
+        fg: '#9ece6a'
+    NeoTreeGitDeleted:
+        fg: '#f7768e'
+    NeoTreeGitModified:
+        fg: '#7aa2f7'
+    NeoTreeIndentMarker:
+        fg: '#1f2335'
+    NeoTreeNormal:
+        fg: '#a9b1d6'
+        bg: '#16161e'
+    NeoTreeNormalNC:
+        fg: '#a9b1d6'
+        bg: '#16161e'
+    NeoTreeRootName:
+        fg: '#7aa2f7'
+        bold: true
+    NonText:
+        fg: '#383d58'
+    Normal:
+        fg: '#c0caf5'
+        bg: '#1a1b26'
+    NormalFloat:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    NormalNC:
+        fg: '#c0caf5'
+        bg: '#1a1b26'
+    NotifyDEBUGBorder:
+        fg: '#565f89'
+    NotifyDEBUGIcon:
+        fg: '#565f89'
+    NotifyDEBUGTitle:
+        fg: '#565f89'
+        bold: true
+    NotifyERRORBorder:
+        fg: '#ff899d'
+    NotifyERRORIcon:
+        fg: '#ff899d'
+    NotifyERRORTitle:
+        fg: '#ff899d'
+        bold: true
+    NotifyINFOBorder:
+        fg: '#97d8f8'
+    NotifyINFOIcon:
+        fg: '#97d8f8'
+    NotifyINFOTitle:
+        fg: '#97d8f8'
+        bold: true
+    NotifyTRACEBorder:
+        fg: '#bb9af7'
+    NotifyTRACEIcon:
+        fg: '#bb9af7'
+    NotifyTRACETitle:
+        fg: '#bb9af7'
+        bold: true
+    NotifyWARNBorder:
+        fg: '#e9c582'
+    NotifyWARNIcon:
+        fg: '#e9c582'
+    NotifyWARNTitle:
+        fg: '#e9c582'
+        bold: true
+    Number:
+        fg: '#ff9e64'
+    NvimTreeEmptyFolderName:
+        fg: '#565f89'
+    NvimTreeFolderIcon:
+        fg: '#7aa2f7'
+    NvimTreeFolderName:
+        fg: '#7aa2f7'
+    NvimTreeGitDeleted:
+        fg: '#f7768e'
+    NvimTreeGitDirty:
+        fg: '#7aa2f7'
+    NvimTreeGitIgnored:
+        fg: '#565f89'
+    NvimTreeGitNew:
+        fg: '#9ece6a'
+    NvimTreeImageFile:
+        fg: '#a9b1d6'
+    NvimTreeIndentMarker:
+        fg: '#1f2335'
+    NvimTreeNormal:
+        fg: '#a9b1d6'
+        bg: '#16161e'
+    NvimTreeNormalNC:
+        fg: '#a9b1d6'
+        bg: '#16161e'
+    NvimTreeOpenedFolderName:
+        fg: '#7aa2f7'
+        bold: true
+    NvimTreeRootFolder:
+        fg: '#7aa2f7'
+        bold: true
+    NvimTreeSpecialFile:
+        fg: '#bb9af7'
+        underline: true
+    NvimTreeSymlink:
+        fg: '#7aa2f7'
+    NvimTreeWinSeparator:
+        fg: '#32364e'
+        bg: '#16161e'
+    Operator:
+        fg: '#8db6fa'
+    Pmenu:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    PmenuSbar:
+        bg: '#1f2335'
+    PmenuSel:
+        bg: '#374465'
+    PmenuThumb:
+        bg: '#32364e'
+    PreCondit:
+        fg: '#bb9af7'
+    PreProc:
+        fg: '#bb9af7'
+    Question:
+        fg: '#7aa2f7'
+    Repeat:
+        fg: '#bb9af7'
+    Search:
+        fg: '#c0caf5'
+        bg: '#55473a'
+    SignColumn:
+        bg: '#1a1b26'
+    Special:
+        fg: '#7aa2f7'
+    SpecialChar:
+        fg: '#bb9af7'
+    SpecialComment:
+        fg: '#565f89'
+        italic: true
+    SpecialKey:
+        fg: '#383d58'
+    SpellBad:
+        sp: '#ff899d'
+        undercurl: true
+    SpellCap:
+        sp: '#e9c582'
+        undercurl: true
+    SpellLocal:
+        sp: '#97d8f8'
+        undercurl: true
+    SpellRare:
+        sp: '#bb9af7'
+        undercurl: true
+    Statement:
+        fg: '#bb9af7'
+    StatusLine:
+        fg: '#a9b1d6'
+        bg: '#16161e'
+    StatusLineNC:
+        fg: '#565f89'
+        bg: '#16161e'
+    StorageClass:
+        fg: '#bb9af7'
+    String:
+        fg: '#9ece6a'
+    Structure:
+        fg: '#e0af68'
+    Substitute:
+        fg: '#1a1b26'
+        bg: '#ff899d'
+    TabLine:
+        fg: '#565f89'
+        bg: '#1f2335'
+    TabLineFill:
+        bg: '#16161e'
+    TabLineSel:
+        fg: '#c0caf5'
+        bg: '#1a1b26'
+        bold: true
+    Tag:
+        fg: '#f7768e'
+    TelescopeBorder:
+        fg: '#32364e'
+        bg: '#16161e'
+    TelescopeMatching:
+        fg: '#7aa2f7'
+        bold: true
+    TelescopeMultiIcon:
+        fg: '#7aa2f7'
+    TelescopeMultiSelection:
+        fg: '#bb9af7'
+    TelescopeNormal:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    TelescopePreviewBorder:
+        fg: '#32364e'
+        bg: '#16161e'
+    TelescopePreviewNormal:
+        bg: '#16161e'
+    TelescopePreviewTitle:
+        fg: '#1a1b26'
+        bg: '#afd67a'
+        bold: true
+    TelescopePromptBorder:
+        fg: '#32364e'
+        bg: '#1f2335'
+    TelescopePromptNormal:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    TelescopePromptPrefix:
+        fg: '#7aa2f7'
+    TelescopePromptTitle:
+        fg: '#1a1b26'
+        bg: '#7aa2f7'
+        bold: true
+    TelescopeResultsTitle:
+        fg: '#1a1b26'
+        bg: '#bb9af7'
+        bold: true
+    TelescopeSelection:
+        fg: '#c0caf5'
+        bg: '#374465'
+    TelescopeSelectionCaret:
+        fg: '#7aa2f7'
+    Title:
+        fg: '#7aa2f7'
+        bold: true
+    Todo:
+        fg: '#7aa2f7'
+        bold: true
+    TroubleCount:
+        fg: '#bb9af7'
+        bold: true
+    TroubleNormal:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    TroubleText:
+        fg: '#c0caf5'
+    Type:
+        fg: '#e0af68'
+    Typedef:
+        fg: '#e0af68'
+    Underlined:
+        underline: true
+    VertSplit:
+        fg: '#32364e'
+    Visual:
+        bg: '#374465'
+    VisualNOS:
+        bg: '#374465'
+    WarningMsg:
+        fg: '#e9c582'
+    WhichKey:
+        fg: '#7aa2f7'
+    WhichKeyDesc:
+        fg: '#c0caf5'
+    WhichKeyFloat:
+        bg: '#16161e'
+    WhichKeyGroup:
+        fg: '#bb9af7'
+    WhichKeySeparator:
+        fg: '#383d58'
+    WhichKeySeperator:
+        fg: '#383d58'
+    WhichKeyValue:
+        fg: '#565f89'
+    WildMenu:
+        fg: '#1a1b26'
+        bg: '#7aa2f7'
+    WinSeparator:
+        fg: '#32364e'
+    helpCommand:
+        fg: '#9ece6a'
+    helpExample:
+        fg: '#9ece6a'
+    helpHeader:
+        fg: '#7aa2f7'
+        bold: true
+    helpHyperTextEntry:
+        fg: '#7dcfff'
+        underline: true
+    helpHyperTextJump:
+        fg: '#7dcfff'
+        underline: true
+    helpSectionDelim:
+        fg: '#565f89'
+    lCursor:
+        reverse: true
+    markdownBlockquote:
+        fg: '#565f89'
+        italic: true
+    markdownBold:
+        bold: true
+    markdownCode:
+        fg: '#9ece6a'
+    markdownCodeBlock:
+        fg: '#9ece6a'
+    markdownH1:
+        fg: '#7aa2f7'
+        bold: true
+    markdownH2:
+        fg: '#7aa2f7'
+        bold: true
+    markdownH3:
+        fg: '#7aa2f7'
+        bold: true
+    markdownH4:
+        fg: '#7aa2f7'
+        bold: true
+    markdownH5:
+        fg: '#7aa2f7'
+        bold: true
+    markdownH6:
+        fg: '#7aa2f7'
+        bold: true
+    markdownItalic:
+        italic: true
+    markdownListMarker:
+        fg: '#ff9e64'
+    markdownUrl:
+        fg: '#7dcfff'
+        underline: true
+terminal_colors:
+    - '#1f2335'
+    - '#f7768e'
+    - '#9ece6a'
+    - '#e0af68'
+    - '#7aa2f7'
+    - '#bb9af7'
+    - '#7dcfff'
+    - '#c0caf5'
+    - '#565f89'
+    - '#ff899d'
+    - '#afd67a'
+    - '#e9c582'
+    - '#8db6fa'
+    - '#c8acf8'
+    - '#97d8f8'
+    - '#c8d3f5'

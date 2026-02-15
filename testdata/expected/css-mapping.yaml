@@ -1,0 +1,108 @@
+custom_properties:
+    --flair-accent-foreground: '#1a1b26'
+    --flair-accent-primary: '#7aa2f7'
+    --flair-accent-secondary: '#bb9af7'
+    --flair-bg: '#1a1b26'
+    --flair-bg-darkest: '#101014'
+    --flair-bg-highlight: '#292e42'
+    --flair-bg-overlay: '#16161e'
+    --flair-bg-popup: '#16161e'
+    --flair-bg-raised: '#1f2335'
+    --flair-bg-search: '#55473a'
+    --flair-bg-selection: '#374465'
+    --flair-bg-sidebar: '#16161e'
+    --flair-bg-statusbar: '#16161e'
+    --flair-bg-sunken: '#16161e'
+    --flair-border-default: '#32364e'
+    --flair-border-focus: '#5d7ab8'
+    --flair-border-muted: '#1f2335'
+    --flair-diff-added-bg: '#3b4837'
+    --flair-diff-added-fg: '#afd67a'
+    --flair-diff-added-sign: '#afd67a'
+    --flair-diff-changed-bg: '#282f45'
+    --flair-diff-changed-fg: '#8db6fa'
+    --flair-diff-deleted-bg: '#513240'
+    --flair-diff-deleted-fg: '#ff899d'
+    --flair-diff-deleted-sign: '#ff899d'
+    --flair-diff-ignored: '#565f89'
+    --flair-fg: '#c0caf5'
+    --flair-git-added: '#9ece6a'
+    --flair-git-deleted: '#f7768e'
+    --flair-git-ignored: '#565f89'
+    --flair-git-modified: '#7aa2f7'
+    --flair-markup-code: '#9ece6a'
+    --flair-markup-heading: '#7aa2f7'
+    --flair-markup-link: '#7dcfff'
+    --flair-markup-list-bullet: '#ff9e64'
+    --flair-markup-list-checked: '#9ece6a'
+    --flair-markup-list-unchecked: '#7aa2f7'
+    --flair-markup-quote: '#565f89'
+    --flair-scrollbar-thumb: '#32364e'
+    --flair-scrollbar-track: '#1f2335'
+    --flair-state-active: '#2d3650'
+    --flair-state-disabled-fg: '#565f89'
+    --flair-state-hover: '#292e42'
+    --flair-status-error: '#ff899d'
+    --flair-status-hint: '#97d8f8'
+    --flair-status-info: '#97d8f8'
+    --flair-status-success: '#afd67a'
+    --flair-status-todo: '#7aa2f7'
+    --flair-status-warning: '#e9c582'
+    --flair-syntax-comment: '#565f89'
+    --flair-syntax-constant: '#ff9e64'
+    --flair-syntax-constructor: '#c8acf8'
+    --flair-syntax-escape: '#bb9af7'
+    --flair-syntax-function: '#7aa2f7'
+    --flair-syntax-keyword: '#bb9af7'
+    --flair-syntax-number: '#ff9e64'
+    --flair-syntax-operator: '#8db6fa'
+    --flair-syntax-parameter: '#e9c582'
+    --flair-syntax-property: '#afd67a'
+    --flair-syntax-regexp: '#7dcfff'
+    --flair-syntax-string: '#9ece6a'
+    --flair-syntax-tag: '#f7768e'
+    --flair-syntax-type: '#e0af68'
+    --flair-syntax-variable: '#c0caf5'
+    --flair-terminal-black: '#1f2335'
+    --flair-terminal-blue: '#7aa2f7'
+    --flair-terminal-brblack: '#565f89'
+    --flair-terminal-brblue: '#8db6fa'
+    --flair-terminal-brcyan: '#97d8f8'
+    --flair-terminal-brgreen: '#afd67a'
+    --flair-terminal-brmagenta: '#c8acf8'
+    --flair-terminal-brred: '#ff899d'
+    --flair-terminal-brwhite: '#c8d3f5'
+    --flair-terminal-bryellow: '#e9c582'
+    --flair-terminal-cyan: '#7dcfff'
+    --flair-terminal-green: '#9ece6a'
+    --flair-terminal-magenta: '#bb9af7'
+    --flair-terminal-red: '#f7768e'
+    --flair-terminal-white: '#c0caf5'
+    --flair-terminal-yellow: '#e0af68'
+    --flair-text-inverse: '#1a1b26'
+    --flair-text-muted: '#565f89'
+    --flair-text-overlay: '#c0caf5'
+    --flair-text-secondary: '#a9b1d6'
+    --flair-text-sidebar: '#a9b1d6'
+    --flair-text-subtle: '#383d58'
+rules:
+    - selector: body
+      properties:
+        background-color: var(--flair-bg)
+        color: var(--flair-fg)
+        font-family: system-ui, -apple-system, sans-serif
+    - selector: a
+      properties:
+        color: var(--flair-accent-primary)
+    - selector: a:hover
+      properties:
+        color: var(--flair-accent-secondary)
+    - selector: ::selection
+      properties:
+        background-color: var(--flair-bg-selection)
+        color: var(--flair-fg)
+    - selector: pre, code
+      properties:
+        background-color: var(--flair-bg-raised)
+        border-radius: 4px
+        color: var(--flair-fg)

@@ -1,0 +1,58 @@
+colors:
+    accent_bg_color: '#7aa2f7'
+    accent_color: '#7aa2f7'
+    accent_fg_color: '#1a1b26'
+    borders: '#32364e'
+    card_bg_color: '#1f2335'
+    card_fg_color: '#c0caf5'
+    dialog_bg_color: '#16161e'
+    dialog_fg_color: '#c0caf5'
+    error_bg_color: '#ff899d'
+    error_color: '#ff899d'
+    error_fg_color: '#c0caf5'
+    headerbar_bg_color: '#16161e'
+    headerbar_fg_color: '#c0caf5'
+    popover_bg_color: '#16161e'
+    popover_fg_color: '#c0caf5'
+    scrollbar_outline_color: '#32364e'
+    sidebar_bg_color: '#16161e'
+    sidebar_fg_color: '#a9b1d6'
+    success_bg_color: '#afd67a'
+    success_color: '#afd67a'
+    success_fg_color: '#c0caf5'
+    view_bg_color: '#16161e'
+    view_fg_color: '#c0caf5'
+    warning_bg_color: '#e9c582'
+    warning_color: '#e9c582'
+    warning_fg_color: '#c0caf5'
+    window_bg_color: '#1a1b26'
+    window_fg_color: '#c0caf5'
+rules:
+    - selector: window
+      properties:
+        background-color: '@window_bg_color'
+        color: '@window_fg_color'
+    - selector: headerbar
+      properties:
+        background-color: '@headerbar_bg_color'
+        color: '@headerbar_fg_color'
+    - selector: button
+      properties:
+        background-color: '@card_bg_color'
+        color: '@window_fg_color'
+    - selector: entry
+      properties:
+        background-color: '@view_bg_color'
+        color: '@view_fg_color'
+    - selector: textview
+      properties:
+        background-color: '@view_bg_color'
+        color: '@view_fg_color'
+    - selector: .sidebar
+      properties:
+        background-color: '@sidebar_bg_color'
+        color: '@sidebar_fg_color'
+    - selector: popover
+      properties:
+        background-color: '@popover_bg_color'
+        color: '@popover_fg_color'

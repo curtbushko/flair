@@ -1,0 +1,185 @@
+tokens:
+    accent.foreground:
+        color: '#1a1b26'
+    accent.primary:
+        color: '#7aa2f7'
+    accent.secondary:
+        color: '#bb9af7'
+    border.default:
+        color: '#32364e'
+    border.focus:
+        color: '#5d7ab8'
+    border.muted:
+        color: '#1f2335'
+    diff.added.bg:
+        color: '#3b4837'
+    diff.added.fg:
+        color: '#afd67a'
+    diff.added.sign:
+        color: '#afd67a'
+    diff.changed.bg:
+        color: '#282f45'
+    diff.changed.fg:
+        color: '#8db6fa'
+    diff.deleted.bg:
+        color: '#513240'
+    diff.deleted.fg:
+        color: '#ff899d'
+    diff.deleted.sign:
+        color: '#ff899d'
+    diff.ignored:
+        color: '#565f89'
+    git.added:
+        color: '#9ece6a'
+    git.deleted:
+        color: '#f7768e'
+    git.ignored:
+        color: '#565f89'
+    git.modified:
+        color: '#7aa2f7'
+    markup.bold:
+        color: ""
+        bold: true
+    markup.code:
+        color: '#9ece6a'
+    markup.heading:
+        color: '#7aa2f7'
+        bold: true
+    markup.italic:
+        color: ""
+        italic: true
+    markup.link:
+        color: '#7dcfff'
+    markup.list.bullet:
+        color: '#ff9e64'
+    markup.list.checked:
+        color: '#9ece6a'
+    markup.list.unchecked:
+        color: '#7aa2f7'
+    markup.quote:
+        color: '#565f89'
+        italic: true
+    markup.strikethrough:
+        color: ""
+        strikethrough: true
+    scrollbar.thumb:
+        color: '#32364e'
+    scrollbar.track:
+        color: '#1f2335'
+    state.active:
+        color: '#2d3650'
+    state.disabled.fg:
+        color: '#565f89'
+    state.hover:
+        color: '#292e42'
+    status.error:
+        color: '#ff899d'
+    status.hint:
+        color: '#97d8f8'
+    status.info:
+        color: '#97d8f8'
+    status.success:
+        color: '#afd67a'
+    status.todo:
+        color: '#7aa2f7'
+    status.warning:
+        color: '#e9c582'
+    surface.background:
+        color: '#1a1b26'
+    surface.background.darkest:
+        color: '#101014'
+    surface.background.highlight:
+        color: '#292e42'
+    surface.background.overlay:
+        color: '#16161e'
+    surface.background.popup:
+        color: '#16161e'
+    surface.background.raised:
+        color: '#1f2335'
+    surface.background.search:
+        color: '#55473a'
+    surface.background.selection:
+        color: '#374465'
+    surface.background.sidebar:
+        color: '#16161e'
+    surface.background.statusbar:
+        color: '#16161e'
+    surface.background.sunken:
+        color: '#16161e'
+    syntax.comment:
+        color: '#565f89'
+        italic: true
+    syntax.constant:
+        color: '#ff9e64'
+    syntax.constructor:
+        color: '#c8acf8'
+    syntax.escape:
+        color: '#bb9af7'
+    syntax.function:
+        color: '#7aa2f7'
+    syntax.keyword:
+        color: '#bb9af7'
+    syntax.number:
+        color: '#ff9e64'
+    syntax.operator:
+        color: '#8db6fa'
+    syntax.parameter:
+        color: '#e9c582'
+    syntax.property:
+        color: '#afd67a'
+    syntax.regexp:
+        color: '#7dcfff'
+    syntax.string:
+        color: '#9ece6a'
+    syntax.tag:
+        color: '#f7768e'
+    syntax.type:
+        color: '#e0af68'
+    syntax.variable:
+        color: '#c0caf5'
+    terminal.black:
+        color: '#1f2335'
+    terminal.blue:
+        color: '#7aa2f7'
+    terminal.brblack:
+        color: '#565f89'
+    terminal.brblue:
+        color: '#8db6fa'
+    terminal.brcyan:
+        color: '#97d8f8'
+    terminal.brgreen:
+        color: '#afd67a'
+    terminal.brmagenta:
+        color: '#c8acf8'
+    terminal.brred:
+        color: '#ff899d'
+    terminal.brwhite:
+        color: '#c8d3f5'
+    terminal.bryellow:
+        color: '#e9c582'
+    terminal.cyan:
+        color: '#7dcfff'
+    terminal.green:
+        color: '#9ece6a'
+    terminal.magenta:
+        color: '#bb9af7'
+    terminal.red:
+        color: '#f7768e'
+    terminal.white:
+        color: '#c0caf5'
+    terminal.yellow:
+        color: '#e0af68'
+    text.inverse:
+        color: '#1a1b26'
+    text.muted:
+        color: '#565f89'
+    text.overlay:
+        color: '#c0caf5'
+    text.primary:
+        color: '#c0caf5'
+    text.secondary:
+        color: '#a9b1d6'
+    text.sidebar:
+        color: '#a9b1d6'
+    text.subtle:
+        color: '#383d58'
