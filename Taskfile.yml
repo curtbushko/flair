@@ -86,6 +86,11 @@ tasks:
     cmds:
       - go test ./...
 
+  test:bdd:
+    desc: Run BDD acceptance tests
+    cmds:
+      - go test -v ./features/...
+
   tidy:
     desc: Run go mod tidy
     cmds:
