@@ -63,6 +63,7 @@ type stubThemeStore struct {
 	mu             sync.Mutex
 	files          map[string]map[string]*recordedWrite // themeName -> filename -> data
 	ensureDirCalls []string
+	selectedTheme  string
 }
 
 func newStubThemeStore() *stubThemeStore {
@@ -87,9 +88,28 @@ func (s *stubThemeStore) EnsureThemeDir(themeName string) error {
 	return nil
 }
 
-func (s *stubThemeStore) ListThemes() ([]string, error)  { return nil, nil }
-func (s *stubThemeStore) SelectedTheme() (string, error) { return "", nil }
-func (s *stubThemeStore) Select(_ string) error          { return nil }
+func (s *stubThemeStore) ListThemes() ([]string, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	names := make([]string, 0, len(s.files))
+	for name := range s.files {
+		names = append(names, name)
+	}
+	return names, nil
+}
+
+func (s *stubThemeStore) SelectedTheme() (string, error) {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	return s.selectedTheme, nil
+}
+
+func (s *stubThemeStore) Select(themeName string) error {
+	s.mu.Lock()
+	defer s.mu.Unlock()
+	s.selectedTheme = themeName
+	return nil
+}
 
 func (s *stubThemeStore) OpenReader(themeName, filename string) (io.ReadCloser, error) {
 	s.mu.Lock()
