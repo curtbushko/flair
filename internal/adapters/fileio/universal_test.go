@@ -15,6 +15,8 @@ import (
 	"github.com/curtbushko/flair/internal/ports"
 )
 
+const testBgHex = "#1a1b26"
+
 func TestWriteUniversal_Empty(t *testing.T) {
 	ts := domain.NewTokenSet()
 	var buf bytes.Buffer
@@ -38,7 +40,7 @@ func TestWriteUniversal_Empty(t *testing.T) {
 
 func TestWriteUniversal_ColorOnly(t *testing.T) {
 	ts := domain.NewTokenSet()
-	bg, err := domain.ParseHex("#1a1b26")
+	bg, err := domain.ParseHex(testBgHex)
 	if err != nil {
 		t.Fatalf("failed to parse hex: %v", err)
 	}
@@ -59,7 +61,7 @@ func TestWriteUniversal_ColorOnly(t *testing.T) {
 		t.Fatalf("expected 'surface.background' in tokens, got keys: %v", tokenKeys(uf.Tokens))
 	}
 
-	if tok.Color != "#1a1b26" {
+	if tok.Color != testBgHex {
 		t.Errorf("expected color '#1a1b26', got %q", tok.Color)
 	}
 
@@ -256,7 +258,7 @@ func TestReadUniversal_Valid(t *testing.T) {
 	if !ok {
 		t.Fatal("expected 'surface.background' in token set")
 	}
-	if bg.Color.Hex() != "#1a1b26" {
+	if bg.Color.Hex() != testBgHex {
 		t.Errorf("expected color '#1a1b26', got %q", bg.Color.Hex())
 	}
 
@@ -326,7 +328,7 @@ func TestUniversal_RoundTrip(t *testing.T) {
 	// Build a TokenSet with mixed color-only and styled tokens.
 	original := domain.NewTokenSet()
 
-	bg, err := domain.ParseHex("#1a1b26")
+	bg, err := domain.ParseHex(testBgHex)
 	if err != nil {
 		t.Fatalf("failed to parse hex: %v", err)
 	}

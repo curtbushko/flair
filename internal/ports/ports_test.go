@@ -101,12 +101,16 @@ func (m *mockThemeStore) FileMtime(themeName, filename string) (time.Time, error
 
 // TestCompileCheck_TargetStruct verifies the Target struct pairs Mapper + Generator + MappingFile.
 func TestCompileCheck_TargetStruct(t *testing.T) {
-	mapper := ports.Mapper(&mockMapper{})
+	m := ports.Mapper(&mockMapper{})
 	gen := ports.Generator(&mockGenerator{})
 	target := ports.Target{
-		Mapper:      mapper,
-		Generator:   gen,
-		MappingFile: "vim-mapping.yaml",
+		Mapper:          m,
+		Generator:       gen,
+		MappingFile:     "vim-mapping.yaml",
+		MappingFileKind: domain.FileKindVimMapping,
+		WriteMappingFile: func(w io.Writer, mapped ports.MappedTheme) error {
+			return nil
+		},
 	}
 
 	if target.MappingFile != "vim-mapping.yaml" {
@@ -117,6 +121,12 @@ func TestCompileCheck_TargetStruct(t *testing.T) {
 	}
 	if target.Generator.Name() != "" {
 		t.Errorf("expected Generator.Name() = %q, got %q", "", target.Generator.Name())
+	}
+	if target.MappingFileKind != domain.FileKindVimMapping {
+		t.Errorf("expected MappingFileKind = %q, got %q", domain.FileKindVimMapping, target.MappingFileKind)
+	}
+	if target.WriteMappingFile == nil {
+		t.Error("expected WriteMappingFile to be set")
 	}
 }
 

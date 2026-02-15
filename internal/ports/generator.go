@@ -1,6 +1,10 @@
 package ports
 
-import "io"
+import (
+	"io"
+
+	"github.com/curtbushko/flair/internal/domain"
+)
 
 // Generator writes the final output file from a mapped theme.
 type Generator interface {
@@ -14,9 +18,16 @@ type Generator interface {
 	Generate(w io.Writer, mapped MappedTheme) error
 }
 
-// Target pairs a mapper with its generator and mapping file path.
+// MappingFileWriter is a function that serializes a mapped theme to YAML
+// via an io.Writer. The composition root wires the specific fileio.WriteXxx
+// function for each target. This keeps the application layer adapter-agnostic.
+type MappingFileWriter func(w io.Writer, mapped MappedTheme) error
+
+// Target pairs a mapper with its generator and mapping file I/O.
 type Target struct {
-	Mapper      Mapper
-	Generator   Generator
-	MappingFile string // filename in theme dir, e.g. "vim-mapping.yaml"
+	Mapper           Mapper
+	Generator        Generator
+	MappingFile      string            // filename in theme dir, e.g. "vim-mapping.yaml"
+	MappingFileKind  domain.FileKind   // schema kind for versioned header
+	WriteMappingFile MappingFileWriter // serializes mapped theme to YAML
 }
