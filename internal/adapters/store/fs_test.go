@@ -157,7 +157,7 @@ func TestFsStore_OpenReader(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenReader() error = %v", err)
 	}
-	defer rc.Close()
+	defer func() { _ = rc.Close() }()
 
 	got, err := io.ReadAll(rc)
 	if err != nil {
@@ -184,7 +184,7 @@ func TestFsStore_ReadWriteRoundTrip(t *testing.T) {
 	if err != nil {
 		t.Fatalf("OpenReader: %v", err)
 	}
-	defer rc.Close()
+	defer func() { _ = rc.Close() }()
 
 	got, err := io.ReadAll(rc)
 	if err != nil {

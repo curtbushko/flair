@@ -154,7 +154,7 @@ func TestParser_Parse_FromTestdataFile(t *testing.T) {
 	if err != nil {
 		t.Fatalf("failed to open testdata: %v", err)
 	}
-	defer f.Close()
+	defer func() { _ = f.Close() }()
 
 	parser := yaml.NewParser()
 	pal, err := parser.Parse(f)

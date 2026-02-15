@@ -21,7 +21,7 @@ tasks:
     desc: Build the binary
     cmds:
       - mkdir -p {{.ROOT_DIR}}/bin/{{.OS}}-{{.ARCH}}
-      - GOOS={{.OS}} GOARCH={{.ARCH}} go build -o {{.ROOT_DIR}}/bin/{{.OS}}-{{.ARCH}}/{{.BINARY}}
+      - GOOS={{.OS}} GOARCH={{.ARCH}} go build -o {{.ROOT_DIR}}/bin/{{.OS}}-{{.ARCH}}/{{.BINARY}} ./cmd/flair
       - chmod +x {{.ROOT_DIR}}/bin/{{.OS}}-{{.ARCH}}/{{.BINARY}}
 
   run:
@@ -37,7 +37,7 @@ tasks:
   install:
     desc: Install the binary using go install
     cmds:
-      - GOOS={{.OS}} GOARCH={{.ARCH}} go install
+      - GOOS={{.OS}} GOARCH={{.ARCH}} go install ./cmd/flair
 
   lint:
     desc: Run all linters
@@ -63,9 +63,23 @@ tasks:
       - go-arch-lint check --arch-file {{.ROOT_DIR}}/.go-arch-lint.yml
 
   lint:ai:
-    desc: Run go-ai-lint
+    desc: Run go-ai-lint with all analyzers
     cmds:
-      - go-ai-lint run -c {{.ROOT_DIR}}/.go-ai-lint.yml
+      - >-
+        go-ai-lint
+        -concurrencylint
+        -contextlint
+        -deferlint
+        -errorlint
+        -goroutinelint
+        -initlint
+        -interfacelint
+        -naminglint
+        -optionlint
+        -paniclint
+        -slicemaplint
+        -stringlint
+        ./...
 
   test:
     desc: Run go tests
