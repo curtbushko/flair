@@ -6,6 +6,7 @@ package steps
 import (
 	"bytes"
 	"context"
+	"errors"
 	"fmt"
 	"io"
 	"math"
@@ -24,6 +25,8 @@ import (
 	"github.com/curtbushko/flair/internal/domain"
 	"github.com/curtbushko/flair/internal/ports"
 )
+
+const boolTrue = "true"
 
 // TestContext holds state shared across step definitions within a scenario.
 // Each scenario gets a fresh TestContext instance.
@@ -48,7 +51,6 @@ type TestContext struct {
 	tempDir   string
 	fsStore   *store.FsStore
 	themeName string
-	writerBuf *bytes.Buffer
 	fileData  []byte
 	storeErr  error
 
@@ -64,22 +66,17 @@ type TestContext struct {
 	outputBuffer    *bytes.Buffer
 
 	// ValidatingReader testing state
-	validatingReader *wrappers.ValidatingReader
-	validationErr    error
-	readBytes        []byte
+	validationErr error
+	readBytes     []byte
 
 	// Application testing state
 	resolvedTheme *domain.ResolvedTheme
 
 	// Mapper/Generator testing state
-	mappedTheme  ports.MappedTheme
 	stylixTheme  *ports.StylixTheme
 	vimTheme     *ports.VimTheme
 	generateErr  error
 	genOutputBuf *bytes.Buffer
-
-	// Generic error holder
-	lastErr error
 }
 
 // InitializeScenario registers all step definitions and sets up fresh context.
@@ -101,7 +98,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	// After hook: cleanup temp directory
 	ctx.After(func(ctx context.Context, sc *godog.Scenario, err error) (context.Context, error) {
 		if tc.tempDir != "" {
-			os.RemoveAll(tc.tempDir)
+			_ = os.RemoveAll(tc.tempDir)
 		}
 		return ctx, nil
 	})
@@ -155,7 +152,7 @@ func (tc *TestContext) iParseItAsAColor() error {
 
 func (tc *TestContext) theRGBValuesShouldBe(r, g, b int) error {
 	if tc.colorErr != nil {
-		return fmt.Errorf("expected successful parse, got error: %v", tc.colorErr)
+		return fmt.Errorf("expected successful parse, got error: %w", tc.colorErr)
 	}
 	if tc.color.R != uint8(r) || tc.color.G != uint8(g) || tc.color.B != uint8(b) {
 		return fmt.Errorf("RGB = (%d,%d,%d), want (%d,%d,%d)",
@@ -166,10 +163,10 @@ func (tc *TestContext) theRGBValuesShouldBe(r, g, b int) error {
 
 func (tc *TestContext) parsingShouldFailWithParseError() error {
 	if tc.colorErr == nil {
-		return fmt.Errorf("expected ParseError, got nil")
+		return errors.New("expected ParseError, got nil")
 	}
-	_, ok := tc.colorErr.(*domain.ParseError)
-	if !ok {
+	var parseErr *domain.ParseError
+	if !errors.As(tc.colorErr, &parseErr) {
 		return fmt.Errorf("expected *domain.ParseError, got %T", tc.colorErr)
 	}
 	return nil
@@ -218,7 +215,7 @@ func (tc *TestContext) aNONEColor() error {
 
 func (tc *TestContext) isNoneShouldBeTrue() error {
 	if !tc.color.IsNone {
-		return fmt.Errorf("expected IsNone=true, got false")
+		return errors.New("expected IsNone=true, got false")
 	}
 	return nil
 }
@@ -450,7 +447,7 @@ func (tc *TestContext) theThemeDirectoryShouldExist() error {
 		return fmt.Errorf("theme directory does not exist: %w", err)
 	}
 	if !info.IsDir() {
-		return fmt.Errorf("expected directory, got file")
+		return errors.New("expected directory, got file")
 	}
 	return nil
 }
@@ -464,10 +461,9 @@ func (tc *TestContext) themeExistsWithFile(theme, filename string) error {
 	if err != nil {
 		return err
 	}
-	_, err = w.Write([]byte("test content"))
-	if err != nil {
-		w.Close()
-		return err
+	if _, writeErr := w.Write([]byte("test content")); writeErr != nil {
+		_ = w.Close()
+		return writeErr
 	}
 	return w.Close()
 }
@@ -479,8 +475,10 @@ func (tc *TestContext) iCallOpenWriterAndWrite(theme, filename, content string) 
 		tc.storeErr = err
 		return nil
 	}
-	defer w.Close()
 	_, tc.storeErr = w.Write([]byte(content))
+	if closeErr := w.Close(); closeErr != nil && tc.storeErr == nil {
+		tc.storeErr = closeErr
+	}
 	return nil
 }
 
@@ -490,8 +488,10 @@ func (tc *TestContext) iCallOpenReader(theme, filename string) error {
 		tc.storeErr = err
 		return nil
 	}
-	defer r.Close()
 	tc.fileData, tc.storeErr = io.ReadAll(r)
+	if closeErr := r.Close(); closeErr != nil && tc.storeErr == nil {
+		tc.storeErr = closeErr
+	}
 	return nil
 }
 
@@ -508,20 +508,19 @@ func (tc *TestContext) theContentShouldBe(expected string) error {
 func (tc *TestContext) iCallSelect(theme string) error {
 	// First create the output files so symlinks have targets
 	for _, f := range []string{"style.lua", "style.css", "gtk.css", "style.qss", "style.json"} {
-		if err := tc.fsStore.EnsureThemeDir(theme); err != nil {
-			return err
+		if ensureErr := tc.fsStore.EnsureThemeDir(theme); ensureErr != nil {
+			return ensureErr
 		}
-		w, err := tc.fsStore.OpenWriter(theme, f)
-		if err != nil {
-			return err
+		w, openErr := tc.fsStore.OpenWriter(theme, f)
+		if openErr != nil {
+			return openErr
 		}
-		_, err = w.Write([]byte("content"))
-		if err != nil {
-			w.Close()
-			return err
+		if _, writeErr := w.Write([]byte("content")); writeErr != nil {
+			_ = w.Close()
+			return writeErr
 		}
-		if err := w.Close(); err != nil {
-			return err
+		if closeErr := w.Close(); closeErr != nil {
+			return closeErr
 		}
 	}
 	tc.storeErr = tc.fsStore.Select(theme)
@@ -553,7 +552,7 @@ func (tc *TestContext) selectedThemeShouldReturn(expected string) error {
 
 func (tc *TestContext) fileExistsShouldReturn(theme, filename, expected string) error {
 	got := tc.fsStore.FileExists(theme, filename)
-	want := expected == "true"
+	want := expected == boolTrue
 	if got != want {
 		return fmt.Errorf("FileExists(%q, %q) = %v, want %v", theme, filename, got, want)
 	}
@@ -611,18 +610,18 @@ func (tc *TestContext) iShouldReceiveValidYAMLBytes() error {
 		return err
 	}
 	if len(data) == 0 {
-		return fmt.Errorf("received empty YAML bytes")
+		return errors.New("received empty YAML bytes")
 	}
 	// Verify it starts with expected YAML structure
 	if !bytes.Contains(data, []byte("system:")) {
-		return fmt.Errorf("YAML does not contain 'system:' field")
+		return errors.New("YAML does not contain 'system:' field")
 	}
 	return nil
 }
 
 func (tc *TestContext) getShouldReturnAnError() error {
 	if tc.builtinGetErr == nil {
-		return fmt.Errorf("expected error, got nil")
+		return errors.New("expected error, got nil")
 	}
 	return nil
 }
@@ -633,7 +632,7 @@ func (tc *TestContext) iCallHasOnBuiltinSource(name string) error {
 }
 
 func (tc *TestContext) hasShouldReturn(expected string) error {
-	want := expected == "true"
+	want := expected == boolTrue
 	if tc.builtinHas != want {
 		return fmt.Errorf("Has() = %v, want %v", tc.builtinHas, want)
 	}
@@ -696,28 +695,28 @@ func (tc *TestContext) iWrapItInValidatingReaderAndRead() error {
 
 func (tc *TestContext) readingShouldSucceed() error {
 	if tc.validationErr != nil {
-		return fmt.Errorf("expected success, got: %v", tc.validationErr)
+		return fmt.Errorf("expected success, got: %w", tc.validationErr)
 	}
 	return nil
 }
 
 func (tc *TestContext) readingShouldFailWithSchemaVersionError() error {
 	if tc.validationErr == nil {
-		return fmt.Errorf("expected SchemaVersionError, got nil")
+		return errors.New("expected SchemaVersionError, got nil")
 	}
-	_, ok := tc.validationErr.(*domain.SchemaVersionError)
-	if !ok {
-		return fmt.Errorf("expected *domain.SchemaVersionError, got %T: %v", tc.validationErr, tc.validationErr)
+	var sve *domain.SchemaVersionError
+	if !errors.As(tc.validationErr, &sve) {
+		return fmt.Errorf("expected *domain.SchemaVersionError, got %T: %w", tc.validationErr, tc.validationErr)
 	}
 	return nil
 }
 
 func (tc *TestContext) needsUpgradeShouldBe(expected string) error {
-	sve, ok := tc.validationErr.(*domain.SchemaVersionError)
-	if !ok {
-		return fmt.Errorf("no SchemaVersionError available")
+	var sve *domain.SchemaVersionError
+	if !errors.As(tc.validationErr, &sve) {
+		return errors.New("no SchemaVersionError available")
 	}
-	want := expected == "true"
+	want := expected == boolTrue
 	if sve.NeedsUpgrade != want {
 		return fmt.Errorf("NeedsUpgrade = %v, want %v", sve.NeedsUpgrade, want)
 	}
@@ -827,7 +826,11 @@ func (tc *TestContext) iMapWithStylixMapper() error {
 	if err != nil {
 		return err
 	}
-	tc.stylixTheme = mapped.(*ports.StylixTheme)
+	stylixTheme, ok := mapped.(*ports.StylixTheme)
+	if !ok {
+		return fmt.Errorf("expected *ports.StylixTheme, got %T", mapped)
+	}
+	tc.stylixTheme = stylixTheme
 	return nil
 }
 
@@ -845,7 +848,11 @@ func (tc *TestContext) iMapWithVimMapper() error {
 	if err != nil {
 		return err
 	}
-	tc.vimTheme = mapped.(*ports.VimTheme)
+	vimTheme, ok := mapped.(*ports.VimTheme)
+	if !ok {
+		return fmt.Errorf("expected *ports.VimTheme, got %T", mapped)
+	}
+	tc.vimTheme = vimTheme
 	return nil
 }
 
@@ -887,10 +894,10 @@ func (tc *TestContext) theOutputShouldBeValidJSON() error {
 	output := tc.genOutputBuf.Bytes()
 	trimmed := bytes.TrimSpace(output)
 	if len(trimmed) == 0 || trimmed[0] != '{' {
-		return fmt.Errorf("output does not start with '{'")
+		return errors.New("output does not start with '{'")
 	}
 	if trimmed[len(trimmed)-1] != '}' {
-		return fmt.Errorf("output does not end with '}'")
+		return errors.New("output does not end with '}'")
 	}
 	return nil
 }
@@ -913,7 +920,7 @@ func (tc *TestContext) iGenerateVimOutput() error {
 
 func (tc *TestContext) theGeneratedOutputShouldContain(expected string) error {
 	if tc.genOutputBuf == nil {
-		return fmt.Errorf("generator output buffer is nil")
+		return errors.New("generator output buffer is nil")
 	}
 	output := tc.genOutputBuf.String()
 	if !bytes.Contains([]byte(output), []byte(expected)) {
@@ -930,17 +937,18 @@ func registerE2ESteps(ctx *godog.ScenarioContext, tc *TestContext) {
 	ctx.Step(`^running the pipeline again should produce identical output$`, tc.runningPipelineAgainShouldProduceIdenticalOutput)
 }
 
+//nolint:gocyclo // E2E test function inherently has many steps
 func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 	// Use built-in source to get palette
-	r, err := tc.builtinSource.Get(scheme)
-	if err != nil {
-		return err
+	r, getErr := tc.builtinSource.Get(scheme)
+	if getErr != nil {
+		return getErr
 	}
 
 	parser := yamlparser.NewParser()
-	pal, err := parser.Parse(r)
-	if err != nil {
-		return err
+	pal, parseErr := parser.Parse(r)
+	if parseErr != nil {
+		return parseErr
 	}
 	tc.palette = pal
 	tc.themeName = scheme
@@ -958,33 +966,37 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 	}
 
 	// Create theme directory and generate all files
-	if err := tc.fsStore.EnsureThemeDir(scheme); err != nil {
-		return err
+	if ensureErr := tc.fsStore.EnsureThemeDir(scheme); ensureErr != nil {
+		return ensureErr
 	}
 
 	// Write palette.yaml
-	pw, err := tc.fsStore.OpenWriter(scheme, "palette.yaml")
-	if err != nil {
-		return err
+	pw, pwErr := tc.fsStore.OpenWriter(scheme, "palette.yaml")
+	if pwErr != nil {
+		return pwErr
 	}
 	vw := wrappers.NewVersionedWriter(pw, domain.FileKindPalette, scheme)
-	if _, err := vw.Write([]byte("palette_content: test\n")); err != nil {
-		pw.Close()
-		return err
+	if _, writeErr := vw.Write([]byte("palette_content: test\n")); writeErr != nil {
+		_ = pw.Close()
+		return writeErr
 	}
-	pw.Close()
+	if closeErr := pw.Close(); closeErr != nil {
+		return closeErr
+	}
 
 	// Write universal.yaml
-	uw, err := tc.fsStore.OpenWriter(scheme, "universal.yaml")
-	if err != nil {
-		return err
+	uw, uwErr := tc.fsStore.OpenWriter(scheme, "universal.yaml")
+	if uwErr != nil {
+		return uwErr
 	}
 	vwu := wrappers.NewVersionedWriter(uw, domain.FileKindUniversal, scheme)
-	if _, err := vwu.Write([]byte("tokens: test\n")); err != nil {
-		uw.Close()
-		return err
+	if _, writeErr := vwu.Write([]byte("tokens: test\n")); writeErr != nil {
+		_ = uw.Close()
+		return writeErr
 	}
-	uw.Close()
+	if closeErr := uw.Close(); closeErr != nil {
+		return closeErr
+	}
 
 	// Write mapping files and outputs
 	mappings := []struct {
@@ -998,16 +1010,19 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 			output:  "style.lua",
 			kind:    domain.FileKindVimMapping,
 			genWrite: func() error {
-				if err := tc.iMapWithVimMapper(); err != nil {
-					return err
+				if mapErr := tc.iMapWithVimMapper(); mapErr != nil {
+					return mapErr
 				}
-				w, err := tc.fsStore.OpenWriter(scheme, "style.lua")
-				if err != nil {
-					return err
+				w, openErr := tc.fsStore.OpenWriter(scheme, "style.lua")
+				if openErr != nil {
+					return openErr
 				}
-				defer w.Close()
 				gen := generator.NewVim()
-				return gen.Generate(w, tc.vimTheme)
+				if genErr := gen.Generate(w, tc.vimTheme); genErr != nil {
+					_ = w.Close()
+					return genErr
+				}
+				return w.Close()
 			},
 		},
 		{
@@ -1015,18 +1030,21 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 			output:  "style.css",
 			kind:    domain.FileKindCSSMapping,
 			genWrite: func() error {
-				m := mapper.NewCSS()
-				mapped, err := m.Map(tc.resolvedTheme)
-				if err != nil {
-					return err
+				cssMapper := mapper.NewCSS()
+				mapped, mapErr := cssMapper.Map(tc.resolvedTheme)
+				if mapErr != nil {
+					return mapErr
 				}
-				w, err := tc.fsStore.OpenWriter(scheme, "style.css")
-				if err != nil {
-					return err
+				w, openErr := tc.fsStore.OpenWriter(scheme, "style.css")
+				if openErr != nil {
+					return openErr
 				}
-				defer w.Close()
 				gen := generator.NewCSS()
-				return gen.Generate(w, mapped)
+				if genErr := gen.Generate(w, mapped); genErr != nil {
+					_ = w.Close()
+					return genErr
+				}
+				return w.Close()
 			},
 		},
 		{
@@ -1034,18 +1052,21 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 			output:  "gtk.css",
 			kind:    domain.FileKindGtkMapping,
 			genWrite: func() error {
-				m := mapper.NewGtk()
-				mapped, err := m.Map(tc.resolvedTheme)
-				if err != nil {
-					return err
+				gtkMapper := mapper.NewGtk()
+				mapped, mapErr := gtkMapper.Map(tc.resolvedTheme)
+				if mapErr != nil {
+					return mapErr
 				}
-				w, err := tc.fsStore.OpenWriter(scheme, "gtk.css")
-				if err != nil {
-					return err
+				w, openErr := tc.fsStore.OpenWriter(scheme, "gtk.css")
+				if openErr != nil {
+					return openErr
 				}
-				defer w.Close()
 				gen := generator.NewGtk()
-				return gen.Generate(w, mapped)
+				if genErr := gen.Generate(w, mapped); genErr != nil {
+					_ = w.Close()
+					return genErr
+				}
+				return w.Close()
 			},
 		},
 		{
@@ -1053,18 +1074,21 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 			output:  "style.qss",
 			kind:    domain.FileKindQssMapping,
 			genWrite: func() error {
-				m := mapper.NewQss()
-				mapped, err := m.Map(tc.resolvedTheme)
-				if err != nil {
-					return err
+				qssMapper := mapper.NewQss()
+				mapped, mapErr := qssMapper.Map(tc.resolvedTheme)
+				if mapErr != nil {
+					return mapErr
 				}
-				w, err := tc.fsStore.OpenWriter(scheme, "style.qss")
-				if err != nil {
-					return err
+				w, openErr := tc.fsStore.OpenWriter(scheme, "style.qss")
+				if openErr != nil {
+					return openErr
 				}
-				defer w.Close()
 				gen := generator.NewQss()
-				return gen.Generate(w, mapped)
+				if genErr := gen.Generate(w, mapped); genErr != nil {
+					_ = w.Close()
+					return genErr
+				}
+				return w.Close()
 			},
 		},
 		{
@@ -1072,16 +1096,19 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 			output:  "style.json",
 			kind:    domain.FileKindStylixMapping,
 			genWrite: func() error {
-				if err := tc.iMapWithStylixMapper(); err != nil {
-					return err
+				if mapErr := tc.iMapWithStylixMapper(); mapErr != nil {
+					return mapErr
 				}
-				w, err := tc.fsStore.OpenWriter(scheme, "style.json")
-				if err != nil {
-					return err
+				w, openErr := tc.fsStore.OpenWriter(scheme, "style.json")
+				if openErr != nil {
+					return openErr
 				}
-				defer w.Close()
 				gen := generator.NewStylix()
-				return gen.Generate(w, tc.stylixTheme)
+				if genErr := gen.Generate(w, tc.stylixTheme); genErr != nil {
+					_ = w.Close()
+					return genErr
+				}
+				return w.Close()
 			},
 		},
 	}
@@ -1094,10 +1121,12 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 		}
 		vwm := wrappers.NewVersionedWriter(mw, m.kind, scheme)
 		if _, err := vwm.Write([]byte("mapping: test\n")); err != nil {
-			mw.Close()
+			_ = mw.Close()
 			return err
 		}
-		mw.Close()
+		if err := mw.Close(); err != nil {
+			return err
+		}
 
 		// Generate output file
 		if err := m.genWrite(); err != nil {
@@ -1133,40 +1162,46 @@ func (tc *TestContext) all12FilesShouldBeCreated() error {
 
 func (tc *TestContext) runningPipelineAgainShouldProduceIdenticalOutput() error {
 	// Read first run's style.json
-	r1, err := tc.fsStore.OpenReader(tc.themeName, "style.json")
-	if err != nil {
-		return err
+	r1, openErr := tc.fsStore.OpenReader(tc.themeName, "style.json")
+	if openErr != nil {
+		return openErr
 	}
-	data1, err := io.ReadAll(r1)
-	r1.Close()
-	if err != nil {
-		return err
+	data1, readErr := io.ReadAll(r1)
+	if closeErr := r1.Close(); closeErr != nil && readErr == nil {
+		return closeErr
+	}
+	if readErr != nil {
+		return readErr
 	}
 
 	// Generate again
-	if err := tc.iMapWithStylixMapper(); err != nil {
-		return err
+	if mapErr := tc.iMapWithStylixMapper(); mapErr != nil {
+		return mapErr
 	}
-	w, err := tc.fsStore.OpenWriter(tc.themeName, "style.json")
-	if err != nil {
-		return err
+	w, writeOpenErr := tc.fsStore.OpenWriter(tc.themeName, "style.json")
+	if writeOpenErr != nil {
+		return writeOpenErr
 	}
 	gen := generator.NewStylix()
-	if err := gen.Generate(w, tc.stylixTheme); err != nil {
-		w.Close()
-		return err
+	if genErr := gen.Generate(w, tc.stylixTheme); genErr != nil {
+		_ = w.Close()
+		return genErr
 	}
-	w.Close()
+	if closeErr := w.Close(); closeErr != nil {
+		return closeErr
+	}
 
 	// Read second run
-	r2, err := tc.fsStore.OpenReader(tc.themeName, "style.json")
-	if err != nil {
-		return err
+	r2, open2Err := tc.fsStore.OpenReader(tc.themeName, "style.json")
+	if open2Err != nil {
+		return open2Err
 	}
-	data2, err := io.ReadAll(r2)
-	r2.Close()
-	if err != nil {
-		return err
+	data2, read2Err := io.ReadAll(r2)
+	if close2Err := r2.Close(); close2Err != nil && read2Err == nil {
+		return close2Err
+	}
+	if read2Err != nil {
+		return read2Err
 	}
 
 	if !bytes.Equal(data1, data2) {
