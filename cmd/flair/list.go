@@ -67,7 +67,11 @@ func listThemes(app *App, stdout, stderr io.Writer) int {
 		if info.Selected {
 			marker = "* "
 		}
-		writeStr(stdout, "%s%s\n", marker, info.Name)
+		if !info.Generated {
+			writeStr(stdout, "%s%s [available]\n", marker, info.Name)
+		} else {
+			writeStr(stdout, "%s%s\n", marker, info.Name)
+		}
 	}
 
 	return 0

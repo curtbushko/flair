@@ -6,11 +6,12 @@ import (
 	"github.com/curtbushko/flair/internal/ports"
 )
 
-// ThemeInfo describes an installed theme for the list command.
+// ThemeInfo describes a theme for the list command.
 type ThemeInfo struct {
-	Name     string
-	Selected bool
-	Complete bool
+	Name      string
+	Selected  bool
+	Complete  bool
+	Generated bool
 }
 
 // ListThemesUseCase lists installed themes and built-in palettes.
@@ -25,8 +26,10 @@ func NewListThemesUseCase(store ports.ThemeStore, builtins ports.PaletteSource) 
 	return &ListThemesUseCase{store: store, builtins: builtins}
 }
 
-// Execute returns a slice of ThemeInfo for all installed themes, marking which
-// one is currently selected and whether each theme is complete (has all output files).
+// Execute returns a slice of ThemeInfo for generated themes merged with
+// available built-in palettes. Generated themes are identified by having a
+// palette.yaml file. Built-in palettes that have not been generated appear
+// with Generated=false.
 func (uc *ListThemesUseCase) Execute() ([]ThemeInfo, error) {
 	names, err := uc.store.ListThemes()
 	if err != nil {
@@ -38,12 +41,31 @@ func (uc *ListThemesUseCase) Execute() ([]ThemeInfo, error) {
 		return nil, fmt.Errorf("selected theme: %w", err)
 	}
 
-	themes := make([]ThemeInfo, 0, len(names))
+	seen := make(map[string]bool)
+	var themes []ThemeInfo
+
+	// Add generated themes (directories that contain palette.yaml).
 	for _, name := range names {
+		if !uc.store.FileExists(name, "palette.yaml") {
+			continue
+		}
+		seen[name] = true
 		themes = append(themes, ThemeInfo{
-			Name:     name,
-			Selected: name == selected,
-			Complete: uc.isComplete(name),
+			Name:      name,
+			Selected:  name == selected,
+			Complete:  uc.isComplete(name),
+			Generated: true,
+		})
+	}
+
+	// Add built-in palettes that have not been generated.
+	for _, name := range uc.builtins.List() {
+		if seen[name] {
+			continue
+		}
+		themes = append(themes, ThemeInfo{
+			Name:      name,
+			Generated: false,
 		})
 	}
 
