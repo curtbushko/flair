@@ -1,5 +1,5 @@
 {
-  description = "Golang flake";
+  description = "Flair - A theme generation tool";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   inputs.golang-shared-configs.url = "github:curtbushko/golang-shared-configs";
@@ -31,11 +31,34 @@
         subPackages = [ "cmd/go-ai-lint" ];
         vendorHash = "sha256-zkXyXTEnMmBZnvzoq0UWKgzWZlyNRyQZCYAv+huZo0I=";
       };
+
+      # Build flair from source
+      flair = { pkgs }: pkgs.buildGoModule {
+        pname = "flair";
+        version = "0.1.0";
+        src = ./.;
+        subPackages = [ "cmd/flair" ];
+        vendorHash = "sha256-5MZludg0yiSXVEj56AJ+rfak9bLQYJeCbPunlS9mX6A=";
+
+        meta = with pkgs.lib; {
+          description = "A theme generation tool for creating consistent color schemes";
+          homepage = "https://github.com/curtbushko/flair";
+          license = licenses.mit;
+          maintainers = [];
+        };
+      };
     in
     {
       overlays.default = final: prev: {
         go = final."go_1_${toString goVersion}";
+        flair = flair { pkgs = final; };
       };
+
+      # Packages output for use as a flake input
+      packages = forEachSupportedSystem ({ pkgs, system }: {
+        flair = flair { inherit pkgs; };
+        default = flair { inherit pkgs; };
+      });
 
       devShells = forEachSupportedSystem ({ pkgs, system }:
         let
