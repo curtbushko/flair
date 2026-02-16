@@ -51,9 +51,13 @@ func (s *FsStore) EnsureThemeDir(themeName string) error {
 }
 
 // ListThemes returns all theme directory names, sorted alphabetically.
+// Returns an empty slice if the config directory does not exist.
 func (s *FsStore) ListThemes() ([]string, error) {
 	entries, err := os.ReadDir(s.configDir)
 	if err != nil {
+		if os.IsNotExist(err) {
+			return nil, nil
+		}
 		return nil, fmt.Errorf("list themes: %w", err)
 	}
 

@@ -227,6 +227,19 @@ func TestFsStore_FileExistsAndMtime(t *testing.T) {
 	}
 }
 
+// TestFsStore_ListThemes_MissingDir returns empty when config dir does not exist.
+func TestFsStore_ListThemes_MissingDir(t *testing.T) {
+	s := store.NewFsStore("/nonexistent/path/that/does/not/exist")
+
+	themes, err := s.ListThemes()
+	if err != nil {
+		t.Fatalf("ListThemes() should not error for missing dir, got: %v", err)
+	}
+	if len(themes) != 0 {
+		t.Errorf("ListThemes() = %v, want empty slice", themes)
+	}
+}
+
 // TestFsStore_Select verifies symlink creation for theme output files.
 func TestFsStore_Select(t *testing.T) {
 	dir := t.TempDir()
