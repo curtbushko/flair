@@ -72,8 +72,8 @@ type semanticMapping struct {
 var semanticMappings = func() []semanticMapping {
 	// Build mappings grouped by category, matching the PLAN.md token inventory.
 	// 11 surface + 7 text + 6 status + 9 diff + 15 syntax + 7 markup +
-	// 3 accent + 3 border + 2 scrollbar + 3 state + 4 git + 16 terminal = 86
-	m := make([]semanticMapping, 0, 86)
+	// 3 accent + 3 border + 2 scrollbar + 3 state + 4 git + 16 terminal + 6 statusline = 92
+	m := make([]semanticMapping, 0, 92)
 
 	// Surface tokens (11)
 	m = append(m,
@@ -207,6 +207,16 @@ var semanticMappings = func() []semanticMapping {
 		semanticMapping{"terminal.brmagenta", "terminal-brmagenta"},
 		semanticMapping{"terminal.brcyan", "terminal-brcyan"},
 		semanticMapping{"terminal.brwhite", "terminal-brwhite"},
+	)
+
+	// Statusline tokens (6)
+	m = append(m,
+		semanticMapping{"statusline.a.bg", "statusline-a-bg"},
+		semanticMapping{"statusline.a.fg", "statusline-a-fg"},
+		semanticMapping{"statusline.b.bg", "statusline-b-bg"},
+		semanticMapping{"statusline.b.fg", "statusline-b-fg"},
+		semanticMapping{"statusline.c.bg", "statusline-c-bg"},
+		semanticMapping{"statusline.c.fg", "statusline-c-fg"},
 	)
 
 	return m

@@ -29,6 +29,7 @@ func (d *DefaultDeriver) Derive(p *domain.Palette) *domain.TokenSet {
 	deriveAccentBorderState(p, ts)
 	deriveGit(p, ts)
 	deriveTerminal(p, ts)
+	deriveStatusline(p, ts)
 	return ts
 }
 
@@ -210,4 +211,15 @@ func deriveTerminal(p *domain.Palette, ts *domain.TokenSet) {
 	for _, m := range mappings {
 		ts.Set(m.name, domain.Token{Color: p.Base(m.base)})
 	}
+}
+
+// deriveStatusline derives the 6 statusline tokens from the palette.
+// These provide foreground and background colors for statusline sections A, B, C.
+func deriveStatusline(p *domain.Palette, ts *domain.TokenSet) {
+	ts.Set("statusline.a.bg", domain.Token{Color: p.Base(0x0D)})
+	ts.Set("statusline.a.fg", domain.Token{Color: p.Base(0x10)})
+	ts.Set("statusline.b.bg", domain.Token{Color: p.Base(0x10)})
+	ts.Set("statusline.b.fg", domain.Token{Color: p.Base(0x0D)})
+	ts.Set("statusline.c.bg", domain.Token{Color: p.Base(0x01)})
+	ts.Set("statusline.c.fg", domain.Token{Color: p.Base(0x0D)})
 }
