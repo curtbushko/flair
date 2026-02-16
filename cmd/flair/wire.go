@@ -87,7 +87,7 @@ func Wire(configDir string) *App {
 			return fileio.WriteUniversal(w, ts)
 		}),
 	)
-	selectUC := application.NewSelectThemeUseCase(fsStore)
+	selectUC := application.NewSelectThemeUseCase(fsStore, builtins, generateUC)
 	listUC := application.NewListThemesUseCase(fsStore, builtins)
 	validateUC := application.NewValidateThemeUseCase(fsStore, parser, schemaValidatorFunc())
 	previewUC := application.NewPreviewThemeUseCase(fsStore, parser, fileio.ReadUniversal)
