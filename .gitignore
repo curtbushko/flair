@@ -34,6 +34,7 @@ go.work.sum
 # Custom for this repo
 /bin
 /temp
+/flair
 .claude/settings.local.json
 .tasks
 
