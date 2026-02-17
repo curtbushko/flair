@@ -28,13 +28,7 @@ func TestSelectCmd_PrintsConfirmation(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 
 	// First generate a theme so it has all output files.
-	genCode := runGenerate(
-		[]string{"flair", "generate", "tokyo-night-dark", "--dir", dir},
-		&bytes.Buffer{}, &bytes.Buffer{},
-	)
-	if genCode != 0 {
-		t.Fatalf("generate setup failed with exit code %d", genCode)
-	}
+	generateThemeForTest(t, dir, "tokyo-night-dark")
 
 	code := runSelect([]string{"flair", "select", "tokyo-night-dark", "--dir", dir}, &stdout, &stderr)
 
@@ -69,13 +63,7 @@ func TestSelectCmd_CreatesSymlinks(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 
 	// Generate a theme first.
-	genCode := runGenerate(
-		[]string{"flair", "generate", "tokyo-night-dark", "--dir", dir},
-		&bytes.Buffer{}, &bytes.Buffer{},
-	)
-	if genCode != 0 {
-		t.Fatalf("generate setup failed with exit code %d", genCode)
-	}
+	generateThemeForTest(t, dir, "tokyo-night-dark")
 
 	code := runSelect([]string{"flair", "select", "tokyo-night-dark", "--dir", dir}, &stdout, &stderr)
 	if code != 0 {
@@ -135,13 +123,7 @@ func TestSelectCmd_DirFlag(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 
 	// Generate theme first.
-	genCode := runGenerate(
-		[]string{"flair", "generate", "tokyo-night-dark", "--dir", dir},
-		&bytes.Buffer{}, &bytes.Buffer{},
-	)
-	if genCode != 0 {
-		t.Fatalf("generate setup failed with exit code %d", genCode)
-	}
+	generateThemeForTest(t, dir, "tokyo-night-dark")
 
 	code := runSelect([]string{"flair", "select", "tokyo-night-dark", "--dir", dir}, &stdout, &stderr)
 

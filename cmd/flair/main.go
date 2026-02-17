@@ -16,8 +16,6 @@ const (
 const usageText = `Usage: flair <command> [options]
 
 Commands:
-  generate    Generate theme files from a palette
-  init        Scaffold a new theme directory
   list        List available built-in palettes
   preview     Preview a theme with ANSI colors
   regenerate  Re-derive stale downstream files
@@ -47,10 +45,6 @@ func run(args []string, stderr io.Writer) int {
 	case flagHelp, flagHelpShrt:
 		printUsage(stderr)
 		return 0
-	case "generate":
-		return runGenerate(args, os.Stdout, stderr)
-	case "init":
-		return runInit(args, os.Stdout, stderr)
 	case "select":
 		return runSelect(args, os.Stdout, stderr)
 	case "list":

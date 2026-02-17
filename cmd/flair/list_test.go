@@ -11,21 +11,8 @@ func TestListCmd_FormatsOutput(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 
 	// Generate two themes.
-	genCode := runGenerate(
-		[]string{"flair", "generate", "tokyo-night-dark", "--dir", dir},
-		&bytes.Buffer{}, &bytes.Buffer{},
-	)
-	if genCode != 0 {
-		t.Fatalf("generate setup failed with exit code %d", genCode)
-	}
-
-	genCode = runGenerate(
-		[]string{"flair", "generate", "catppuccin-mocha", "--dir", dir},
-		&bytes.Buffer{}, &bytes.Buffer{},
-	)
-	if genCode != 0 {
-		t.Fatalf("generate setup failed with exit code %d", genCode)
-	}
+	generateThemeForTest(t, dir, "tokyo-night-dark")
+	generateThemeForTest(t, dir, "catppuccin-mocha")
 
 	// Select one theme.
 	selCode := runSelect(
@@ -138,13 +125,7 @@ func TestListCmd_DirFlag(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 
 	// Generate a theme in custom dir.
-	genCode := runGenerate(
-		[]string{"flair", "generate", "tokyo-night-dark", "--dir", dir},
-		&bytes.Buffer{}, &bytes.Buffer{},
-	)
-	if genCode != 0 {
-		t.Fatalf("generate setup failed with exit code %d", genCode)
-	}
+	generateThemeForTest(t, dir, "tokyo-night-dark")
 
 	code := runList([]string{"flair", "list", "--dir", dir}, &stdout, &stderr)
 	if code != 0 {

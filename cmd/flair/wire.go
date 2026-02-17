@@ -90,7 +90,7 @@ func Wire(configDir string) *App {
 	selectUC := application.NewSelectThemeUseCase(fsStore, builtins, generateUC)
 	listUC := application.NewListThemesUseCase(fsStore, builtins)
 	validateUC := application.NewValidateThemeUseCase(fsStore, parser, schemaValidatorFunc())
-	previewUC := application.NewPreviewThemeUseCase(fsStore, parser, fileio.ReadUniversal)
+	previewUC := application.NewPreviewThemeUseCase(fsStore, parser, fileio.ReadUniversal, drv, builtins)
 	regenerateUC := application.NewRegenerateThemeUseCase(
 		fsStore, parser, drv, targets,
 		application.WithRegenUniversalWriter(func(w io.Writer, ts *domain.TokenSet) error {

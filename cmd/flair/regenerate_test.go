@@ -29,10 +29,7 @@ func TestRegenerateCmd_TargetFlag(t *testing.T) {
 	var stdout, stderr bytes.Buffer
 
 	// First generate a theme to regenerate.
-	code := runGenerate([]string{"flair", "generate", "tokyo-night-dark", "--dir", dir}, &stdout, &stderr)
-	if code != 0 {
-		t.Fatalf("generate exit code = %d, want 0; stderr: %s", code, stderr.String())
-	}
+	generateThemeForTest(t, dir, "tokyo-night-dark")
 
 	// Verify theme was created.
 	themeDir := filepath.Join(dir, "tokyo-night-dark")
@@ -44,9 +41,7 @@ func TestRegenerateCmd_TargetFlag(t *testing.T) {
 	copyBuiltinPalette(t, themeDir, "tokyo-night-dark")
 
 	// Now regenerate with --target vim.
-	stdout.Reset()
-	stderr.Reset()
-	code = runRegenerate([]string{"flair", "regenerate", "tokyo-night-dark", "--target", "vim", "--dir", dir}, &stdout, &stderr)
+	code := runRegenerate([]string{"flair", "regenerate", "tokyo-night-dark", "--target", "vim", "--dir", dir}, &stdout, &stderr)
 	if code != 0 {
 		t.Fatalf("regenerate exit code = %d, want 0; stderr: %s", code, stderr.String())
 	}

@@ -28,44 +28,36 @@ make build
 ## Quick Start
 
 ```sh
-# Generate a theme from a built-in palette
-flair generate tokyo-night-dark
+# Select a built-in theme (auto-generates if needed)
+flair select tokyo-night-dark
 
 # Preview the theme in your terminal
 flair preview tokyo-night-dark
 
-# Select it as the active theme (creates symlinks)
-flair select tokyo-night-dark
+# List available themes
+flair list
 ```
 
 ## Commands
 
-### generate
+### select
 
-Generate theme files from a palette. The palette argument can be a built-in
-name or a file path to a palette YAML.
+Select a theme as active by creating symlinks to its output files at the
+config root. If the theme is a built-in and hasn't been generated yet, it
+will be auto-generated first.
 
 ```sh
-flair generate <palette> [options]
+flair select <theme-name> [options]
 ```
 
 Options:
 
 - `--dir <path>` -- Config directory (default: `~/.config/flair`)
-- `--target <name>` -- Generate only the named target (e.g. `stylix`)
-- `--name <name>` -- Override the theme name (default: inferred from palette)
 
-Examples:
+Example:
 
 ```sh
-# Generate from a built-in palette
-flair generate catppuccin-mocha
-
-# Generate from a custom palette file
-flair generate ~/palettes/my-palette.yaml --name my-theme
-
-# Generate only the vim target
-flair generate gruvbox-dark --target vim
+flair select gruvbox-dark
 ```
 
 ### regenerate
@@ -91,25 +83,6 @@ flair regenerate tokyo-night-dark
 
 # Regenerate only the CSS target
 flair regenerate tokyo-night-dark --target css
-```
-
-### select
-
-Select a theme as active by creating symlinks to its output files at the
-config root.
-
-```sh
-flair select <theme-name> [options]
-```
-
-Options:
-
-- `--dir <path>` -- Config directory (default: `~/.config/flair`)
-
-Example:
-
-```sh
-flair select gruvbox-dark
 ```
 
 ### validate
@@ -170,25 +143,6 @@ flair list
 
 # List built-in palettes
 flair list --builtins
-```
-
-### init
-
-Scaffold a new theme directory with a starter palette.yaml.
-
-```sh
-flair init --name <theme-name> [options]
-```
-
-Options:
-
-- `--name <name>` -- Theme name (required)
-- `--dir <path>` -- Config directory (default: `~/.config/flair`)
-
-Example:
-
-```sh
-flair init --name my-custom-theme
 ```
 
 ## Pipeline
@@ -273,7 +227,7 @@ flair list --builtins
 Flair uses no override system. Instead, customize themes by editing
 intermediate YAML files directly:
 
-1. Generate a theme: `flair generate tokyo-night-dark`
+1. Select a theme: `flair select tokyo-night-dark`
 2. Edit any intermediate file (e.g. `universal.yaml` to change semantic
    token assignments, or a `*-mapping.yaml` to adjust target-specific output)
 3. Regenerate downstream files: `flair regenerate tokyo-night-dark`

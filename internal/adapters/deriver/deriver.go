@@ -122,15 +122,14 @@ func deriveSyntax(p *domain.Palette, ts *domain.TokenSet) {
 }
 
 // deriveMarkup derives the 10 markup tokens from the palette.
-// Style-only tokens (bold, italic, strikethrough) use NoneColor so that
-// the foreground color is inherited from the surrounding context.
+// deriveMarkup derives the 10 markup semantic tokens.
 func deriveMarkup(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("markup.heading", domain.Token{Color: p.Base(0x0D), Bold: true})
 	ts.Set("markup.link", domain.Token{Color: p.Base(0x0C)})
 	ts.Set("markup.code", domain.Token{Color: p.Base(0x0B)})
-	ts.Set("markup.bold", domain.Token{Color: domain.NoneColor(), Bold: true})
-	ts.Set("markup.italic", domain.Token{Color: domain.NoneColor(), Italic: true})
-	ts.Set("markup.strikethrough", domain.Token{Color: domain.NoneColor(), Strikethrough: true})
+	ts.Set("markup.bold", domain.Token{Color: p.Base(0x05), Bold: true})
+	ts.Set("markup.italic", domain.Token{Color: p.Base(0x05), Italic: true})
+	ts.Set("markup.strikethrough", domain.Token{Color: p.Base(0x03), Strikethrough: true})
 	ts.Set("markup.quote", domain.Token{Color: p.Base(0x03), Italic: true})
 	ts.Set("markup.list.bullet", domain.Token{Color: p.Base(0x09)})
 	ts.Set("markup.list.checked", domain.Token{Color: p.Base(0x0B)})

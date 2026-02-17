@@ -1034,8 +1034,9 @@ func TestDeriveMarkup_Bold(t *testing.T) {
 	if !tok.Bold {
 		t.Error("markup.bold should have Bold=true")
 	}
-	if !tok.Color.IsNone {
-		t.Errorf("markup.bold should have NoneColor (fg inherited), got %s", tok.Color.Hex())
+	want := pal.Base(0x05)
+	if tok.Color.Hex() != want.Hex() {
+		t.Errorf("markup.bold color = %s, want %s (base05)", tok.Color.Hex(), want.Hex())
 	}
 }
 
@@ -1052,8 +1053,9 @@ func TestDeriveMarkup_Italic(t *testing.T) {
 	if !tok.Italic {
 		t.Error("markup.italic should have Italic=true")
 	}
-	if !tok.Color.IsNone {
-		t.Errorf("markup.italic should have NoneColor (fg inherited), got %s", tok.Color.Hex())
+	want := pal.Base(0x05)
+	if tok.Color.Hex() != want.Hex() {
+		t.Errorf("markup.italic color = %s, want %s (base05)", tok.Color.Hex(), want.Hex())
 	}
 }
 
@@ -1070,8 +1072,9 @@ func TestDeriveMarkup_Strikethrough(t *testing.T) {
 	if !tok.Strikethrough {
 		t.Error("markup.strikethrough should have Strikethrough=true")
 	}
-	if !tok.Color.IsNone {
-		t.Errorf("markup.strikethrough should have NoneColor, got %s", tok.Color.Hex())
+	want := pal.Base(0x03)
+	if tok.Color.Hex() != want.Hex() {
+		t.Errorf("markup.strikethrough color = %s, want %s (base03)", tok.Color.Hex(), want.Hex())
 	}
 }
 
@@ -1573,18 +1576,11 @@ func TestFullDerivation_TokenCount(t *testing.T) {
 }
 
 // TestFullDerivation_AllColorsPresent verifies that every token path has a
-// valid Color — either a valid RGB color or IsNone (for style-only tokens
-// like markup.bold, markup.italic, markup.strikethrough).
+// valid RGB color.
 func TestFullDerivation_AllColorsPresent(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
 	d := deriver.New()
 	ts := d.Derive(pal)
-
-	styleOnlyTokens := map[string]bool{
-		"markup.bold":          true,
-		"markup.italic":        true,
-		"markup.strikethrough": true,
-	}
 
 	for _, path := range ts.Paths() {
 		tok, ok := ts.Get(path)
@@ -1593,14 +1589,8 @@ func TestFullDerivation_AllColorsPresent(t *testing.T) {
 			continue
 		}
 
-		if styleOnlyTokens[path] {
-			if !tok.Color.IsNone {
-				t.Errorf("style-only token %q should have NoneColor, got %s", path, tok.Color.Hex())
-			}
-		} else {
-			if tok.Color.IsNone {
-				t.Errorf("token %q should have a valid RGB color, got NoneColor", path)
-			}
+		if tok.Color.IsNone {
+			t.Errorf("token %q should have a valid RGB color, got NoneColor", path)
 		}
 	}
 }

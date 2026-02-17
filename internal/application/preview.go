@@ -15,35 +15,49 @@ type UniversalReader func(r io.Reader) (*domain.TokenSet, error)
 
 // PreviewThemeUseCase reads palette.yaml and universal.yaml from a theme
 // directory and renders an ANSI-colored preview to an io.Writer.
+// If universal.yaml doesn't exist, it derives tokens from palette.yaml
+// or from a built-in palette.
 type PreviewThemeUseCase struct {
 	store           ports.ThemeStore
 	parser          ports.PaletteParser
 	universalReader UniversalReader
+	deriver         ports.TokenDeriver
+	builtins        ports.PaletteSource
 }
 
 // NewPreviewThemeUseCase returns a new PreviewThemeUseCase wired to the
-// given store, palette parser, and universal reader function.
-func NewPreviewThemeUseCase(store ports.ThemeStore, parser ports.PaletteParser, ur UniversalReader) *PreviewThemeUseCase {
-	return &PreviewThemeUseCase{store: store, parser: parser, universalReader: ur}
+// given store, palette parser, universal reader, deriver, and builtins source.
+func NewPreviewThemeUseCase(
+	store ports.ThemeStore,
+	parser ports.PaletteParser,
+	ur UniversalReader,
+	deriver ports.TokenDeriver,
+	builtins ports.PaletteSource,
+) *PreviewThemeUseCase {
+	return &PreviewThemeUseCase{
+		store:           store,
+		parser:          parser,
+		universalReader: ur,
+		deriver:         deriver,
+		builtins:        builtins,
+	}
 }
 
 // Execute reads palette.yaml and universal.yaml from the named theme and
-// writes an ANSI-colored preview to w. Returns an error if universal.yaml
-// cannot be read. The palette section is shown when palette.yaml is valid.
+// writes an ANSI-colored preview to w. If universal.yaml doesn't exist,
+// tokens are derived on-the-fly from palette.yaml or a built-in palette.
 func (uc *PreviewThemeUseCase) Execute(themeName string, w io.Writer) error {
 	// Try to read and parse palette.yaml (optional — may be a comment-only stub).
 	palette := uc.tryParsePalette(themeName)
 
-	// Read and parse universal.yaml (required).
-	univRC, err := uc.store.OpenReader(themeName, "universal.yaml")
+	// Try to read universal.yaml first.
+	tokens, err := uc.tryReadUniversal(themeName)
 	if err != nil {
-		return fmt.Errorf("preview %q: %w", themeName, err)
-	}
-	defer func() { _ = univRC.Close() }()
-
-	tokens, err := uc.universalReader(univRC)
-	if err != nil {
-		return fmt.Errorf("preview %q: read universal: %w", themeName, err)
+		// universal.yaml doesn't exist or can't be read — derive tokens instead.
+		tokens, palette, err = uc.deriveTokens(themeName, palette)
+		if err != nil {
+			return fmt.Errorf("preview %q: %w", themeName, err)
+		}
 	}
 
 	var sb strings.Builder
@@ -60,6 +74,43 @@ func (uc *PreviewThemeUseCase) Execute(themeName string, w io.Writer) error {
 
 	_, err = fmt.Fprint(w, sb.String())
 	return err
+}
+
+// tryReadUniversal attempts to read universal.yaml from the store.
+// Returns nil tokens and an error if the file doesn't exist or can't be read.
+func (uc *PreviewThemeUseCase) tryReadUniversal(themeName string) (*domain.TokenSet, error) {
+	univRC, err := uc.store.OpenReader(themeName, "universal.yaml")
+	if err != nil {
+		return nil, err
+	}
+	defer func() { _ = univRC.Close() }()
+
+	return uc.universalReader(univRC)
+}
+
+// deriveTokens derives tokens from a palette. If palette is nil, it tries
+// to parse palette.yaml from the store. If that fails, it checks if themeName
+// is a built-in palette and derives from that.
+func (uc *PreviewThemeUseCase) deriveTokens(themeName string, palette *domain.Palette) (*domain.TokenSet, *domain.Palette, error) {
+	// If we already have a palette, derive from it.
+	if palette != nil {
+		return uc.deriver.Derive(palette), palette, nil
+	}
+
+	// Try to get from built-in palettes.
+	if uc.builtins != nil && uc.builtins.Has(themeName) {
+		r, err := uc.builtins.Get(themeName)
+		if err != nil {
+			return nil, nil, fmt.Errorf("get built-in palette: %w", err)
+		}
+		palette, err = uc.parser.Parse(r)
+		if err != nil {
+			return nil, nil, fmt.Errorf("parse built-in palette: %w", err)
+		}
+		return uc.deriver.Derive(palette), palette, nil
+	}
+
+	return nil, nil, fmt.Errorf("no palette or universal.yaml found")
 }
 
 // tryParsePalette attempts to open and parse palette.yaml from the store.

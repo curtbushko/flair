@@ -5,7 +5,9 @@ import (
 	"strings"
 	"testing"
 
+	"github.com/curtbushko/flair/internal/adapters/deriver"
 	"github.com/curtbushko/flair/internal/adapters/fileio"
+	"github.com/curtbushko/flair/internal/adapters/palettes"
 	yamlparser "github.com/curtbushko/flair/internal/adapters/yaml"
 	"github.com/curtbushko/flair/internal/application"
 )
@@ -96,7 +98,9 @@ func TestPreviewThemeUseCase_OutputContainsPaletteColors(t *testing.T) {
 	writeUniversalToStore(t, store, "test-dark")
 
 	parser := yamlparser.NewParser()
-	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal)
+	drv := deriver.New()
+	builtins := palettes.NewSource()
+	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
 
 	var buf bytes.Buffer
 	err := uc.Execute("test-dark", &buf)
@@ -128,7 +132,9 @@ func TestPreviewThemeUseCase_OutputContainsANSI(t *testing.T) {
 	writeUniversalToStore(t, store, "test-dark")
 
 	parser := yamlparser.NewParser()
-	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal)
+	drv := deriver.New()
+	builtins := palettes.NewSource()
+	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
 
 	var buf bytes.Buffer
 	err := uc.Execute("test-dark", &buf)
@@ -155,7 +161,9 @@ func TestPreviewThemeUseCase_OutputContainsTokenPreview(t *testing.T) {
 	writeUniversalToStore(t, store, "test-dark")
 
 	parser := yamlparser.NewParser()
-	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal)
+	drv := deriver.New()
+	builtins := palettes.NewSource()
+	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
 
 	var buf bytes.Buffer
 	err := uc.Execute("test-dark", &buf)
@@ -180,11 +188,80 @@ func TestPreviewThemeUseCase_OutputContainsTokenPreview(t *testing.T) {
 func TestPreviewThemeUseCase_ThemeNotFound(t *testing.T) {
 	store := newStubThemeStore()
 	parser := yamlparser.NewParser()
-	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal)
+	drv := deriver.New()
+	builtins := palettes.NewSource()
+	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
 
 	var buf bytes.Buffer
 	err := uc.Execute("nonexistent-theme", &buf)
 	if err == nil {
 		t.Fatal("expected error for non-existent theme, got nil")
+	}
+}
+
+func TestPreviewThemeUseCase_BuiltinWithoutUniversal(t *testing.T) {
+	// Preview a built-in theme without generating universal.yaml first.
+	store := newStubThemeStore()
+	parser := yamlparser.NewParser()
+	drv := deriver.New()
+	builtins := palettes.NewSource()
+	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
+
+	var buf bytes.Buffer
+	err := uc.Execute("tokyo-night-dark", &buf)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	output := buf.String()
+
+	// Should contain theme name.
+	if !strings.Contains(output, "tokyo-night-dark") {
+		t.Error("output should contain theme name")
+	}
+
+	// Should contain ANSI escape sequences.
+	if !strings.Contains(output, "\x1b[") {
+		t.Error("output should contain ANSI escape sequences")
+	}
+
+	// Should contain semantic tokens from derivation.
+	if !strings.Contains(output, "surface.background") {
+		t.Error("output should contain derived semantic tokens")
+	}
+}
+
+func TestPreviewThemeUseCase_PaletteWithoutUniversal(t *testing.T) {
+	// Preview a theme with palette.yaml but without universal.yaml.
+	store := newStubThemeStore()
+	writePaletteToStore(t, store, "test-dark")
+	// Note: not writing universal.yaml
+
+	parser := yamlparser.NewParser()
+	drv := deriver.New()
+	builtins := palettes.NewSource()
+	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
+
+	var buf bytes.Buffer
+	err := uc.Execute("test-dark", &buf)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	output := buf.String()
+
+	// Should contain theme name.
+	if !strings.Contains(output, "test-dark") {
+		t.Error("output should contain theme name")
+	}
+
+	// Should contain palette colors (since palette.yaml exists).
+	if !strings.Contains(output, "base00") {
+		t.Error("output should contain palette slot names")
+	}
+
+	// Should contain derived semantic tokens.
+	if !strings.Contains(output, "surface.background") {
+		t.Error("output should contain derived semantic tokens")
 	}
 }
