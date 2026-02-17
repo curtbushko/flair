@@ -38,8 +38,9 @@ type TestContext struct {
 	hsl      domain.HSL
 
 	// Palette testing state
-	palette    *domain.Palette
-	paletteErr error
+	palette            *domain.Palette
+	paletteErr         error
+	validationMessages []string
 
 	// TokenSet testing state
 	tokenSet *domain.TokenSet
@@ -75,6 +76,9 @@ type TestContext struct {
 	// Mapper/Generator testing state
 	stylixTheme  *ports.StylixTheme
 	vimTheme     *ports.VimTheme
+	cssTheme     *ports.CSSTheme
+	gtkTheme     *ports.GtkTheme
+	qssTheme     *ports.QssTheme
 	generateErr  error
 	genOutputBuf *bytes.Buffer
 }
@@ -291,6 +295,16 @@ func registerPaletteSteps(ctx *godog.ScenarioContext, tc *TestContext) {
 	ctx.Step(`^Base\((\d+)\) should return the same as Slot\("([^"]*)"\)$`, tc.baseShouldReturnSameAsSlot)
 	ctx.Step(`^a base16 palette with only 16 colors$`, tc.aBase16PaletteWith16Colors)
 	ctx.Step(`^base(\d+) should be a fallback from base(\d+)$`, tc.baseNShouldBeFallbackFromBaseM)
+	// Validation steps
+	ctx.Step(`^I validate the palette$`, tc.iValidateThePalette)
+	ctx.Step(`^validation should pass with no errors$`, tc.validationShouldPassWithNoErrors)
+	ctx.Step(`^validation should fail with luminance ordering error$`, tc.validationShouldFailWithLuminanceOrderingError)
+	ctx.Step(`^validation should warn about monotonicity$`, tc.validationShouldWarnAboutMonotonicity)
+	ctx.Step(`^validation should warn about bright variant luminance$`, tc.validationShouldWarnAboutBrightVariantLuminance)
+	ctx.Step(`^a dark palette where base00 is lighter than base05$`, tc.aDarkPaletteWhereBase00IsLighterThanBase05)
+	ctx.Step(`^a light palette where base00 is darker than base05$`, tc.aLightPaletteWhereBase00IsDarkerThanBase05)
+	ctx.Step(`^a palette where base01 luminance is less than base00$`, tc.aPaletteWhereBase01LuminanceIsLessThanBase00)
+	ctx.Step(`^a palette where base12 is darker than base08$`, tc.aPaletteWhereBase12IsDarkerThanBase08)
 }
 
 func (tc *TestContext) theTokyoNightDarkPalette() error {
@@ -360,6 +374,117 @@ func (tc *TestContext) baseNShouldBeFallbackFromBaseM(n, m int) error {
 			n, colorN.Hex(), m, colorM.Hex())
 	}
 	return nil
+}
+
+func (tc *TestContext) iValidateThePalette() error {
+	tc.validationMessages = domain.ValidatePalette(tc.palette)
+	return nil
+}
+
+func (tc *TestContext) validationShouldPassWithNoErrors() error {
+	if len(tc.validationMessages) > 0 {
+		return fmt.Errorf("expected no validation errors, got: %v", tc.validationMessages)
+	}
+	return nil
+}
+
+func (tc *TestContext) validationShouldFailWithLuminanceOrderingError() error {
+	for _, msg := range tc.validationMessages {
+		if bytes.Contains([]byte(msg), []byte("luminance ordering")) {
+			return nil
+		}
+	}
+	return fmt.Errorf("expected luminance ordering error, got: %v", tc.validationMessages)
+}
+
+func (tc *TestContext) validationShouldWarnAboutMonotonicity() error {
+	for _, msg := range tc.validationMessages {
+		if bytes.Contains([]byte(msg), []byte("monotonicity")) {
+			return nil
+		}
+	}
+	return fmt.Errorf("expected monotonicity warning, got: %v", tc.validationMessages)
+}
+
+func (tc *TestContext) validationShouldWarnAboutBrightVariantLuminance() error {
+	for _, msg := range tc.validationMessages {
+		if bytes.Contains([]byte(msg), []byte("bright variant")) {
+			return nil
+		}
+	}
+	return fmt.Errorf("expected bright variant warning, got: %v", tc.validationMessages)
+}
+
+func (tc *TestContext) aDarkPaletteWhereBase00IsLighterThanBase05() error {
+	// Create a palette where base00 (background) is lighter than base05 (foreground)
+	// This violates the dark theme luminance ordering rule
+	colors := map[string]string{
+		"base00": "ffffff", // White background (high luminance)
+		"base01": "1f2335", "base02": "292e42", "base03": "565f89",
+		"base04": "a9b1d6",
+		"base05": "1a1b26", // Dark foreground (low luminance)
+		"base06": "c0caf5", "base07": "c8d3f5",
+		"base08": "f7768e", "base09": "ff9e64", "base0A": "e0af68", "base0B": "9ece6a",
+		"base0C": "7dcfff", "base0D": "7aa2f7", "base0E": "bb9af7", "base0F": "db4b4b",
+		"base10": "16161e", "base11": "101014",
+		"base12": "ff899d", "base13": "e9c582", "base14": "afd67a", "base15": "97d8f8",
+		"base16": "8db6fa", "base17": "c8acf8",
+	}
+	tc.palette, tc.paletteErr = domain.NewPalette("Invalid Dark", "Test", "dark", "base24", colors)
+	return tc.paletteErr
+}
+
+func (tc *TestContext) aLightPaletteWhereBase00IsDarkerThanBase05() error {
+	// Create a palette where base00 (background) is darker than base05 (foreground)
+	// This violates the light theme luminance ordering rule
+	colors := map[string]string{
+		"base00": "1a1b26", // Dark background (low luminance)
+		"base01": "1f2335", "base02": "292e42", "base03": "565f89",
+		"base04": "a9b1d6",
+		"base05": "ffffff", // White foreground (high luminance)
+		"base06": "c0caf5", "base07": "c8d3f5",
+		"base08": "f7768e", "base09": "ff9e64", "base0A": "e0af68", "base0B": "9ece6a",
+		"base0C": "7dcfff", "base0D": "7aa2f7", "base0E": "bb9af7", "base0F": "db4b4b",
+		"base10": "16161e", "base11": "101014",
+		"base12": "ff899d", "base13": "e9c582", "base14": "afd67a", "base15": "97d8f8",
+		"base16": "8db6fa", "base17": "c8acf8",
+	}
+	tc.palette, tc.paletteErr = domain.NewPalette("Invalid Light", "Test", "light", "base24", colors)
+	return tc.paletteErr
+}
+
+func (tc *TestContext) aPaletteWhereBase01LuminanceIsLessThanBase00() error {
+	// Create a palette where base01 is darker than base00 (violates monotonicity)
+	colors := map[string]string{
+		"base00": "2a2b36", // Lighter than base01
+		"base01": "101014", // Darker than base00
+		"base02": "292e42", "base03": "565f89",
+		"base04": "a9b1d6", "base05": "c0caf5", "base06": "c0caf5", "base07": "c8d3f5",
+		"base08": "f7768e", "base09": "ff9e64", "base0A": "e0af68", "base0B": "9ece6a",
+		"base0C": "7dcfff", "base0D": "7aa2f7", "base0E": "bb9af7", "base0F": "db4b4b",
+		"base10": "16161e", "base11": "101014",
+		"base12": "ff899d", "base13": "e9c582", "base14": "afd67a", "base15": "97d8f8",
+		"base16": "8db6fa", "base17": "c8acf8",
+	}
+	tc.palette, tc.paletteErr = domain.NewPalette("Non-Monotonic", "Test", "dark", "base24", colors)
+	return tc.paletteErr
+}
+
+func (tc *TestContext) aPaletteWhereBase12IsDarkerThanBase08() error {
+	// Create a palette where base12 (bright red) is darker than base08 (red)
+	colors := map[string]string{
+		"base00": "1a1b26", "base01": "1f2335", "base02": "292e42", "base03": "565f89",
+		"base04": "a9b1d6", "base05": "c0caf5", "base06": "c0caf5", "base07": "c8d3f5",
+		"base08": "f7768e", // Red (bright)
+		"base09": "ff9e64", "base0A": "e0af68", "base0B": "9ece6a",
+		"base0C": "7dcfff", "base0D": "7aa2f7", "base0E": "bb9af7", "base0F": "db4b4b",
+		"base10": "16161e", "base11": "101014",
+		"base12": "400000", // Very dark red (should be brighter than base08)
+		"base13": "e9c582", "base14": "afd67a", "base15": "97d8f8",
+		"base16": "8db6fa", "base17": "c8acf8",
+	}
+	tc.palette, tc.paletteErr = domain.NewPalette("Dark Bright Variant", "Test", "dark", "base24", colors)
+	return tc.paletteErr
 }
 
 // --- Schema Version Step Definitions ---
@@ -798,6 +923,14 @@ func registerMapperSteps(ctx *godog.ScenarioContext, tc *TestContext) {
 	ctx.Step(`^I map it with the Vim mapper$`, tc.iMapWithVimMapper)
 	ctx.Step(`^the VimTheme should have at least (\d+) highlight groups$`, tc.theVimThemeShouldHaveAtLeastHighlights)
 	ctx.Step(`^the VimTheme should have 16 terminal colors$`, tc.theVimThemeShouldHave16TerminalColors)
+	ctx.Step(`^I map it with the CSS mapper$`, tc.iMapWithCSSMapper)
+	ctx.Step(`^the CssTheme should have custom properties$`, tc.theCSSThemeShouldHaveCustomProperties)
+	ctx.Step(`^the CssTheme should have element rules$`, tc.theCSSThemeShouldHaveElementRules)
+	ctx.Step(`^I map it with the GTK mapper$`, tc.iMapWithGTKMapper)
+	ctx.Step(`^the GtkTheme should have color definitions$`, tc.theGtkThemeShouldHaveColorDefinitions)
+	ctx.Step(`^the GtkTheme should have widget rules$`, tc.theGtkThemeShouldHaveWidgetRules)
+	ctx.Step(`^I map it with the QSS mapper$`, tc.iMapWithQSSMapper)
+	ctx.Step(`^the QssTheme should have widget rules$`, tc.theQssThemeShouldHaveWidgetRules)
 }
 
 func (tc *TestContext) iCreateResolvedThemeFromTokyoNightDark() error {
@@ -873,6 +1006,98 @@ func (tc *TestContext) theVimThemeShouldHave16TerminalColors() error {
 	return nil
 }
 
+func (tc *TestContext) iMapWithCSSMapper() error {
+	m := mapper.NewCSS()
+	mapped, err := m.Map(tc.resolvedTheme)
+	if err != nil {
+		return err
+	}
+	cssTheme, ok := mapped.(*ports.CSSTheme)
+	if !ok {
+		return fmt.Errorf("expected *ports.CSSTheme, got %T", mapped)
+	}
+	tc.cssTheme = cssTheme
+	return nil
+}
+
+func (tc *TestContext) theCSSThemeShouldHaveCustomProperties() error {
+	if tc.cssTheme == nil {
+		return errors.New("cssTheme is nil")
+	}
+	if len(tc.cssTheme.CustomProperties) == 0 {
+		return errors.New("CssTheme has no custom properties")
+	}
+	return nil
+}
+
+func (tc *TestContext) theCSSThemeShouldHaveElementRules() error {
+	if tc.cssTheme == nil {
+		return errors.New("cssTheme is nil")
+	}
+	if len(tc.cssTheme.Rules) == 0 {
+		return errors.New("CssTheme has no element rules")
+	}
+	return nil
+}
+
+func (tc *TestContext) iMapWithGTKMapper() error {
+	m := mapper.NewGtk()
+	mapped, err := m.Map(tc.resolvedTheme)
+	if err != nil {
+		return err
+	}
+	gtkTheme, ok := mapped.(*ports.GtkTheme)
+	if !ok {
+		return fmt.Errorf("expected *ports.GtkTheme, got %T", mapped)
+	}
+	tc.gtkTheme = gtkTheme
+	return nil
+}
+
+func (tc *TestContext) theGtkThemeShouldHaveColorDefinitions() error {
+	if tc.gtkTheme == nil {
+		return errors.New("gtkTheme is nil")
+	}
+	if len(tc.gtkTheme.Colors) == 0 {
+		return errors.New("GtkTheme has no color definitions")
+	}
+	return nil
+}
+
+func (tc *TestContext) theGtkThemeShouldHaveWidgetRules() error {
+	if tc.gtkTheme == nil {
+		return errors.New("gtkTheme is nil")
+	}
+	if len(tc.gtkTheme.Rules) == 0 {
+		return errors.New("GtkTheme has no widget rules")
+	}
+	return nil
+}
+
+func (tc *TestContext) iMapWithQSSMapper() error {
+	m := mapper.NewQss()
+	mapped, err := m.Map(tc.resolvedTheme)
+	if err != nil {
+		return err
+	}
+	qssTheme, ok := mapped.(*ports.QssTheme)
+	if !ok {
+		return fmt.Errorf("expected *ports.QssTheme, got %T", mapped)
+	}
+	tc.qssTheme = qssTheme
+	return nil
+}
+
+func (tc *TestContext) theQssThemeShouldHaveWidgetRules() error {
+	if tc.qssTheme == nil {
+		return errors.New("qssTheme is nil")
+	}
+	if len(tc.qssTheme.Rules) == 0 {
+		return errors.New("QssTheme has no widget rules")
+	}
+	return nil
+}
+
 // --- Generator Step Definitions ---
 
 func registerGeneratorSteps(ctx *godog.ScenarioContext, tc *TestContext) {
@@ -881,6 +1106,9 @@ func registerGeneratorSteps(ctx *godog.ScenarioContext, tc *TestContext) {
 	ctx.Step(`^the JSON should contain key "([^"]*)"$`, tc.theJSONShouldContainKey)
 	ctx.Step(`^I generate Vim output$`, tc.iGenerateVimOutput)
 	ctx.Step(`^the generated output should contain "([^"]*)"$`, tc.theGeneratedOutputShouldContain)
+	ctx.Step(`^I generate CSS output$`, tc.iGenerateCSSOutput)
+	ctx.Step(`^I generate GTK output$`, tc.iGenerateGTKOutput)
+	ctx.Step(`^I generate QSS output$`, tc.iGenerateQSSOutput)
 }
 
 func (tc *TestContext) iGenerateStylixOutput() error {
@@ -927,6 +1155,27 @@ func (tc *TestContext) theGeneratedOutputShouldContain(expected string) error {
 		return fmt.Errorf("generated output does not contain %q:\n%s", expected, truncateBytes([]byte(output), 500))
 	}
 	return nil
+}
+
+func (tc *TestContext) iGenerateCSSOutput() error {
+	tc.genOutputBuf = &bytes.Buffer{}
+	gen := generator.NewCSS()
+	tc.generateErr = gen.Generate(tc.genOutputBuf, tc.cssTheme)
+	return tc.generateErr
+}
+
+func (tc *TestContext) iGenerateGTKOutput() error {
+	tc.genOutputBuf = &bytes.Buffer{}
+	gen := generator.NewGtk()
+	tc.generateErr = gen.Generate(tc.genOutputBuf, tc.gtkTheme)
+	return tc.generateErr
+}
+
+func (tc *TestContext) iGenerateQSSOutput() error {
+	tc.genOutputBuf = &bytes.Buffer{}
+	gen := generator.NewQss()
+	tc.generateErr = gen.Generate(tc.genOutputBuf, tc.qssTheme)
+	return tc.generateErr
 }
 
 // --- E2E Step Definitions ---
