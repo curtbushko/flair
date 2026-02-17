@@ -17,7 +17,16 @@ func TestSource_List(t *testing.T) {
 	src := palettes.NewSource()
 	got := src.List()
 
-	want := []string{"catppuccin-mocha", "gruvbox-dark", "tokyo-night-dark"}
+	want := []string{
+		"andromeda",
+		"catppuccin-mocha",
+		"everforest",
+		"gruvbox-dark",
+		"gruvbox-material",
+		"rebel-scum",
+		"tokyo-night-dark",
+		"tokyo-night-neon",
+	}
 
 	if len(got) != len(want) {
 		t.Fatalf("List() returned %d items, want %d: %v", len(got), len(want), got)
@@ -123,7 +132,7 @@ func TestSource_AllPalettes_Parseable(t *testing.T) {
 
 	names := src.List()
 	if len(names) == 0 {
-		t.Fatal("List() returned empty, expected at least 3 palettes")
+		t.Fatal("List() returned empty, expected at least 8 palettes")
 	}
 
 	for _, name := range names {

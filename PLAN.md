@@ -136,6 +136,11 @@ Track progress by marking items `[x]` as completed.
   - [x] 1.15a — tokyo-night-dark.yaml
   - [x] 1.15b — gruvbox-dark.yaml
   - [x] 1.15c — catppuccin-mocha.yaml
+  - [x] 1.15d — andromeda.yaml
+  - [x] 1.15e — everforest.yaml
+  - [x] 1.15f — gruvbox-material.yaml
+  - [x] 1.15g — rebel-scum.yaml
+  - [x] 1.15h — tokyo-night-neon.yaml
 - [x] 1.16 — Adapter: VersionedWriter (wraps io.Writer, prepends schema_version + kind header)
 - [x] 1.17 — Adapter: ValidatingReader (wraps io.Reader, peeks schema version, returns SchemaVersionError)
 - [x] 1.18 — Testdata: Tokyo Night Dark reference palette YAML
