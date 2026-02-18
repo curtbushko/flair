@@ -129,6 +129,16 @@ func (uc *PreviewThemeUseCase) tryParsePalette(themeName string) *domain.Palette
 	return palette
 }
 
+// Parser returns the palette parser used by this use case.
+func (uc *PreviewThemeUseCase) Parser() ports.PaletteParser {
+	return uc.parser
+}
+
+// Deriver returns the token deriver used by this use case.
+func (uc *PreviewThemeUseCase) Deriver() ports.TokenDeriver {
+	return uc.deriver
+}
+
 // renderPaletteSection writes the palette color swatches with ANSI escape codes.
 func renderPaletteSection(sb *strings.Builder, palette *domain.Palette) {
 	sb.WriteString("Palette Colors\n")
