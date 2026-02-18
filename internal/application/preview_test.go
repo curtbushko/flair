@@ -12,8 +12,10 @@ import (
 	"github.com/curtbushko/flair/internal/application"
 )
 
-// writePaletteToStore writes a valid palette.yaml into the stub store for the given theme.
-func writePaletteToStore(t *testing.T, store *stubThemeStore, themeName string) {
+const testThemeName = "test-dark"
+
+// writePaletteToStore writes a valid palette.yaml into the stub store for the test theme.
+func writePaletteToStore(t *testing.T, store *stubThemeStore) {
 	t.Helper()
 
 	paletteYAML := `system: "base24"
@@ -47,10 +49,10 @@ palette:
   base17: "c8acf8"
 `
 
-	if err := store.EnsureThemeDir(themeName); err != nil {
+	if err := store.EnsureThemeDir(testThemeName); err != nil {
 		t.Fatalf("ensure theme dir: %v", err)
 	}
-	w, err := store.OpenWriter(themeName, "palette.yaml")
+	w, err := store.OpenWriter(testThemeName, "palette.yaml")
 	if err != nil {
 		t.Fatalf("open palette writer: %v", err)
 	}
@@ -58,8 +60,8 @@ palette:
 	_ = w.Close()
 }
 
-// writeUniversalToStore writes a minimal universal.yaml into the stub store.
-func writeUniversalToStore(t *testing.T, store *stubThemeStore, themeName string) {
+// writeUniversalToStore writes a minimal universal.yaml into the stub store for the test theme.
+func writeUniversalToStore(t *testing.T, store *stubThemeStore) {
 	t.Helper()
 
 	universalYAML := `tokens:
@@ -84,7 +86,7 @@ func writeUniversalToStore(t *testing.T, store *stubThemeStore, themeName string
     bold: true
 `
 
-	w, err := store.OpenWriter(themeName, "universal.yaml")
+	w, err := store.OpenWriter(testThemeName, "universal.yaml")
 	if err != nil {
 		t.Fatalf("open universal writer: %v", err)
 	}
@@ -94,8 +96,8 @@ func writeUniversalToStore(t *testing.T, store *stubThemeStore, themeName string
 
 func TestPreviewThemeUseCase_OutputContainsPaletteColors(t *testing.T) {
 	store := newStubThemeStore()
-	writePaletteToStore(t, store, "test-dark")
-	writeUniversalToStore(t, store, "test-dark")
+	writePaletteToStore(t, store)
+	writeUniversalToStore(t, store)
 
 	parser := yamlparser.NewParser()
 	drv := deriver.New()
@@ -103,7 +105,7 @@ func TestPreviewThemeUseCase_OutputContainsPaletteColors(t *testing.T) {
 	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
 
 	var buf bytes.Buffer
-	err := uc.Execute("test-dark", &buf)
+	err := uc.Execute(testThemeName, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -128,8 +130,8 @@ func TestPreviewThemeUseCase_OutputContainsPaletteColors(t *testing.T) {
 
 func TestPreviewThemeUseCase_OutputContainsANSI(t *testing.T) {
 	store := newStubThemeStore()
-	writePaletteToStore(t, store, "test-dark")
-	writeUniversalToStore(t, store, "test-dark")
+	writePaletteToStore(t, store)
+	writeUniversalToStore(t, store)
 
 	parser := yamlparser.NewParser()
 	drv := deriver.New()
@@ -137,7 +139,7 @@ func TestPreviewThemeUseCase_OutputContainsANSI(t *testing.T) {
 	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
 
 	var buf bytes.Buffer
-	err := uc.Execute("test-dark", &buf)
+	err := uc.Execute(testThemeName, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -157,8 +159,8 @@ func TestPreviewThemeUseCase_OutputContainsANSI(t *testing.T) {
 
 func TestPreviewThemeUseCase_OutputContainsTokenPreview(t *testing.T) {
 	store := newStubThemeStore()
-	writePaletteToStore(t, store, "test-dark")
-	writeUniversalToStore(t, store, "test-dark")
+	writePaletteToStore(t, store)
+	writeUniversalToStore(t, store)
 
 	parser := yamlparser.NewParser()
 	drv := deriver.New()
@@ -166,7 +168,7 @@ func TestPreviewThemeUseCase_OutputContainsTokenPreview(t *testing.T) {
 	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
 
 	var buf bytes.Buffer
-	err := uc.Execute("test-dark", &buf)
+	err := uc.Execute(testThemeName, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -234,7 +236,7 @@ func TestPreviewThemeUseCase_BuiltinWithoutUniversal(t *testing.T) {
 func TestPreviewThemeUseCase_PaletteWithoutUniversal(t *testing.T) {
 	// Preview a theme with palette.yaml but without universal.yaml.
 	store := newStubThemeStore()
-	writePaletteToStore(t, store, "test-dark")
+	writePaletteToStore(t, store)
 	// Note: not writing universal.yaml
 
 	parser := yamlparser.NewParser()
@@ -243,7 +245,7 @@ func TestPreviewThemeUseCase_PaletteWithoutUniversal(t *testing.T) {
 	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadUniversal, drv, builtins)
 
 	var buf bytes.Buffer
-	err := uc.Execute("test-dark", &buf)
+	err := uc.Execute(testThemeName, &buf)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -251,7 +253,7 @@ func TestPreviewThemeUseCase_PaletteWithoutUniversal(t *testing.T) {
 	output := buf.String()
 
 	// Should contain theme name.
-	if !strings.Contains(output, "test-dark") {
+	if !strings.Contains(output, testThemeName) {
 		t.Error("output should contain theme name")
 	}
 

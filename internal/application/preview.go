@@ -1,6 +1,7 @@
 package application
 
 import (
+	"errors"
 	"fmt"
 	"io"
 	"strings"
@@ -110,7 +111,7 @@ func (uc *PreviewThemeUseCase) deriveTokens(themeName string, palette *domain.Pa
 		return uc.deriver.Derive(palette), palette, nil
 	}
 
-	return nil, nil, fmt.Errorf("no palette or universal.yaml found")
+	return nil, nil, errors.New("no palette or universal.yaml found")
 }
 
 // tryParsePalette attempts to open and parse palette.yaml from the store.
