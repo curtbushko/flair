@@ -26,6 +26,7 @@ func (d *DefaultDeriver) Derive(p *domain.Palette) *domain.TokenSet {
 	deriveDiff(p, ts)
 	deriveSyntax(p, ts)
 	deriveMarkup(p, ts)
+	deriveComment(p, ts)
 	deriveAccentBorderState(p, ts)
 	deriveGit(p, ts)
 	deriveTerminal(p, ts)
@@ -76,8 +77,8 @@ func deriveStatus(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("status.error", domain.Token{Color: p.Base(0x12)})
 	ts.Set("status.warning", domain.Token{Color: p.Base(0x13)})
 	ts.Set("status.success", domain.Token{Color: p.Base(0x14)})
-	ts.Set("status.info", domain.Token{Color: p.Base(0x15)})
-	ts.Set("status.hint", domain.Token{Color: p.Base(0x15)})
+	ts.Set("status.info", domain.Token{Color: p.Base(0x14)})
+	ts.Set("status.hint", domain.Token{Color: p.Base(0x09)})
 	ts.Set("status.todo", domain.Token{Color: p.Base(0x0D)})
 }
 
@@ -114,17 +115,24 @@ func deriveSyntax(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("syntax.type", domain.Token{Color: p.Base(0x0A)})
 	ts.Set("syntax.number", domain.Token{Color: p.Base(0x09)})
 	ts.Set("syntax.tag", domain.Token{Color: p.Base(0x08)})
-	ts.Set("syntax.property", domain.Token{Color: p.Base(0x14)})
-	ts.Set("syntax.parameter", domain.Token{Color: p.Base(0x13)})
+	ts.Set("syntax.property", domain.Token{Color: p.Base(0x0B)})
+	ts.Set("syntax.parameter", domain.Token{Color: p.Base(0x0A)})
 	ts.Set("syntax.regexp", domain.Token{Color: p.Base(0x0C)})
 	ts.Set("syntax.escape", domain.Token{Color: p.Base(0x0E)})
 	ts.Set("syntax.constructor", domain.Token{Color: p.Base(0x17)})
 }
 
-// deriveMarkup derives the 10 markup tokens from the palette.
-// deriveMarkup derives the 10 markup semantic tokens.
+// deriveMarkup derives the markup semantic tokens from the palette.
+// Includes per-heading-level colors for markdown.
 func deriveMarkup(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("markup.heading", domain.Token{Color: p.Base(0x0D), Bold: true})
+	// Per-level markdown heading colors
+	ts.Set("markup.heading.1", domain.Token{Color: p.Base(0x0D), Bold: true}) // blue
+	ts.Set("markup.heading.2", domain.Token{Color: p.Base(0x0A), Bold: true}) // yellow
+	ts.Set("markup.heading.3", domain.Token{Color: p.Base(0x14), Bold: true}) // green
+	ts.Set("markup.heading.4", domain.Token{Color: p.Base(0x08), Bold: true}) // red
+	ts.Set("markup.heading.5", domain.Token{Color: p.Base(0x17), Bold: true}) // purple
+	ts.Set("markup.heading.6", domain.Token{Color: p.Base(0x0D), Bold: true}) // blue
 	ts.Set("markup.link", domain.Token{Color: p.Base(0x0C)})
 	ts.Set("markup.code", domain.Token{Color: p.Base(0x0B)})
 	ts.Set("markup.bold", domain.Token{Color: p.Base(0x05), Bold: true})
@@ -134,6 +142,16 @@ func deriveMarkup(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("markup.list.bullet", domain.Token{Color: p.Base(0x09)})
 	ts.Set("markup.list.checked", domain.Token{Color: p.Base(0x0B)})
 	ts.Set("markup.list.unchecked", domain.Token{Color: p.Base(0x0D)})
+}
+
+// deriveComment derives comment variant tokens from the palette.
+func deriveComment(p *domain.Palette, ts *domain.TokenSet) {
+	ts.Set("comment.error", domain.Token{Color: p.Base(0x12)})   // bright red
+	ts.Set("comment.warning", domain.Token{Color: p.Base(0x0A)}) // yellow
+	ts.Set("comment.info", domain.Token{Color: p.Base(0x16)})    // bright blue
+	ts.Set("comment.hint", domain.Token{Color: p.Base(0x09)})    // orange
+	ts.Set("comment.note", domain.Token{Color: p.Base(0x09)})    // orange
+	ts.Set("comment.todo", domain.Token{Color: p.Base(0x0D)})    // blue
 }
 
 // deriveAccentBorderState derives the 11 accent, border, scrollbar, and state
@@ -214,11 +232,14 @@ func deriveTerminal(p *domain.Palette, ts *domain.TokenSet) {
 
 // deriveStatusline derives the 6 statusline tokens from the palette.
 // These provide foreground and background colors for statusline sections A, B, C.
+// Section A: mode indicator (bold bg with dark fg)
+// Section B: branch/info (subtle bg with light text)
+// Section C: filename area (darkest bg with light text)
 func deriveStatusline(p *domain.Palette, ts *domain.TokenSet) {
-	ts.Set("statusline.a.bg", domain.Token{Color: p.Base(0x0D)})
-	ts.Set("statusline.a.fg", domain.Token{Color: p.Base(0x10)})
-	ts.Set("statusline.b.bg", domain.Token{Color: p.Base(0x10)})
-	ts.Set("statusline.b.fg", domain.Token{Color: p.Base(0x0D)})
-	ts.Set("statusline.c.bg", domain.Token{Color: p.Base(0x01)})
-	ts.Set("statusline.c.fg", domain.Token{Color: p.Base(0x0D)})
+	ts.Set("statusline.a.bg", domain.Token{Color: p.Base(0x04)}) // secondary text color as bg
+	ts.Set("statusline.a.fg", domain.Token{Color: p.Base(0x00)}) // darkest for contrast
+	ts.Set("statusline.b.bg", domain.Token{Color: p.Base(0x10)}) // sunken surface
+	ts.Set("statusline.b.fg", domain.Token{Color: p.Base(0x05)}) // primary text
+	ts.Set("statusline.c.bg", domain.Token{Color: p.Base(0x01)}) // raised surface
+	ts.Set("statusline.c.fg", domain.Token{Color: p.Base(0x05)}) // primary text
 }

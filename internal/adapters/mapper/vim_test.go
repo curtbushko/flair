@@ -55,8 +55,8 @@ func TestVimMapper_BaseHighlights(t *testing.T) {
 		wantBg *domain.Color
 		italic bool
 	}{
-		// Normal: fg=text.primary (#c0caf5), bg=surface.background (#1a1b26)
-		{"Normal", colorPtr("#c0caf5"), colorPtr("#1a1b26"), false},
+		// Normal: fg=text.primary (#c0caf5), no bg (transparency)
+		{"Normal", colorPtr("#c0caf5"), nil, false},
 		// Comment: fg=syntax.comment (#565f89), italic
 		{"Comment", colorPtr("#565f89"), nil, true},
 		// Visual: bg=surface.background.selection (blended)
@@ -65,8 +65,8 @@ func TestVimMapper_BaseHighlights(t *testing.T) {
 		{"CursorLine", nil, colorPtr("#292e42"), false},
 		// LineNr: fg=text.muted (#565f89)
 		{"LineNr", colorPtr("#565f89"), nil, false},
-		// SignColumn: bg=surface.background (#1a1b26)
-		{"SignColumn", nil, colorPtr("#1a1b26"), false},
+		// SignColumn: bg=surface.background.raised (#1f2335)
+		{"SignColumn", nil, colorPtr("#1f2335"), false},
 	}
 
 	for _, tc := range tests {
@@ -161,12 +161,12 @@ func TestVimMapper_TreesitterHighlights(t *testing.T) {
 		{"@string.escape", colorPtr("#bb9af7"), false, false, ""},
 		{"@string.regex", colorPtr("#7dcfff"), false, false, ""},
 		{"@tag", colorPtr("#f7768e"), false, false, ""},
-		{"@property", colorPtr("#afd67a"), false, false, ""},
-		{"@parameter", colorPtr("#e9c582"), false, false, ""},
+		{"@property", colorPtr("#9ece6a"), false, false, ""},
+		{"@parameter", colorPtr("#e0af68"), false, false, ""},
 		{"@constructor", colorPtr("#c8acf8"), false, false, ""},
 		{"@function.builtin", colorPtr("#7aa2f7"), false, false, ""},
 		{"@type.builtin", colorPtr("#e0af68"), false, false, ""},
-		{"@variable.builtin", colorPtr("#c0caf5"), false, false, ""},
+		{"@variable.builtin", colorPtr("#f7768e"), false, false, ""},
 		{"@keyword.return", colorPtr("#bb9af7"), false, false, ""},
 		{"@keyword.function", colorPtr("#bb9af7"), false, false, ""},
 	}
@@ -285,8 +285,8 @@ func TestVimMapper_DiagnosticHighlights(t *testing.T) {
 	}{
 		{"DiagnosticError", colorPtr("#ff899d")}, // status.error
 		{"DiagnosticWarn", colorPtr("#e9c582")},  // status.warning
-		{"DiagnosticInfo", colorPtr("#97d8f8")},  // status.info
-		{"DiagnosticHint", colorPtr("#97d8f8")},  // status.hint
+		{"DiagnosticInfo", colorPtr("#afd67a")},  // status.info (base14)
+		{"DiagnosticHint", colorPtr("#ff9e64")},  // status.hint (base09)
 	}
 
 	for _, tc := range diagTextTests {
@@ -311,8 +311,8 @@ func TestVimMapper_DiagnosticHighlights(t *testing.T) {
 	}{
 		{"DiagnosticUnderlineError", colorPtr("#ff899d")},
 		{"DiagnosticUnderlineWarn", colorPtr("#e9c582")},
-		{"DiagnosticUnderlineInfo", colorPtr("#97d8f8")},
-		{"DiagnosticUnderlineHint", colorPtr("#97d8f8")},
+		{"DiagnosticUnderlineInfo", colorPtr("#afd67a")},
+		{"DiagnosticUnderlineHint", colorPtr("#ff9e64")},
 	}
 
 	for _, tc := range diagUnderlineTests {

@@ -40,17 +40,19 @@ func (v *Vim) Map(theme *domain.ResolvedTheme) (ports.MappedTheme, error) {
 
 	mapBase(theme, highlights)
 	mapTreesitter(theme, highlights)
-	mapLSP(highlights)
+	mapLSP(theme, highlights)
 	mapDiagnostic(theme, highlights)
 	mapPlugins(theme, highlights)
 	mapMarkup(theme, highlights)
 
 	termColors := mapTerminal(theme)
+	lualineTheme := mapLualine(theme)
 
 	return &ports.VimTheme{
 		Name:           theme.Name,
 		Highlights:     highlights,
 		TerminalColors: termColors,
+		Lualine:        lualineTheme,
 	}, nil
 }
 
@@ -74,9 +76,9 @@ func mapBase(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	bg := func(path string) *domain.Color { return colorOf(theme, path) }
 
 	// --- Core editor groups ---
-	hl["Normal"] = ports.VimHighlight{Fg: fg("text.primary"), Bg: bg("surface.background")}
-	hl["NormalFloat"] = ports.VimHighlight{Fg: fg("text.primary"), Bg: bg("surface.background.popup")}
-	hl["NormalNC"] = ports.VimHighlight{Fg: fg("text.primary"), Bg: bg("surface.background")}
+	hl["Normal"] = ports.VimHighlight{Fg: fg("text.primary")}    // No bg for transparency
+	hl["NormalFloat"] = ports.VimHighlight{Fg: fg("text.primary")} // No bg for transparency
+	hl["NormalNC"] = ports.VimHighlight{Fg: fg("text.primary")}    // No bg for transparency
 	hl["Comment"] = ports.VimHighlight{Fg: fg("syntax.comment"), Italic: true}
 	hl["Cursor"] = ports.VimHighlight{Reverse: true}
 	hl["lCursor"] = ports.VimHighlight{Reverse: true}
@@ -88,8 +90,8 @@ func mapBase(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["CursorLineNr"] = ports.VimHighlight{Fg: fg("accent.primary"), Bold: true}
 	hl["ColorColumn"] = ports.VimHighlight{Bg: bg("surface.background.highlight")}
 	hl["LineNr"] = ports.VimHighlight{Fg: fg("text.muted")}
-	hl["SignColumn"] = ports.VimHighlight{Bg: bg("surface.background")}
-	hl["FoldColumn"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background")}
+	hl["SignColumn"] = ports.VimHighlight{Bg: bg("surface.background.raised")}
+	hl["FoldColumn"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background.raised")}
 	hl["Folded"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background.raised")}
 	hl["VertSplit"] = ports.VimHighlight{Fg: fg("border.default")}
 	hl["WinSeparator"] = ports.VimHighlight{Fg: fg("border.default")}
@@ -105,12 +107,12 @@ func mapBase(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["Substitute"] = ports.VimHighlight{Fg: fg("text.inverse"), Bg: bg("status.error")}
 
 	// --- Popup / completion menu ---
-	hl["Pmenu"] = ports.VimHighlight{Fg: fg("text.primary"), Bg: bg("surface.background.popup")}
+	hl["Pmenu"] = ports.VimHighlight{Fg: fg("text.primary")}
 	hl["PmenuSel"] = ports.VimHighlight{Bg: bg("surface.background.selection")}
-	hl["PmenuSbar"] = ports.VimHighlight{Bg: bg("surface.background.raised")}
+	hl["PmenuSbar"] = ports.VimHighlight{}
 	hl["PmenuThumb"] = ports.VimHighlight{Bg: bg("scrollbar.thumb")}
-	hl["FloatBorder"] = ports.VimHighlight{Fg: fg("border.default"), Bg: bg("surface.background.popup")}
-	hl["FloatTitle"] = ports.VimHighlight{Fg: fg("accent.primary"), Bg: bg("surface.background.popup"), Bold: true}
+	hl["FloatBorder"] = ports.VimHighlight{Fg: fg("syntax.property")}
+	hl["FloatTitle"] = ports.VimHighlight{Fg: fg("status.hint")}
 
 	// --- Tab line ---
 	hl["TabLine"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background.raised")}
@@ -207,6 +209,7 @@ func mapBase(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 type treesitterMapping struct {
 	group     string
 	tokenPath string
+	bgPath    string // optional background token path
 	link      string
 	italic    bool
 	bold      bool
@@ -218,7 +221,7 @@ type treesitterMapping struct {
 //nolint:dupl // Intentional structural similarity between mapping tables.
 var treesitterMappings = []treesitterMapping{
 	// Core treesitter groups mapped directly to semantic tokens.
-	{group: "@keyword", tokenPath: "syntax.keyword"},
+	{group: "@keyword", tokenPath: "syntax.keyword", italic: true},
 	{group: "@keyword.function", tokenPath: "syntax.keyword"},
 	{group: "@keyword.operator", tokenPath: "syntax.operator"},
 	{group: "@keyword.return", tokenPath: "syntax.keyword"},
@@ -227,21 +230,31 @@ var treesitterMappings = []treesitterMapping{
 	{group: "@keyword.conditional", tokenPath: "syntax.keyword"},
 	{group: "@keyword.repeat", tokenPath: "syntax.keyword"},
 	{group: "@keyword.import", tokenPath: "syntax.keyword"},
+	{group: "@keyword.debug", link: "Debug"},
+	{group: "@keyword.directive", link: "PreProc"},
+	{group: "@keyword.directive.define", link: "Define"},
+	{group: "@keyword.storage", link: "StorageClass"},
 	{group: "@string", tokenPath: "syntax.string"},
 	{group: "@string.escape", tokenPath: "syntax.escape"},
 	{group: "@string.regex", tokenPath: "syntax.regexp"},
+	{group: "@string.regexp", tokenPath: "syntax.regexp"},
 	{group: "@string.special", tokenPath: "syntax.escape"},
+	{group: "@string.documentation", tokenPath: "syntax.string"},
 	{group: "@character", tokenPath: "syntax.string"},
 	{group: "@character.special", tokenPath: "syntax.escape"},
+	{group: "@character.printf", link: "SpecialChar"},
 	{group: "@function", tokenPath: "syntax.function"},
 	{group: "@function.builtin", tokenPath: "syntax.function"},
 	{group: "@function.call", tokenPath: "syntax.function"},
 	{group: "@function.macro", tokenPath: "syntax.constant"},
+	{group: "@function.method", link: "Function"},
+	{group: "@function.method.call", link: "@function.method"},
 	{group: "@method", tokenPath: "syntax.function"},
 	{group: "@method.call", tokenPath: "syntax.function"},
 	{group: "@variable", tokenPath: "syntax.variable"},
-	{group: "@variable.builtin", tokenPath: "syntax.variable"},
+	{group: "@variable.builtin", tokenPath: "syntax.tag"},
 	{group: "@variable.parameter", tokenPath: "syntax.parameter"},
+	{group: "@variable.parameter.builtin", tokenPath: "syntax.parameter"},
 	{group: "@variable.member", tokenPath: "syntax.property"},
 	{group: "@type", tokenPath: "syntax.type"},
 	{group: "@type.builtin", tokenPath: "syntax.type"},
@@ -254,25 +267,48 @@ var treesitterMappings = []treesitterMapping{
 	{group: "@number.float", tokenPath: "syntax.number"},
 	{group: "@boolean", tokenPath: "syntax.constant"},
 	{group: "@operator", tokenPath: "syntax.operator"},
-	{group: "@punctuation.bracket", tokenPath: "text.secondary"},
-	{group: "@punctuation.delimiter", tokenPath: "text.primary"},
-	{group: "@punctuation.special", tokenPath: "accent.primary"},
+	{group: "@punctuation.bracket", tokenPath: "text.overlay"},
+	{group: "@punctuation.delimiter", tokenPath: "syntax.operator"},
+	{group: "@punctuation.special", tokenPath: "syntax.operator"},
 	{group: "@tag", tokenPath: "syntax.tag"},
 	{group: "@tag.attribute", tokenPath: "syntax.property"},
 	{group: "@tag.delimiter", tokenPath: "text.secondary"},
+	{group: "@tag.builtin", tokenPath: "syntax.tag"},
+	{group: "@tag.javascript", tokenPath: "syntax.tag"},
+	{group: "@tag.tsx", tokenPath: "syntax.tag"},
+	{group: "@tag.delimiter.tsx", tokenPath: "text.secondary"},
 	{group: "@property", tokenPath: "syntax.property"},
 	{group: "@parameter", tokenPath: "syntax.parameter"},
 	{group: "@constructor", tokenPath: "syntax.constructor"},
+	{group: "@constructor.tsx", tokenPath: "syntax.function"},
 	{group: "@namespace", tokenPath: "syntax.type"},
+	{group: "@namespace.builtin", tokenPath: "syntax.variable"},
 	{group: "@module", tokenPath: "syntax.type"},
+	{group: "@module.builtin", tokenPath: "syntax.variable"},
 	{group: "@label", tokenPath: "syntax.keyword"},
 	{group: "@include", tokenPath: "syntax.keyword"},
 	{group: "@exception", tokenPath: "syntax.keyword"},
 	{group: "@define", tokenPath: "syntax.keyword"},
 	{group: "@preproc", tokenPath: "syntax.keyword"},
+	{group: "@annotation", link: "PreProc"},
+	{group: "@attribute", link: "PreProc"},
+	{group: "@none", link: "Normal"},
 
-	// Link groups (reference other highlight groups).
+	// Comment variants
 	{group: "@comment", link: "Comment"},
+	{group: "@comment.error", tokenPath: "comment.error"},
+	{group: "@comment.warning", tokenPath: "comment.warning"},
+	{group: "@comment.info", tokenPath: "comment.info"},
+	{group: "@comment.hint", tokenPath: "comment.hint"},
+	{group: "@comment.note", tokenPath: "comment.note"},
+	{group: "@comment.todo", tokenPath: "comment.todo"},
+
+	// Diff groups
+	{group: "@diff.plus", link: "DiffAdd"},
+	{group: "@diff.minus", link: "DiffDelete"},
+	{group: "@diff.delta", link: "DiffChange"},
+
+	// Text groups (legacy)
 	{group: "@text", link: "Normal"},
 	{group: "@text.strong", bold: true},
 	{group: "@text.emphasis", italic: true},
@@ -286,15 +322,33 @@ var treesitterMappings = []treesitterMapping{
 	{group: "@text.danger", link: "ErrorMsg"},
 
 	// Markup treesitter groups.
+	{group: "@markup", link: "@none"},
 	{group: "@markup.heading", tokenPath: "markup.heading", bold: true},
+	{group: "@markup.heading.1.markdown", tokenPath: "markup.heading.1", bold: true},
+	{group: "@markup.heading.2.markdown", tokenPath: "markup.heading.2", bold: true},
+	{group: "@markup.heading.3.markdown", tokenPath: "markup.heading.3", bold: true},
+	{group: "@markup.heading.4.markdown", tokenPath: "markup.heading.4", bold: true},
+	{group: "@markup.heading.5.markdown", tokenPath: "markup.heading.5", bold: true},
+	{group: "@markup.heading.6.markdown", tokenPath: "markup.heading.6", bold: true},
 	{group: "@markup.link", tokenPath: "markup.link"},
 	{group: "@markup.link.url", tokenPath: "markup.link"},
+	{group: "@markup.link.label", link: "SpecialChar"},
+	{group: "@markup.link.label.symbol", link: "Identifier"},
 	{group: "@markup.raw", tokenPath: "markup.code"},
+	{group: "@markup.raw.markdown_inline", tokenPath: "markup.code"},
 	{group: "@markup.list", tokenPath: "markup.list.bullet"},
+	{group: "@markup.list.markdown", tokenPath: "markup.list.bullet", bold: true},
+	{group: "@markup.list.checked", tokenPath: "markup.list.checked"},
+	{group: "@markup.list.unchecked", tokenPath: "markup.list.unchecked"},
 	{group: "@markup.strong", bold: true},
 	{group: "@markup.italic", italic: true},
+	{group: "@markup.emphasis", italic: true},
+	{group: "@markup.underline", link: "Underlined"},
 	{group: "@markup.strikethrough", tokenPath: "markup.quote"},
 	{group: "@markup.quote", tokenPath: "markup.quote", italic: true},
+	{group: "@markup.math", link: "Special"},
+	{group: "@markup.environment", link: "Macro"},
+	{group: "@markup.environment.name", link: "Type"},
 }
 
 // mapTreesitter adds treesitter highlight groups to the highlights map.
@@ -314,6 +368,10 @@ func mapTreesitter(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight
 			h.Fg = colorOf(theme, m.tokenPath)
 		}
 
+		if m.bgPath != "" {
+			h.Bg = colorOf(theme, m.bgPath)
+		}
+
 		hl[m.group] = h
 	}
 }
@@ -326,6 +384,7 @@ type lspMapping struct {
 
 // lspMappings defines the LSP semantic token link groups.
 var lspMappings = []lspMapping{
+	// Basic type mappings
 	{"@lsp.type.function", "@function"},
 	{"@lsp.type.method", "@function"},
 	{"@lsp.type.variable", "@variable"},
@@ -349,12 +408,52 @@ var lspMappings = []lspMapping{
 	{"@lsp.type.event", "@type"},
 	{"@lsp.type.modifier", "@keyword"},
 	{"@lsp.type.regexp", "@string.regex"},
+	// Additional type mappings
+	{"@lsp.type.boolean", "@boolean"},
+	{"@lsp.type.builtinType", "@type.builtin"},
+	{"@lsp.type.deriveHelper", "@attribute"},
+	{"@lsp.type.escapeSequence", "@string.escape"},
+	{"@lsp.type.formatSpecifier", "@markup.list"},
+	{"@lsp.type.generic", "@variable"},
+	{"@lsp.type.lifetime", "@keyword.storage"},
+	{"@lsp.type.namespace.python", "@variable"},
+	{"@lsp.type.selfKeyword", "@variable.builtin"},
+	{"@lsp.type.selfTypeKeyword", "@variable.builtin"},
+	{"@lsp.type.typeAlias", "@type.definition"},
+	// Type modifier mappings
+	{"@lsp.typemod.class.defaultLibrary", "@type.builtin"},
+	{"@lsp.typemod.enum.defaultLibrary", "@type.builtin"},
+	{"@lsp.typemod.enumMember.defaultLibrary", "@constant.builtin"},
+	{"@lsp.typemod.function.defaultLibrary", "@function.builtin"},
+	{"@lsp.typemod.keyword.async", "@keyword.coroutine"},
+	{"@lsp.typemod.keyword.injected", "@keyword"},
+	{"@lsp.typemod.macro.defaultLibrary", "@function.builtin"},
+	{"@lsp.typemod.method.defaultLibrary", "@function.builtin"},
+	{"@lsp.typemod.operator.injected", "@operator"},
+	{"@lsp.typemod.string.injected", "@string"},
+	{"@lsp.typemod.struct.defaultLibrary", "@type.builtin"},
+	{"@lsp.typemod.variable.callable", "@function"},
+	{"@lsp.typemod.variable.defaultLibrary", "@variable.builtin"},
+	{"@lsp.typemod.variable.injected", "@variable"},
+	{"@lsp.typemod.variable.static", "@constant"},
 }
 
 // mapLSP adds LSP semantic token link groups to the highlights map.
-func mapLSP(hl map[string]ports.VimHighlight) {
+func mapLSP(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	for _, m := range lspMappings {
 		hl[m.group] = ports.VimHighlight{Link: m.link}
+	}
+
+	// Special LSP groups that need colors instead of links
+	hl["@lsp.type.unresolvedReference"] = ports.VimHighlight{
+		Sp:        colorOf(theme, "status.error"),
+		Undercurl: true,
+	}
+	hl["@lsp.typemod.type.defaultLibrary"] = ports.VimHighlight{
+		Fg: colorOf(theme, "syntax.regexp"),
+	}
+	hl["@lsp.typemod.typeAlias.defaultLibrary"] = ports.VimHighlight{
+		Fg: colorOf(theme, "syntax.regexp"),
 	}
 }
 
@@ -445,4 +544,28 @@ func mapTerminal(theme *domain.ResolvedTheme) [16]domain.Color {
 	}
 
 	return colors
+}
+
+// mapLualine builds a lualine theme from the statusline semantic tokens.
+// It creates modes for normal, insert, visual, replace, command, and inactive,
+// each with sections a, b, c using the statusline.*.fg/bg tokens.
+func mapLualine(theme *domain.ResolvedTheme) *ports.LualineTheme {
+	fg := func(path string) *domain.Color { return colorOf(theme, path) }
+	bg := func(path string) *domain.Color { return colorOf(theme, path) }
+
+	// Base mode uses the statusline tokens directly
+	baseMode := ports.LualineMode{
+		A: ports.LualineModeColors{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")},
+		B: ports.LualineModeColors{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")},
+		C: ports.LualineModeColors{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")},
+	}
+
+	return &ports.LualineTheme{
+		Normal:   baseMode,
+		Insert:   baseMode,
+		Visual:   baseMode,
+		Replace:  baseMode,
+		Command:  baseMode,
+		Inactive: baseMode,
+	}
 }

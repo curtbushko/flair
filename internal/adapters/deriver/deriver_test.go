@@ -443,22 +443,24 @@ func TestDeriveStatus_InfoHint(t *testing.T) {
 	d := deriver.New()
 	ts := d.Derive(pal)
 
-	want := mustParseHex(t, "#97d8f8") // base15
-
+	// status.info uses base14 (green)
+	wantInfo := mustParseHex(t, "#afd67a") // base14
 	tok, ok := ts.Get("status.info")
 	if !ok {
 		t.Fatal("status.info not found in token set")
 	}
-	if !tok.Color.Equal(want) {
-		t.Errorf("status.info = %s, want %s", tok.Color.Hex(), want.Hex())
+	if !tok.Color.Equal(wantInfo) {
+		t.Errorf("status.info = %s, want %s", tok.Color.Hex(), wantInfo.Hex())
 	}
 
+	// status.hint uses base09 (orange)
+	wantHint := mustParseHex(t, "#ff9e64") // base09
 	tok, ok = ts.Get("status.hint")
 	if !ok {
 		t.Fatal("status.hint not found in token set")
 	}
-	if !tok.Color.Equal(want) {
-		t.Errorf("status.hint = %s, want %s", tok.Color.Hex(), want.Hex())
+	if !tok.Color.Equal(wantHint) {
+		t.Errorf("status.hint = %s, want %s", tok.Color.Hex(), wantHint.Hex())
 	}
 }
 
@@ -857,7 +859,7 @@ func TestDeriveSyntax_Property(t *testing.T) {
 		t.Fatal("syntax.property not found in token set")
 	}
 
-	want := mustParseHex(t, "#afd67a") // base14
+	want := mustParseHex(t, "#9ece6a") // base0B
 	if !tok.Color.Equal(want) {
 		t.Errorf("syntax.property = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -873,7 +875,7 @@ func TestDeriveSyntax_Parameter(t *testing.T) {
 		t.Fatal("syntax.parameter not found in token set")
 	}
 
-	want := mustParseHex(t, "#e9c582") // base13
+	want := mustParseHex(t, "#e0af68") // base0A
 	if !tok.Color.Equal(want) {
 		t.Errorf("syntax.parameter = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -1176,8 +1178,8 @@ func TestDeriveMarkup_AllPresent(t *testing.T) {
 			count++
 		}
 	}
-	if count != 10 {
-		t.Errorf("expected 10 markup tokens, got %d", count)
+	if count != 16 {
+		t.Errorf("expected 16 markup tokens, got %d", count)
 	}
 }
 

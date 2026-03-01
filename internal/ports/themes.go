@@ -18,11 +18,35 @@ type VimHighlight struct {
 	Link          string
 }
 
+// LualineModeColors holds the fg/bg colors for a lualine mode section.
+type LualineModeColors struct {
+	Fg *domain.Color
+	Bg *domain.Color
+}
+
+// LualineMode holds the colors for sections a, b, c of a lualine mode.
+type LualineMode struct {
+	A LualineModeColors
+	B LualineModeColors
+	C LualineModeColors
+}
+
+// LualineTheme holds the complete lualine theme with all modes.
+type LualineTheme struct {
+	Normal   LualineMode
+	Insert   LualineMode
+	Visual   LualineMode
+	Replace  LualineMode
+	Command  LualineMode
+	Inactive LualineMode
+}
+
 // VimTheme is the mapped theme DTO for the Vim/Neovim target.
 type VimTheme struct {
 	Name           string
 	Highlights     map[string]VimHighlight
 	TerminalColors [16]domain.Color
+	Lualine        *LualineTheme
 }
 
 // StylixTheme is the mapped theme DTO for the Stylix target.
