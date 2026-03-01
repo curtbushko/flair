@@ -43,6 +43,17 @@ Track testing progress by marking items as completed.
 | SelectTheme use case | UNTESTED | See UNTESTED section |
 | ListThemes use case | UNTESTED | See UNTESTED section |
 
+### Public Packages (pkg/)
+
+| Feature | Status | Location |
+|---------|--------|----------|
+| Theme loading (pkg/flair) | UNTESTED | See UNTESTED section |
+| Color accessors (pkg/flair) | UNTESTED | See UNTESTED section |
+| Lipgloss style builder | UNTESTED | See UNTESTED section |
+| Style viewer model | UNTESTED | See UNTESTED section |
+| Style viewer pages | UNTESTED | See UNTESTED section |
+| Interactive theme selection | UNTESTED | See UNTESTED section |
+
 ### End-to-End
 
 | Feature | Status | Location |
@@ -804,6 +815,292 @@ Feature: Advanced end-to-end scenarios
     When I parse and validate each
     Then no errors should occur
     And no warnings should be reported
+```
+
+### Feature: Theme loading (pkg/flair)
+
+**Status:** Phase 6 — pkg/ packages
+
+```gherkin
+Feature: Theme loading from pkg/flair
+  As a CLI developer
+  I need to load flair themes from the public API
+  So that I can use flair theming in my applications
+
+  Scenario: Load currently selected theme
+    Given theme "tokyonight" is selected via symlinks
+    When I call flair.Load()
+    Then I should receive a Theme with name "tokyonight"
+    And the theme should have surface colors
+    And the theme should have text colors
+
+  Scenario: Load named theme
+    Given theme "gruvbox" exists
+    When I call flair.LoadNamed("gruvbox")
+    Then I should receive a Theme with name "gruvbox"
+
+  Scenario: Load from custom directory
+    Given a flair config at "/tmp/custom-flair"
+    When I call flair.LoadFrom("/tmp/custom-flair")
+    Then I should receive a Theme
+
+  Scenario: List available themes
+    Given themes "gruvbox" and "tokyonight" exist
+    When I call flair.ListThemes()
+    Then the result should contain "gruvbox"
+    And the result should contain "tokyonight"
+
+  Scenario: Get selected theme name
+    Given theme "tokyonight" is selected via symlinks
+    When I call flair.SelectedTheme()
+    Then the result should be "tokyonight"
+
+  Scenario: Load fails gracefully when no theme selected
+    Given no theme is selected
+    When I call flair.Load()
+    Then I should receive an error
+    And the error should indicate no theme is selected
+
+  Scenario: pkg/flair does not import internal packages
+    When I analyze imports of "pkg/flair"
+    Then no imports should reference "internal/"
+```
+
+### Feature: Color accessors (pkg/flair)
+
+**Status:** Phase 6 — pkg/ packages
+
+```gherkin
+Feature: Color accessors from pkg/flair
+  As a CLI developer
+  I need typed color accessors
+  So that I can access theme colors by semantic name
+
+  Scenario: Access surface colors
+    Given a loaded Theme
+    When I call theme.Surface()
+    Then I should receive SurfaceColors with Background
+    And I should receive SurfaceColors with Raised
+    And I should receive SurfaceColors with Sunken
+
+  Scenario: Access text colors
+    Given a loaded Theme
+    When I call theme.Text()
+    Then I should receive TextColors with Primary
+    And I should receive TextColors with Secondary
+    And I should receive TextColors with Muted
+
+  Scenario: Access status colors
+    Given a loaded Theme
+    When I call theme.Status()
+    Then I should receive StatusColors with Error
+    And I should receive StatusColors with Warning
+    And I should receive StatusColors with Success
+    And I should receive StatusColors with Info
+
+  Scenario: Access terminal ANSI colors
+    Given a loaded Theme
+    When I call theme.Terminal()
+    Then I should receive 16 colors
+    And color 0 should be black
+    And color 1 should be red
+```
+
+### Feature: Lipgloss style builder
+
+**Status:** Phase 6 — pkg/charm/lipgloss
+
+```gherkin
+Feature: Lipgloss style builder
+  As a CLI developer
+  I need lipgloss styles from flair themes
+  So that my TUI has consistent theming
+
+  Scenario: Create styles from theme
+    Given a loaded Theme
+    When I call lipgloss.NewStyles(theme)
+    Then I should receive a Styles struct
+    And Styles.Background should have the theme background color
+    And Styles.Text should have the theme text color
+
+  Scenario: Surface styles are configured
+    Given a loaded Theme
+    When I call lipgloss.NewStyles(theme)
+    Then Styles.Background should have correct background
+    And Styles.Raised should have raised background
+    And Styles.Sunken should have sunken background
+    And Styles.Overlay should have overlay background
+
+  Scenario: Text styles are configured
+    Given a loaded Theme
+    When I call lipgloss.NewStyles(theme)
+    Then Styles.Text should have primary foreground
+    And Styles.Secondary should have secondary foreground
+    And Styles.Muted should have muted foreground
+
+  Scenario: Status styles are configured
+    Given a loaded Theme
+    When I call lipgloss.NewStyles(theme)
+    Then Styles.Error should have error color
+    And Styles.Warning should have warning color
+    And Styles.Success should have success color
+    And Styles.Info should have info color
+
+  Scenario: Component styles are configured
+    Given a loaded Theme
+    When I call lipgloss.NewStyles(theme)
+    Then Styles.Button should be properly styled
+    And Styles.Input should be properly styled
+    And Styles.ListItem should be properly styled
+
+  Scenario: Default styles load from selected theme
+    Given theme "tokyonight" is selected
+    When I call lipgloss.Default()
+    Then I should receive Styles based on tokyonight
+
+  Scenario: Default returns nil when no theme selected
+    Given no theme is selected
+    When I call lipgloss.Default()
+    Then I should receive nil
+
+  Scenario: pkg/charm/lipgloss does not import internal packages
+    When I analyze imports of "pkg/charm/lipgloss"
+    Then no imports should reference "internal/"
+```
+
+### Feature: Style viewer model
+
+**Status:** Phase 6 — pkg/flair/viewer
+
+```gherkin
+Feature: Style viewer model
+  As a CLI developer
+  I need an embeddable style viewer
+  So that users can preview and select themes
+
+  Scenario: Viewer initializes with available themes
+    Given themes "gruvbox" and "tokyonight" exist
+    When I create a viewer.Model
+    Then the model should list both themes
+
+  Scenario: Viewer pre-selects initial theme
+    Given themes "gruvbox" and "tokyonight" exist
+    When I create a viewer.Model with InitialTheme "tokyonight"
+    Then "tokyonight" should be highlighted
+
+  Scenario: Navigate themes with j/k keys
+    Given a viewer with themes "a", "b", "c"
+    When I press "j"
+    Then the selection should move down
+    When I press "k"
+    Then the selection should move up
+
+  Scenario: Select theme with Enter
+    Given a viewer with themes "gruvbox" and "tokyonight"
+    And "tokyonight" is highlighted
+    When I press Enter
+    Then OnSelect should be called with "tokyonight"
+
+  Scenario: Quit without changes with q
+    Given a viewer with themes
+    When I press "q"
+    Then the viewer should quit
+    And no theme should be selected
+
+  Scenario: Switch pages with Tab
+    Given a viewer on the theme selector page
+    When I press Tab
+    Then the viewer should show the palette page
+    When I press Tab again
+    Then the viewer should show the tokens page
+```
+
+### Feature: Style viewer pages
+
+**Status:** Phase 6 — pkg/flair/viewer
+
+```gherkin
+Feature: Style viewer pages
+  As a CLI developer
+  I need multiple viewer pages
+  So that users can explore theme details
+
+  Scenario: Palette page shows base24 colors
+    Given theme "tokyonight" is selected in viewer
+    When I switch to the palette page
+    Then I should see colors base00 through base17
+    And each color should show its hex value
+    And each color should show a color swatch
+
+  Scenario: Tokens page shows semantic tokens by category
+    Given theme "tokyonight" is selected in viewer
+    When I switch to the tokens page
+    Then I should see surface tokens
+    And I should see text tokens
+    And I should see status tokens
+    And I should see syntax tokens
+
+  Scenario: Components page shows lipgloss components
+    Given theme "tokyonight" is selected in viewer
+    When I switch to the components page
+    Then I should see button components
+    And I should see input components
+    And I should see list components
+
+  Scenario: Component labels use flair token names
+    Given theme "tokyonight" is selected in viewer
+    When I view the components page
+    Then the error button should be labeled "status.error"
+    And the primary text should be labeled "text.primary"
+
+  Scenario: Live preview updates when theme changes
+    Given theme "gruvbox" is highlighted
+    And I am on the palette page
+    When I navigate to "tokyonight"
+    Then the palette page should update to show tokyonight colors
+```
+
+### Feature: Interactive theme selection
+
+**Status:** Phase 6 — CLI integration
+
+```gherkin
+Feature: Interactive theme selection
+  As a user
+  I need the select command to launch an interactive viewer
+  So that I can preview themes before selecting
+
+  Scenario: Select with no args launches viewer
+    Given themes "gruvbox" and "tokyonight" exist
+    When I run "flair select"
+    Then the style viewer should launch
+    And I should see available themes
+
+  Scenario: Select with theme name sets theme directly
+    Given themes "gruvbox" and "tokyonight" exist
+    When I run "flair select tokyonight"
+    Then theme "tokyonight" should be selected via symlinks
+    And the viewer should NOT launch
+
+  Scenario: Select with --viewer flag and theme name
+    Given themes "gruvbox" and "tokyonight" exist
+    When I run "flair select --viewer tokyonight"
+    Then the style viewer should launch
+    And "tokyonight" should be pre-selected
+
+  Scenario: Viewer applies theme on Enter
+    Given the style viewer is running
+    And I navigate to "gruvbox"
+    When I press Enter
+    Then theme "gruvbox" should be selected via symlinks
+    And the viewer should exit
+
+  Scenario: Viewer exits without changes on q
+    Given theme "tokyonight" is currently selected
+    And the style viewer is running
+    When I press "q"
+    Then theme "tokyonight" should still be selected
+    And no symlinks should change
 ```
 
 ---

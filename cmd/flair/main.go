@@ -19,7 +19,7 @@ Commands:
   list        List available built-in palettes
   preview     Preview a theme with ANSI colors
   regenerate  Re-derive stale downstream files
-  select      Select a theme as active
+  select      Select a theme or launch style viewer
   validate    Validate a theme directory
 
 Flags:

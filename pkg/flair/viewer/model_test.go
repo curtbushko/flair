@@ -22,9 +22,9 @@ func TestModel_Init(t *testing.T) {
 		t.Errorf("got %d themes, want %d", len(m.themes), len(themes))
 	}
 
-	// Current page should be selector.
-	if m.currentPage != PageSelector {
-		t.Errorf("got page %v, want PageSelector", m.currentPage)
+	// Current page should be text status (first content page in 2-panel layout).
+	if m.currentPage != PageTextStatus {
+		t.Errorf("got page %v, want PageTextStatus", m.currentPage)
 	}
 
 	// Initial theme should be highlighted (cursor at that index).
@@ -39,43 +39,36 @@ func TestModel_Init(t *testing.T) {
 	}
 }
 
-// TestModel_TabSwitchesPages verifies Tab key cycles through pages.
+// TestModel_TabSwitchesPages verifies Tab key cycles through content pages.
 func TestModel_TabSwitchesPages(t *testing.T) {
 	m := NewModel(Options{
 		Themes: []string{"theme1", "theme2"},
 	})
 
-	// Start on selector page.
-	if m.currentPage != PageSelector {
-		t.Fatalf("initial page = %v, want PageSelector", m.currentPage)
+	// Start on text status page (first content page in 2-panel layout).
+	if m.currentPage != PageTextStatus {
+		t.Fatalf("initial page = %v, want PageTextStatus", m.currentPage)
 	}
 
-	// Tab to palette page.
+	// Tab to interactive page.
 	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyTab})
 	m = updated.(Model)
-	if m.currentPage != PagePalette {
-		t.Errorf("after Tab: page = %v, want PagePalette", m.currentPage)
+	if m.currentPage != PageInteractive {
+		t.Errorf("after Tab: page = %v, want PageInteractive", m.currentPage)
 	}
 
-	// Tab to tokens page.
+	// Tab to data display page.
 	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyTab})
 	m = updated.(Model)
-	if m.currentPage != PageTokens {
-		t.Errorf("after Tab: page = %v, want PageTokens", m.currentPage)
+	if m.currentPage != PageDataDisplay {
+		t.Errorf("after Tab: page = %v, want PageDataDisplay", m.currentPage)
 	}
 
-	// Tab to components page.
+	// Tab wraps back to text status.
 	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyTab})
 	m = updated.(Model)
-	if m.currentPage != PageComponents {
-		t.Errorf("after Tab: page = %v, want PageComponents", m.currentPage)
-	}
-
-	// Tab wraps back to selector.
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyTab})
-	m = updated.(Model)
-	if m.currentPage != PageSelector {
-		t.Errorf("after Tab (wrap): page = %v, want PageSelector", m.currentPage)
+	if m.currentPage != PageTextStatus {
+		t.Errorf("after Tab (wrap): page = %v, want PageTextStatus", m.currentPage)
 	}
 }
 
@@ -133,31 +126,102 @@ func TestModel_Navigation(t *testing.T) {
 	}
 }
 
-// TestModel_EnterAppliesTheme verifies Enter on selector calls OnSelect callback.
-func TestModel_EnterAppliesTheme(t *testing.T) {
+// TestModel_NavigationReloadsThemeData verifies j/k keys reload preview data immediately.
+func TestModel_NavigationReloadsThemeData(t *testing.T) {
+	loader := &mockThemeLoader{
+		palettes: map[string]PaletteData{
+			"theme1": {Colors: [24]string{"#111111"}},
+			"theme2": {Colors: [24]string{"#222222"}},
+			"theme3": {Colors: [24]string{"#333333"}},
+		},
+		tokens: map[string]TokenData{
+			"theme1": {Status: map[string]string{"status.error": "#ff0000"}},
+			"theme2": {Status: map[string]string{"status.error": "#00ff00"}},
+			"theme3": {Status: map[string]string{"status.error": "#0000ff"}},
+		},
+	}
+
+	m := NewModel(Options{
+		Themes:       []string{"theme1", "theme2", "theme3"},
+		InitialTheme: "theme1",
+		ThemeLoader:  loader,
+	})
+
+	// Verify initial data loaded for theme1.
+	if m.palette.Colors[0] != "#111111" {
+		t.Errorf("initial palette = %q, want #111111", m.palette.Colors[0])
+	}
+
+	// Press 'j' to move to theme2 - preview data should reload immediately.
+	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
+	m = updated.(Model)
+
+	if m.cursor != 1 {
+		t.Errorf("cursor = %d, want 1", m.cursor)
+	}
+	// selectedTheme should NOT change until Enter is pressed.
+	if m.selectedTheme != "theme1" {
+		t.Errorf("selectedTheme = %q, want theme1 (unchanged)", m.selectedTheme)
+	}
+	// But preview data should be loaded for theme2.
+	if m.palette.Colors[0] != "#222222" {
+		t.Errorf("after j: palette = %q, want #222222", m.palette.Colors[0])
+	}
+	if m.tokens.Status["status.error"] != "#00ff00" {
+		t.Errorf("after j: status.error = %q, want #00ff00", m.tokens.Status["status.error"])
+	}
+
+	// Press 'j' again to move to theme3.
+	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
+	m = updated.(Model)
+
+	if m.palette.Colors[0] != "#333333" {
+		t.Errorf("after second j: palette = %q, want #333333", m.palette.Colors[0])
+	}
+
+	// Press 'k' to go back to theme2.
+	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'k'}})
+	m = updated.(Model)
+
+	if m.palette.Colors[0] != "#222222" {
+		t.Errorf("after k: palette = %q, want #222222", m.palette.Colors[0])
+	}
+}
+
+// TestModel_EnterConfirmsSelection verifies Enter key confirms selection.
+func TestModel_EnterConfirmsSelection(t *testing.T) {
 	var selectedName string
 	m := NewModel(Options{
-		Themes: []string{"theme1", "theme2"},
+		Themes: []string{"theme1", "theme2", "theme3"},
 		OnSelect: func(name string) {
 			selectedName = name
 		},
 	})
 
-	// Move to theme2.
+	// Navigate to theme2.
 	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
 	m = updated.(Model)
 
-	// Press Enter.
+	// selectedTheme should still be empty (no initial theme, no Enter pressed).
+	if m.selectedTheme != "" {
+		t.Errorf("before Enter: selectedTheme = %q, want empty", m.selectedTheme)
+	}
+	if m.selectedIndex != -1 {
+		t.Errorf("before Enter: selectedIndex = %d, want -1", m.selectedIndex)
+	}
+
+	// Press Enter to confirm selection.
 	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
 	m = updated.(Model)
 
-	if selectedName != "theme2" {
-		t.Errorf("OnSelect called with %q, want %q", selectedName, "theme2")
-	}
-
-	// Verify selectedTheme is updated.
 	if m.selectedTheme != "theme2" {
-		t.Errorf("selectedTheme = %q, want %q", m.selectedTheme, "theme2")
+		t.Errorf("after Enter: selectedTheme = %q, want theme2", m.selectedTheme)
+	}
+	if m.selectedIndex != 1 {
+		t.Errorf("after Enter: selectedIndex = %d, want 1", m.selectedIndex)
+	}
+	if selectedName != "theme2" {
+		t.Errorf("onSelect called with %q, want theme2", selectedName)
 	}
 }
 
@@ -204,48 +268,6 @@ func (m *mockThemeLoader) LoadTokens(name string) (TokenData, error) {
 		return td, nil
 	}
 	return TokenData{}, nil
-}
-
-// TestModel_EnterReloadsThemeData verifies Enter key reloads palette and token data.
-func TestModel_EnterReloadsThemeData(t *testing.T) {
-	loader := &mockThemeLoader{
-		palettes: map[string]PaletteData{
-			"theme1": {Colors: [24]string{"#111111"}},
-			"theme2": {Colors: [24]string{"#222222"}},
-		},
-		tokens: map[string]TokenData{
-			"theme1": {Status: map[string]string{"status.error": "#ff0000"}},
-			"theme2": {Status: map[string]string{"status.error": "#00ff00"}},
-		},
-	}
-
-	m := NewModel(Options{
-		Themes:       []string{"theme1", "theme2"},
-		InitialTheme: "theme1",
-		ThemeLoader:  loader,
-	})
-
-	// Verify initial data is loaded.
-	if m.palette.Colors[0] != "#111111" {
-		t.Errorf("initial palette color = %q, want #111111", m.palette.Colors[0])
-	}
-	if m.tokens.Status["status.error"] != "#ff0000" {
-		t.Errorf("initial status.error = %q, want #ff0000", m.tokens.Status["status.error"])
-	}
-
-	// Move to theme2 and press Enter.
-	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
-	m = updated.(Model)
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
-	m = updated.(Model)
-
-	// Verify data is reloaded for theme2.
-	if m.palette.Colors[0] != "#222222" {
-		t.Errorf("after Enter: palette color = %q, want #222222", m.palette.Colors[0])
-	}
-	if m.tokens.Status["status.error"] != "#00ff00" {
-		t.Errorf("after Enter: status.error = %q, want #00ff00", m.tokens.Status["status.error"])
-	}
 }
 
 // TestModel_InitialThemeLoadsData verifies initial theme loads data on model creation.

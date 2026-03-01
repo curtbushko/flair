@@ -217,6 +217,70 @@ Track progress by marking items `[x]` as completed.
 - [x] 5.7 — README and usage documentation
 - [x] 5.8 — Makefile targets (build, test, lint, arch-lint, install)
 
+### Phase 6: Charm Integration & Style Viewer
+
+**Goal:** Integrate with Charmbracelet's lipgloss library to provide themed TUI components
+for Go CLI tools. The `pkg/` directory contains fully independent packages that can be
+imported by external projects without pulling in flair's internal implementation.
+
+#### 6.1 — Public Package Foundation (`pkg/`)
+
+- [x] 6.1a — Create `pkg/` directory structure (independent from `/internal`)
+- [x] 6.1b — Define `pkg/flair/theme.go` — public Theme type (read-only, no internal deps)
+- [x] 6.1c — Define `pkg/flair/loader.go` — load selected theme from `~/.config/flair`
+- [x] 6.1d — Define `pkg/flair/colors.go` — public color accessors (surface, text, status, etc.)
+- [x] 6.1e — Unit tests for theme loading and color accessors
+
+#### 6.2 — Lipgloss Adapter (`pkg/charm/lipgloss`)
+
+- [x] 6.2a — `pkg/charm/lipgloss/styles.go` — LipglossStyles struct with pre-configured styles
+- [x] 6.2b — `pkg/charm/lipgloss/builder.go` — NewStyles(theme) → LipglossStyles
+- [x] 6.2c — Surface styles (Background, Raised, Sunken, Overlay, Popup)
+- [x] 6.2d — Text styles (Primary, Secondary, Muted, Inverse)
+- [x] 6.2e — Status styles (Error, Warning, Success, Info)
+- [x] 6.2f — Border styles (Default, Focus, Muted)
+- [x] 6.2g — Component styles (Button, Input, List, Table, Dialog)
+- [x] 6.2h — State styles (Hover, Active, Disabled, Selected)
+- [x] 6.2i — Unit tests for all lipgloss style builders
+
+#### 6.3 — Style Viewer (`pkg/flair/viewer`)
+
+- [x] 6.3a — `pkg/flair/viewer/model.go` — Bubbletea model for style viewer
+- [x] 6.3b — `pkg/flair/viewer/view.go` — Render style showcase pages
+- [x] 6.3c — Theme selector component (list available themes, live preview)
+- [x] 6.3d — Palette display page (base00–base17 with color swatches)
+- [x] 6.3e — Token display page (semantic tokens grouped by category)
+- [x] 6.3f — Lipgloss component showcase page (buttons, inputs, tables, etc.)
+- [x] 6.3g — Dynamic theme switching (select theme → update all styles live)
+- [x] 6.3h — Use flair token names as example labels in component showcase
+- [x] 6.3i — `pkg/flair/viewer/run.go` — Public Run() function for embedding in other CLIs
+- [x] 6.3j — Keyboard navigation (j/k scroll, Enter select, q quit, Tab switch pages)
+- [x] 6.3k — Unit tests for viewer model and view rendering
+
+#### 6.4 — CLI Integration
+
+- [x] 6.4a — Update `select` command: no args launches style viewer
+- [x] 6.4b — `select <theme-name>` retains existing symlink behavior
+- [x] 6.4c — Add `--viewer` flag to force viewer mode with theme pre-selected
+- [x] 6.4d — Integration tests for select command variants
+
+#### 6.5 — Documentation & Polish
+
+- [ ] 6.5a — README section: Using flair in your CLI
+- [ ] 6.5b — Example: minimal CLI with flair theming
+- [ ] 6.5c — Example: embedding style viewer in a CLI
+- [ ] 6.5d — godoc comments for all public APIs in `pkg/`
+- [ ] 6.5e — BDD feature files for Phase 6 features
+
+### Phase 7: Extended Charm Support (Future)
+
+**Goal:** Support additional Charmbracelet packages beyond lipgloss.
+
+- [ ] 7.1 — `pkg/charm/bubbletea/` — Themed bubbletea components
+- [ ] 7.2 — `pkg/charm/huh/` — Themed huh form components
+- [ ] 7.3 — `pkg/charm/bubbles/` — Themed bubbles (list, table, viewport, etc.)
+- [ ] 7.4 — Style viewer pages for each supported Charm package
+
 ---
 
 ## Hexagonal Architecture Mapping
@@ -324,6 +388,36 @@ flair/
 ├── cmd/
 │   └── flair/
 │       └── main.go                     # Composition root: wires adapters → ports → app
+│
+├── pkg/                                 # Public packages — fully independent from /internal
+│   ├── flair/
+│   │   ├── theme.go                    # Public Theme type (colors, metadata)
+│   │   ├── theme_test.go
+│   │   ├── loader.go                   # Load theme from ~/.config/flair
+│   │   ├── loader_test.go
+│   │   ├── colors.go                   # Color accessors (Surface, Text, Status, etc.)
+│   │   ├── colors_test.go
+│   │   └── viewer/
+│   │       ├── model.go                # Bubbletea model for style viewer
+│   │       ├── model_test.go
+│   │       ├── view.go                 # View rendering (pages, components)
+│   │       ├── view_test.go
+│   │       ├── pages.go                # Palette, Tokens, Components pages
+│   │       ├── run.go                  # Public Run() for embedding
+│   │       └── keymap.go               # Keyboard bindings
+│   │
+│   └── charm/
+│       └── lipgloss/
+│           ├── styles.go               # LipglossStyles struct
+│           ├── styles_test.go
+│           ├── builder.go              # NewStyles(theme) constructor
+│           ├── builder_test.go
+│           ├── surface.go              # Surface style builders
+│           ├── text.go                 # Text style builders
+│           ├── status.go               # Status style builders
+│           ├── border.go               # Border style builders
+│           ├── component.go            # Component style builders (Button, Input, etc.)
+│           └── state.go                # State style builders (Hover, Active, etc.)
 │
 ├── internal/
 │   ├── domain/
@@ -514,6 +608,10 @@ excludeFiles:
   - /mocks/
   - /testdata/
 ```
+
+**Note:** The `pkg/` packages are outside `/internal` and are validated by
+their own constraint: they MUST NOT import any `/internal` packages. This is
+enforced through code review and import analysis during CI.
 
 ---
 
@@ -1242,7 +1340,7 @@ flair init [--name <theme-name>] [--dir <config-dir>]
 |--------------|--------------------------------------------------------------------|
 | `generate`   | Import a palette (built-in or file), create theme dir, run pipeline|
 | `regenerate` | Re-derive downstream files from the furthest-upstream edit         |
-| `select`     | Set the active theme (update symlinks at config root)              |
+| `select`     | Interactive theme selector (no args) or set active theme           |
 | `validate`   | Check all files in a theme dir for correctness and version skew    |
 | `preview`    | Print ANSI-colored palette + token preview to terminal             |
 | `list`       | Show available themes; `--builtins` shows built-in palette names   |
@@ -1272,10 +1370,28 @@ flair init [--name <theme-name>] [--dir <config-dir>]
 
 ### `select` flow
 
+**With theme name argument:**
+
 1. Verify theme dir exists and has output files
 2. Remove existing symlinks at config root
 3. Create new symlinks: `~/.config/flair/style.lua → <theme>/style.lua`, etc.
 4. Print confirmation
+
+**Without arguments (style viewer mode):**
+
+1. Launch interactive style viewer TUI
+2. Display available themes in a selectable list
+3. Show live preview of selected theme:
+   - Palette colors (base00–base17)
+   - Semantic tokens grouped by category
+   - Lipgloss component showcase (buttons, inputs, tables)
+4. Use flair token names as labels in component showcase
+5. On Enter: apply selected theme (same as `select <theme-name>`)
+6. On q: exit without changes
+
+**With `--viewer` flag:**
+
+`flair select --viewer tokyonight` opens style viewer with tokyonight pre-selected.
 
 ---
 
@@ -1782,17 +1898,32 @@ go test ./features/...
 ## Dependency Summary
 
 ```
-Layer          Imports From           Never Imports From
-─────────────  ─────────────────────  ──────────────────
-domain         (stdlib only)          ports, application, adapters, cmd
-ports          domain                 application, adapters, cmd
-application    ports, domain          adapters, cmd
-adapters/*     ports, domain          other adapters/*, application, cmd
-config         (stdlib, vendor)       domain, ports, application, adapters
-cmd            everything             (composition root)
+Layer              Imports From              Never Imports From
+─────────────────  ────────────────────────  ──────────────────────────────────
+domain             (stdlib only)             ports, application, adapters, cmd, pkg/*
+ports              domain                    application, adapters, cmd, pkg/*
+application        ports, domain             adapters, cmd, pkg/*
+adapters/*         ports, domain             other adapters/*, application, cmd, pkg/*
+config             (stdlib, vendor)          domain, ports, application, adapters, pkg/*
+cmd                everything                (composition root)
+pkg/flair          (stdlib, vendor)          internal/* (fully independent)
+pkg/charm/lipgloss pkg/flair, vendor         internal/* (fully independent)
 ```
 
-External dependency: `gopkg.in/yaml.v3` — used by `adapters/yaml` and `adapters/fileio` only.
+**Key constraint:** `pkg/` packages are **fully independent** from `/internal`. They:
+- MUST NOT import any `internal/` packages (domain, ports, adapters, etc.)
+- CAN be imported by `/internal` packages if needed
+- CAN depend on each other (`pkg/charm/lipgloss` → `pkg/flair`)
+- CAN depend on external vendor packages (charmbracelet/lipgloss, etc.)
+
+This allows external Go projects to import `pkg/flair` or `pkg/charm/lipgloss`
+without pulling in flair's internal implementation details.
+
+External dependencies:
+- `gopkg.in/yaml.v3` — used by `adapters/yaml`, `adapters/fileio`, and `pkg/flair`
+- `github.com/charmbracelet/lipgloss` — used by `pkg/charm/lipgloss`
+- `github.com/charmbracelet/bubbletea` — used by `pkg/flair/viewer`
+- `github.com/charmbracelet/bubbles` — used by `pkg/flair/viewer`
 
 ---
 
@@ -1808,4 +1939,217 @@ External dependency: `gopkg.in/yaml.v3` — used by `adapters/yaml` and `adapter
 
 5. **Phase 5** is golden files, regeneration tests, arch lint, docs.
 
+6. **Phase 6** adds Charm integration and the style viewer. The `pkg/` packages
+   are fully independent from `/internal` — they read theme files directly and
+   provide lipgloss styles without needing flair's internal domain types. The
+   style viewer uses bubbletea and can be embedded in other CLI tools.
+
+7. **Phase 7** (future) extends Charm support to bubbletea, huh, and bubbles.
+
 `go-arch-lint check` passes at every commit.
+
+---
+
+## Public Package API (`pkg/`)
+
+The `pkg/` directory contains fully independent packages that external Go
+projects can import without pulling in flair's internal implementation.
+
+### Constraint: No Internal Dependencies
+
+```
+pkg/flair         → reads ~/.config/flair directly (no internal/ imports)
+pkg/charm/lipgloss → imports pkg/flair + charmbracelet/lipgloss
+```
+
+This is enforced by `go-arch-lint`. The independence constraint means:
+- `pkg/` defines its own simple types for colors and themes
+- `pkg/` reads YAML files directly using `gopkg.in/yaml.v3`
+- `pkg/` does NOT import domain.Color, ports.*, or any adapter
+
+### `pkg/flair` — Theme Loading
+
+```go
+// pkg/flair/theme.go
+package flair
+
+// Theme represents a loaded flair theme with all color tokens.
+type Theme struct {
+    Name    string
+    Variant string  // "dark" or "light"
+    colors  map[string]Color
+}
+
+// Color is a simple RGB color.
+type Color struct {
+    R, G, B uint8
+}
+
+// Surface returns surface color tokens.
+func (t Theme) Surface() SurfaceColors { /* ... */ }
+
+// Text returns text color tokens.
+func (t Theme) Text() TextColors { /* ... */ }
+
+// Status returns status color tokens.
+func (t Theme) Status() StatusColors { /* ... */ }
+
+// Syntax returns syntax highlighting color tokens.
+func (t Theme) Syntax() SyntaxColors { /* ... */ }
+
+// Terminal returns the 16 ANSI colors.
+func (t Theme) Terminal() [16]Color { /* ... */ }
+```
+
+```go
+// pkg/flair/loader.go
+package flair
+
+// Load reads the currently selected theme from ~/.config/flair.
+// It follows the symlinks to find the active theme directory.
+func Load() (*Theme, error) { /* ... */ }
+
+// LoadNamed reads a specific theme by name.
+func LoadNamed(name string) (*Theme, error) { /* ... */ }
+
+// LoadFrom reads a theme from a custom config directory.
+func LoadFrom(configDir string) (*Theme, error) { /* ... */ }
+
+// ListThemes returns all available theme names.
+func ListThemes() ([]string, error) { /* ... */ }
+
+// SelectedTheme returns the name of the currently selected theme.
+func SelectedTheme() (string, error) { /* ... */ }
+```
+
+### `pkg/charm/lipgloss` — Lipgloss Styles
+
+```go
+// pkg/charm/lipgloss/styles.go
+package lipgloss
+
+import (
+    "github.com/charmbracelet/lipgloss"
+    "github.com/curtbushko/flair/pkg/flair"
+)
+
+// Styles contains pre-configured lipgloss styles for a flair theme.
+type Styles struct {
+    // Surface styles
+    Background lipgloss.Style
+    Raised     lipgloss.Style
+    Sunken     lipgloss.Style
+    Overlay    lipgloss.Style
+    Popup      lipgloss.Style
+
+    // Text styles
+    Text       lipgloss.Style
+    Secondary  lipgloss.Style
+    Muted      lipgloss.Style
+    Inverse    lipgloss.Style
+
+    // Status styles
+    Error      lipgloss.Style
+    Warning    lipgloss.Style
+    Success    lipgloss.Style
+    Info       lipgloss.Style
+
+    // Component styles
+    Button         lipgloss.Style
+    ButtonFocused  lipgloss.Style
+    Input          lipgloss.Style
+    InputFocused   lipgloss.Style
+    ListItem       lipgloss.Style
+    ListSelected   lipgloss.Style
+    Table          lipgloss.Style
+    TableHeader    lipgloss.Style
+    Dialog         lipgloss.Style
+
+    // Border styles
+    Border      lipgloss.Style
+    BorderFocus lipgloss.Style
+}
+
+// NewStyles creates a Styles from a flair theme.
+func NewStyles(theme *flair.Theme) *Styles { /* ... */ }
+
+// Default returns styles using the currently selected flair theme.
+// Returns nil styles if no theme is selected or loading fails.
+func Default() *Styles { /* ... */ }
+```
+
+### `pkg/flair/viewer` — Embeddable Style Viewer
+
+```go
+// pkg/flair/viewer/run.go
+package viewer
+
+import tea "github.com/charmbracelet/bubbletea"
+
+// Options configures the style viewer.
+type Options struct {
+    // InitialTheme pre-selects a theme (empty = current selection)
+    InitialTheme string
+
+    // OnSelect is called when user confirms a theme selection.
+    // If nil, the viewer applies the theme via symlinks.
+    OnSelect func(themeName string) error
+}
+
+// Run launches the interactive style viewer.
+// This can be embedded in other CLI tools.
+func Run(opts Options) error {
+    // Creates bubbletea program and runs it
+}
+
+// Model returns a bubbletea.Model for the style viewer.
+// Use this for custom integration with existing bubbletea programs.
+func Model(opts Options) tea.Model { /* ... */ }
+```
+
+### Usage Example
+
+```go
+package main
+
+import (
+    "fmt"
+    "github.com/charmbracelet/lipgloss"
+    "github.com/curtbushko/flair/pkg/flair"
+    flairlip "github.com/curtbushko/flair/pkg/charm/lipgloss"
+)
+
+func main() {
+    // Load the currently selected flair theme
+    theme, err := flair.Load()
+    if err != nil {
+        fmt.Println("No flair theme selected, using defaults")
+        return
+    }
+
+    // Create lipgloss styles from the theme
+    styles := flairlip.NewStyles(theme)
+
+    // Use the styles
+    header := styles.Raised.Render("Welcome to My CLI")
+    message := styles.Text.Render("Using " + theme.Name + " theme")
+    warning := styles.Warning.Render("This is a warning")
+
+    fmt.Println(header)
+    fmt.Println(message)
+    fmt.Println(warning)
+}
+```
+
+### Style Viewer Pages
+
+The style viewer displays multiple pages navigable via Tab:
+
+1. **Theme Selector** — List of available themes with live preview
+2. **Palette** — Base24 colors with hex values and color swatches
+3. **Tokens** — Semantic tokens grouped by category (surface, text, status, etc.)
+4. **Components** — Lipgloss component showcase using flair token names as labels
+
+Each component in the showcase uses its corresponding flair token name as the
+example label. For example, the "Error" button displays the text "status.error"
+styled with the error colors, making it both a visual demo and a reference.

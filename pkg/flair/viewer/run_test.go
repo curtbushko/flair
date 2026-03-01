@@ -29,8 +29,8 @@ func TestRunOptions_Defaults(t *testing.T) {
 		t.Error("themes should not be nil")
 	}
 
-	// Default page is selector.
-	if m.currentPage != PageSelector {
-		t.Errorf("default page = %v, want PageSelector", m.currentPage)
+	// Default page is text status (first content page in 2-panel layout).
+	if m.currentPage != PageTextStatus {
+		t.Errorf("default page = %v, want PageTextStatus", m.currentPage)
 	}
 }

@@ -7,22 +7,20 @@ import (
 	tea "github.com/charmbracelet/bubbletea"
 )
 
-// Page represents which page is currently displayed in the viewer.
+// Page represents which content page is displayed in the right panel.
 type Page int
 
 const (
-	// PageSelector shows the theme list for selection.
-	PageSelector Page = iota
-	// PagePalette shows the base00-base17 palette colors.
-	PagePalette
-	// PageTokens shows semantic tokens grouped by category.
-	PageTokens
-	// PageComponents shows styled component examples.
-	PageComponents
+	// PageTextStatus shows text paragraphs and status messages.
+	PageTextStatus Page = iota
+	// PageInteractive shows buttons, inputs, and selection lists.
+	PageInteractive
+	// PageDataDisplay shows tables, dialogs, and code blocks.
+	PageDataDisplay
 )
 
-// pageCount is the total number of pages for Tab cycling.
-const pageCount = 4
+// pageCount is the total number of content pages for Tab cycling.
+const pageCount = 3
 
 // Options configures the viewer Model.
 type Options struct {
@@ -67,13 +65,14 @@ type TokenData struct {
 // Model implements tea.Model for the style viewer TUI.
 type Model struct {
 	themes        []string
-	cursor        int
+	cursor        int // Current cursor position (for navigation/preview)
+	selectedIndex int // Index of confirmed selection (-1 if none)
 	currentPage   Page
-	selectedTheme string
+	selectedTheme string // Name of confirmed selection
 	onSelect      func(string)
 	themeLoader   ThemeLoader
 
-	// Cached data for current theme.
+	// Cached data for previewed theme (at cursor position).
 	palette PaletteData
 	tokens  TokenData
 
@@ -90,10 +89,11 @@ func NewModel(opts Options) Model {
 	}
 
 	m := Model{
-		themes:      themes,
-		currentPage: PageSelector,
-		onSelect:    opts.OnSelect,
-		themeLoader: opts.ThemeLoader,
+		themes:        themes,
+		selectedIndex: -1, // No selection until Enter is pressed
+		currentPage:   PageTextStatus,
+		onSelect:      opts.OnSelect,
+		themeLoader:   opts.ThemeLoader,
 	}
 
 	// Set initial theme and cursor position.
@@ -102,11 +102,15 @@ func NewModel(opts Options) Model {
 		for i, name := range opts.Themes {
 			if name == opts.InitialTheme {
 				m.cursor = i
+				m.selectedIndex = i
 				break
 			}
 		}
 		// Load data for initial theme.
 		m.loadThemeData(opts.InitialTheme)
+	} else if len(themes) > 0 {
+		// Load first theme for preview.
+		m.loadThemeData(themes[0])
 	}
 
 	return m
@@ -137,27 +141,39 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 		m.currentPage = (m.currentPage + 1) % pageCount
 		return m, nil
 
-	case tea.KeyEnter:
-		if m.currentPage == PageSelector && len(m.themes) > 0 {
-			m.selectedTheme = m.themes[m.cursor]
-			if m.onSelect != nil {
-				m.onSelect(m.selectedTheme)
-			}
-			// Reload palette and token data for the newly selected theme.
-			m.loadThemeData(m.selectedTheme)
+	case tea.KeyUp:
+		if m.cursor > 0 {
+			m.cursor--
+			m.previewCurrentTheme()
 		}
 		return m, nil
+
+	case tea.KeyDown:
+		if m.cursor < len(m.themes)-1 {
+			m.cursor++
+			m.previewCurrentTheme()
+		}
+		return m, nil
+
+	case tea.KeyEnter:
+		m.confirmSelection()
+		return m, nil
+
+	case tea.KeyEsc:
+		return m, tea.Quit
 
 	case tea.KeyRunes:
 		switch string(msg.Runes) {
 		case "j":
 			if m.cursor < len(m.themes)-1 {
 				m.cursor++
+				m.previewCurrentTheme()
 			}
 			return m, nil
 		case "k":
 			if m.cursor > 0 {
 				m.cursor--
+				m.previewCurrentTheme()
 			}
 			return m, nil
 		case "q":
@@ -166,6 +182,26 @@ func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
 	}
 
 	return m, nil
+}
+
+// previewCurrentTheme loads theme data for the cursor position (live preview).
+func (m *Model) previewCurrentTheme() {
+	if len(m.themes) == 0 || m.cursor >= len(m.themes) {
+		return
+	}
+	m.loadThemeData(m.themes[m.cursor])
+}
+
+// confirmSelection marks the current cursor position as selected and calls onSelect.
+func (m *Model) confirmSelection() {
+	if len(m.themes) == 0 || m.cursor >= len(m.themes) {
+		return
+	}
+	m.selectedIndex = m.cursor
+	m.selectedTheme = m.themes[m.cursor]
+	if m.onSelect != nil {
+		m.onSelect(m.selectedTheme)
+	}
 }
 
 // loadThemeData loads palette and token data for the given theme using ThemeLoader.
