@@ -35,15 +35,15 @@ func (m *mockPaletteSource) List() []string                     { return nil }
 func (m *mockPaletteSource) Get(name string) (io.Reader, error) { return nil, nil }
 func (m *mockPaletteSource) Has(name string) bool               { return false }
 
-// TestCompileCheck_TokenDeriver verifies the TokenDeriver interface compiles
-// with Derive(*domain.Palette) *domain.TokenSet.
-func TestCompileCheck_TokenDeriver(t *testing.T) {
-	var _ ports.TokenDeriver = (*mockTokenDeriver)(nil)
+// TestCompileCheck_Tokenizer verifies the Tokenizer interface compiles
+// with Tokenize(*domain.Palette) *domain.TokenSet.
+func TestCompileCheck_Tokenizer(t *testing.T) {
+	var _ ports.Tokenizer = (*mockTokenizer)(nil)
 }
 
-type mockTokenDeriver struct{}
+type mockTokenizer struct{}
 
-func (m *mockTokenDeriver) Derive(p *domain.Palette) *domain.TokenSet {
+func (m *mockTokenizer) Tokenize(p *domain.Palette) *domain.TokenSet {
 	return nil
 }
 
@@ -165,8 +165,8 @@ func TestCompileCheck_FileStructs(t *testing.T) {
 	}
 	assertAllFieldsReadable(t, "PaletteFile", pf)
 
-	// UniversalToken
-	ut := ports.UniversalToken{
+	// TokenEntry
+	te := ports.TokenEntry{
 		Color:         "#7aa2f7",
 		Bold:          true,
 		Italic:        true,
@@ -174,14 +174,14 @@ func TestCompileCheck_FileStructs(t *testing.T) {
 		Undercurl:     true,
 		Strikethrough: true,
 	}
-	assertAllFieldsReadable(t, "UniversalToken", ut)
+	assertAllFieldsReadable(t, "TokenEntry", te)
 
-	// UniversalFile
-	uf := ports.UniversalFile{
-		FileHeader: ports.FileHeader{SchemaVersion: 1, Kind: domain.FileKindUniversal, ThemeName: "t"},
-		Tokens:     map[string]ports.UniversalToken{"text.primary": ut},
+	// TokensFile
+	tf := ports.TokensFile{
+		FileHeader: ports.FileHeader{SchemaVersion: 1, Kind: domain.FileKindTokens, ThemeName: "t"},
+		Tokens:     map[string]ports.TokenEntry{"text.primary": te},
 	}
-	assertAllFieldsReadable(t, "UniversalFile", uf)
+	assertAllFieldsReadable(t, "TokensFile", tf)
 
 	// VimMappingHighlight
 	vmh := ports.VimMappingHighlight{
@@ -326,8 +326,8 @@ func TestFileStructsHaveYamlTags(t *testing.T) {
 	}{
 		{"FileHeader", ports.FileHeader{}},
 		{"PaletteFile", ports.PaletteFile{}},
-		{"UniversalToken", ports.UniversalToken{}},
-		{"UniversalFile", ports.UniversalFile{}},
+		{"TokenEntry", ports.TokenEntry{}},
+		{"TokensFile", ports.TokensFile{}},
 		{"VimMappingHighlight", ports.VimMappingHighlight{}},
 		{"VimMappingFile", ports.VimMappingFile{}},
 		{"CSSRuleEntry", ports.CSSRuleEntry{}},

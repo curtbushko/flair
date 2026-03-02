@@ -18,7 +18,7 @@ func createTestTheme(t *testing.T, configDir, themeName string) {
 		t.Fatalf("failed to create theme dir: %v", err)
 	}
 
-	universalYAML := `tokens:
+	tokensYAML := `tokens:
     surface.background:
         color: '#1a1b26'
     text.primary:
@@ -27,8 +27,8 @@ func createTestTheme(t *testing.T, configDir, themeName string) {
         color: '#bb9af7'
         bold: true
 `
-	if err := os.WriteFile(filepath.Join(themeDir, "universal.yaml"), []byte(universalYAML), 0o644); err != nil {
-		t.Fatalf("failed to write universal.yaml: %v", err)
+	if err := os.WriteFile(filepath.Join(themeDir, "tokens.yaml"), []byte(tokensYAML), 0o644); err != nil {
+		t.Fatalf("failed to write tokens.yaml: %v", err)
 	}
 }
 
@@ -63,7 +63,7 @@ func TestLoad_SelectedTheme(t *testing.T) {
 	// Act: Call LoadFrom() with config dir.
 	theme, err := flair.LoadFrom(configDir)
 
-	// Assert: Returns Theme with correct name and colors loaded from universal.yaml.
+	// Assert: Returns Theme with correct name and colors loaded from tokens.yaml.
 	if err != nil {
 		t.Fatalf("LoadFrom() error = %v, want nil", err)
 	}
@@ -93,7 +93,7 @@ func TestLoad_SelectedTheme(t *testing.T) {
 }
 
 func TestLoadNamed_ExistingTheme(t *testing.T) {
-	// Arrange: Create a temp config dir with theme 'tokyonight' directory containing universal.yaml.
+	// Arrange: Create a temp config dir with theme 'tokyonight' directory containing tokens.yaml.
 	configDir := t.TempDir()
 	themeName := "tokyonight"
 
@@ -110,7 +110,7 @@ func TestLoadNamed_ExistingTheme(t *testing.T) {
 
 	theme, err := flair.LoadNamed(themeName)
 
-	// Assert: Returns Theme with name 'tokyonight' and colors from universal.yaml.
+	// Assert: Returns Theme with name 'tokyonight' and colors from tokens.yaml.
 	if err != nil {
 		t.Fatalf("LoadNamed() error = %v, want nil", err)
 	}

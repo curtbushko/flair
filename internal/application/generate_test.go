@@ -11,10 +11,10 @@ import (
 	"testing"
 	"time"
 
-	"github.com/curtbushko/flair/internal/adapters/deriver"
 	"github.com/curtbushko/flair/internal/adapters/fileio"
 	"github.com/curtbushko/flair/internal/adapters/generator"
 	"github.com/curtbushko/flair/internal/adapters/mapper"
+	"github.com/curtbushko/flair/internal/adapters/tokenizer"
 	yamlparser "github.com/curtbushko/flair/internal/adapters/yaml"
 	"github.com/curtbushko/flair/internal/application"
 	"github.com/curtbushko/flair/internal/domain"
@@ -194,12 +194,12 @@ func (s *stubGenParser) Parse(_ io.Reader) (*domain.Palette, error) {
 	return s.palette, s.err
 }
 
-// stubGenDeriver is a test stub for ports.TokenDeriver used in generate tests.
-type stubGenDeriver struct {
+// stubGenTokenizer is a test stub for ports.Tokenizer used in generate tests.
+type stubGenTokenizer struct {
 	tokenSet *domain.TokenSet
 }
 
-func (s *stubGenDeriver) Derive(_ *domain.Palette) *domain.TokenSet {
+func (s *stubGenTokenizer) Tokenize(_ *domain.Palette) *domain.TokenSet {
 	return s.tokenSet
 }
 
@@ -309,7 +309,7 @@ func TestGenerateTheme_FullPipeline(t *testing.T) {
 
 	uc := application.NewGenerateThemeUseCase(
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 		store,
 		builtins,
@@ -320,14 +320,14 @@ func TestGenerateTheme_FullPipeline(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Should have written: palette.yaml, universal.yaml, 5 mapping files, 5 output files = 12 total
+	// Should have written: palette.yaml, tokens.yaml, 5 mapping files, 5 output files = 12 total
 	written := store.writtenFiles("test-theme")
 	if len(written) != 12 {
 		t.Errorf("expected 12 files written, got %d: %v", len(written), written)
 	}
 
 	expectedFiles := []string{
-		"palette.yaml", "universal.yaml",
+		"palette.yaml", "tokens.yaml",
 		"vim-mapping.yaml", "css-mapping.yaml", "gtk-mapping.yaml",
 		"qss-mapping.yaml", "stylix-mapping.yaml",
 		"style.lua", "style.css", "gtk.css", "style.qss", "style.json",
@@ -351,7 +351,7 @@ func TestGenerateTheme_BuiltinName(t *testing.T) {
 
 	uc := application.NewGenerateThemeUseCase(
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 		store,
 		builtins,
@@ -389,7 +389,7 @@ func TestGenerateTheme_TargetFilter(t *testing.T) {
 
 	uc := application.NewGenerateThemeUseCase(
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 		store,
 		builtins,
@@ -400,13 +400,13 @@ func TestGenerateTheme_TargetFilter(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	// Should have: palette.yaml, universal.yaml, stylix-mapping.yaml, style.json = 4 files
+	// Should have: palette.yaml, tokens.yaml, stylix-mapping.yaml, style.json = 4 files
 	written := store.writtenFiles("test-theme")
 	if len(written) != 4 {
 		t.Errorf("expected 4 files written, got %d: %v", len(written), written)
 	}
 
-	mustHave := []string{"palette.yaml", "universal.yaml", "stylix-mapping.yaml", "style.json"}
+	mustHave := []string{"palette.yaml", "tokens.yaml", "stylix-mapping.yaml", "style.json"}
 	for _, f := range mustHave {
 		if !store.hasFile("test-theme", f) {
 			t.Errorf("expected file %q to be written", f)
@@ -432,7 +432,7 @@ func TestGenerateTheme_CreateDir(t *testing.T) {
 
 	uc := application.NewGenerateThemeUseCase(
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 		store,
 		builtins,
@@ -460,7 +460,7 @@ func TestGenerateTheme_ParseError(t *testing.T) {
 
 	uc := application.NewGenerateThemeUseCase(
 		&stubGenParser{err: parseErr},
-		&stubGenDeriver{tokenSet: domain.NewTokenSet()},
+		&stubGenTokenizer{tokenSet: domain.NewTokenSet()},
 		targets,
 		store,
 		builtins,
@@ -502,7 +502,7 @@ func TestGenerateTheme_MapperError(t *testing.T) {
 
 	uc := application.NewGenerateThemeUseCase(
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 		store,
 		builtins,
@@ -522,8 +522,8 @@ func TestGenerateTheme_MapperError(t *testing.T) {
 	if !store.hasFile("test-theme", "palette.yaml") {
 		t.Error("expected palette.yaml to be written")
 	}
-	if !store.hasFile("test-theme", "universal.yaml") {
-		t.Error("expected universal.yaml to be written")
+	if !store.hasFile("test-theme", "tokens.yaml") {
+		t.Error("expected tokens.yaml to be written")
 	}
 	// vim, gtk, qss, stylix should still work
 	for _, f := range []string{"vim-mapping.yaml", "style.lua", "gtk-mapping.yaml", "gtk.css", "qss-mapping.yaml", "style.qss", "stylix-mapping.yaml", "style.json"} {
@@ -548,7 +548,7 @@ func TestGenerateTheme_Integration(t *testing.T) {
 	}
 
 	parser := yamlparser.NewParser()
-	deriv := deriver.New()
+	tok := tokenizer.New()
 	store := newStubThemeStore()
 	builtins := newStubPaletteSource()
 
@@ -625,7 +625,7 @@ func TestGenerateTheme_Integration(t *testing.T) {
 		},
 	}
 
-	uc := application.NewGenerateThemeUseCase(parser, deriv, targets, store, builtins)
+	uc := application.NewGenerateThemeUseCase(parser, tok, targets, store, builtins)
 
 	err = uc.Execute(bytes.NewReader(yamlBytes), "tokyo-night-dark", "")
 	if err != nil {
@@ -634,7 +634,7 @@ func TestGenerateTheme_Integration(t *testing.T) {
 
 	// All 12 files should be produced
 	expectedFiles := []string{
-		"palette.yaml", "universal.yaml",
+		"palette.yaml", "tokens.yaml",
 		"vim-mapping.yaml", "css-mapping.yaml", "gtk-mapping.yaml",
 		"qss-mapping.yaml", "stylix-mapping.yaml",
 		"style.lua", "style.css", "gtk.css", "style.qss", "style.json",

@@ -1,5 +1,5 @@
 // Package ports defines the interface boundaries for the flair theme pipeline.
-// It contains port interfaces (PaletteParser, PaletteSource, TokenDeriver, Mapper,
+// It contains port interfaces (PaletteParser, PaletteSource, Tokenizer, Mapper,
 // Generator, ThemeStore), file structs for YAML serialization, and theme DTOs
 // shared between mapper and generator adapters.
 package ports

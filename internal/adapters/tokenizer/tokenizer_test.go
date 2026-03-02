@@ -1,18 +1,18 @@
-package deriver_test
+package tokenizer_test
 
 import (
 	"bytes"
 	"strings"
 	"testing"
 
-	"github.com/curtbushko/flair/internal/adapters/deriver"
 	"github.com/curtbushko/flair/internal/adapters/fileio"
+	"github.com/curtbushko/flair/internal/adapters/tokenizer"
 	"github.com/curtbushko/flair/internal/domain"
 	"github.com/curtbushko/flair/internal/ports"
 )
 
 // tokyoNightDarkPalette returns the reference Tokyo Night Dark base24 palette
-// used as the canonical test fixture throughout the deriver tests.
+// used as the canonical test fixture throughout the tokenizer tests.
 func tokyoNightDarkPalette(t *testing.T) *domain.Palette {
 	t.Helper()
 
@@ -60,14 +60,14 @@ func mustParseHex(t *testing.T, hex string) domain.Color {
 	return c
 }
 
-func TestDefaultDeriver_ImplementsInterface(t *testing.T) {
-	var _ ports.TokenDeriver = &deriver.DefaultDeriver{}
+func TestDefaultTokenizer_ImplementsInterface(t *testing.T) {
+	var _ ports.Tokenizer = &tokenizer.DefaultTokenizer{}
 }
 
-func TestDeriveSurface_Background(t *testing.T) {
+func TestTokenizeSurface_Background(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("surface.background")
 	if !ok {
@@ -80,10 +80,10 @@ func TestDeriveSurface_Background(t *testing.T) {
 	}
 }
 
-func TestDeriveSurface_BackgroundRaised(t *testing.T) {
+func TestTokenizeSurface_BackgroundRaised(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("surface.background.raised")
 	if !ok {
@@ -96,10 +96,10 @@ func TestDeriveSurface_BackgroundRaised(t *testing.T) {
 	}
 }
 
-func TestDeriveSurface_BackgroundSunken(t *testing.T) {
+func TestTokenizeSurface_BackgroundSunken(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("surface.background.sunken")
 	if !ok {
@@ -112,10 +112,10 @@ func TestDeriveSurface_BackgroundSunken(t *testing.T) {
 	}
 }
 
-func TestDeriveSurface_BackgroundDarkest(t *testing.T) {
+func TestTokenizeSurface_BackgroundDarkest(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("surface.background.darkest")
 	if !ok {
@@ -128,10 +128,10 @@ func TestDeriveSurface_BackgroundDarkest(t *testing.T) {
 	}
 }
 
-func TestDeriveSurface_BackgroundHighlight(t *testing.T) {
+func TestTokenizeSurface_BackgroundHighlight(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("surface.background.highlight")
 	if !ok {
@@ -144,10 +144,10 @@ func TestDeriveSurface_BackgroundHighlight(t *testing.T) {
 	}
 }
 
-func TestDeriveSurface_BackgroundSelection(t *testing.T) {
+func TestTokenizeSurface_BackgroundSelection(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("surface.background.selection")
 	if !ok {
@@ -161,10 +161,10 @@ func TestDeriveSurface_BackgroundSelection(t *testing.T) {
 	}
 }
 
-func TestDeriveSurface_BackgroundSearch(t *testing.T) {
+func TestTokenizeSurface_BackgroundSearch(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("surface.background.search")
 	if !ok {
@@ -178,10 +178,10 @@ func TestDeriveSurface_BackgroundSearch(t *testing.T) {
 	}
 }
 
-func TestDeriveSurface_Base10Aliases(t *testing.T) {
+func TestTokenizeSurface_Base10Aliases(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	want := mustParseHex(t, "#16161e") // base10
 	aliases := []string{
@@ -203,10 +203,10 @@ func TestDeriveSurface_Base10Aliases(t *testing.T) {
 	}
 }
 
-func TestDeriveSurface_AllPresent(t *testing.T) {
+func TestTokenizeSurface_AllPresent(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	surfacePaths := []string{
 		"surface.background",
@@ -242,10 +242,10 @@ func TestDeriveSurface_AllPresent(t *testing.T) {
 
 // --- Text token tests ---
 
-func TestDeriveText_Primary(t *testing.T) {
+func TestTokenizeText_Primary(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("text.primary")
 	if !ok {
@@ -258,10 +258,10 @@ func TestDeriveText_Primary(t *testing.T) {
 	}
 }
 
-func TestDeriveText_Secondary(t *testing.T) {
+func TestTokenizeText_Secondary(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("text.secondary")
 	if !ok {
@@ -274,10 +274,10 @@ func TestDeriveText_Secondary(t *testing.T) {
 	}
 }
 
-func TestDeriveText_Muted(t *testing.T) {
+func TestTokenizeText_Muted(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("text.muted")
 	if !ok {
@@ -290,10 +290,10 @@ func TestDeriveText_Muted(t *testing.T) {
 	}
 }
 
-func TestDeriveText_Subtle(t *testing.T) {
+func TestTokenizeText_Subtle(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("text.subtle")
 	if !ok {
@@ -307,10 +307,10 @@ func TestDeriveText_Subtle(t *testing.T) {
 	}
 }
 
-func TestDeriveText_Inverse(t *testing.T) {
+func TestTokenizeText_Inverse(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("text.inverse")
 	if !ok {
@@ -323,10 +323,10 @@ func TestDeriveText_Inverse(t *testing.T) {
 	}
 }
 
-func TestDeriveText_Overlay(t *testing.T) {
+func TestTokenizeText_Overlay(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("text.overlay")
 	if !ok {
@@ -339,10 +339,10 @@ func TestDeriveText_Overlay(t *testing.T) {
 	}
 }
 
-func TestDeriveText_Sidebar(t *testing.T) {
+func TestTokenizeText_Sidebar(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("text.sidebar")
 	if !ok {
@@ -355,10 +355,10 @@ func TestDeriveText_Sidebar(t *testing.T) {
 	}
 }
 
-func TestDeriveText_AllPresent(t *testing.T) {
+func TestTokenizeText_AllPresent(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	textPaths := []string{
 		"text.primary",
@@ -390,10 +390,10 @@ func TestDeriveText_AllPresent(t *testing.T) {
 
 // --- Status token tests ---
 
-func TestDeriveStatus_Error(t *testing.T) {
+func TestTokenizeStatus_Error(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("status.error")
 	if !ok {
@@ -406,10 +406,10 @@ func TestDeriveStatus_Error(t *testing.T) {
 	}
 }
 
-func TestDeriveStatus_Warning(t *testing.T) {
+func TestTokenizeStatus_Warning(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("status.warning")
 	if !ok {
@@ -422,10 +422,10 @@ func TestDeriveStatus_Warning(t *testing.T) {
 	}
 }
 
-func TestDeriveStatus_Success(t *testing.T) {
+func TestTokenizeStatus_Success(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("status.success")
 	if !ok {
@@ -438,10 +438,10 @@ func TestDeriveStatus_Success(t *testing.T) {
 	}
 }
 
-func TestDeriveStatus_InfoHint(t *testing.T) {
+func TestTokenizeStatus_InfoHint(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	// status.info uses base14 (green)
 	wantInfo := mustParseHex(t, "#afd67a") // base14
@@ -464,10 +464,10 @@ func TestDeriveStatus_InfoHint(t *testing.T) {
 	}
 }
 
-func TestDeriveStatus_Todo(t *testing.T) {
+func TestTokenizeStatus_Todo(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("status.todo")
 	if !ok {
@@ -482,10 +482,10 @@ func TestDeriveStatus_Todo(t *testing.T) {
 
 // --- Diff token tests ---
 
-func TestDeriveDiff_AddedFg(t *testing.T) {
+func TestTokenizeDiff_AddedFg(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("diff.added.fg")
 	if !ok {
@@ -498,10 +498,10 @@ func TestDeriveDiff_AddedFg(t *testing.T) {
 	}
 }
 
-func TestDeriveDiff_AddedBg(t *testing.T) {
+func TestTokenizeDiff_AddedBg(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("diff.added.bg")
 	if !ok {
@@ -515,10 +515,10 @@ func TestDeriveDiff_AddedBg(t *testing.T) {
 	}
 }
 
-func TestDeriveDiff_AddedSign(t *testing.T) {
+func TestTokenizeDiff_AddedSign(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("diff.added.sign")
 	if !ok {
@@ -531,10 +531,10 @@ func TestDeriveDiff_AddedSign(t *testing.T) {
 	}
 }
 
-func TestDeriveDiff_DeletedFg(t *testing.T) {
+func TestTokenizeDiff_DeletedFg(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("diff.deleted.fg")
 	if !ok {
@@ -547,10 +547,10 @@ func TestDeriveDiff_DeletedFg(t *testing.T) {
 	}
 }
 
-func TestDeriveDiff_DeletedBg(t *testing.T) {
+func TestTokenizeDiff_DeletedBg(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("diff.deleted.bg")
 	if !ok {
@@ -564,10 +564,10 @@ func TestDeriveDiff_DeletedBg(t *testing.T) {
 	}
 }
 
-func TestDeriveDiff_DeletedSign(t *testing.T) {
+func TestTokenizeDiff_DeletedSign(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("diff.deleted.sign")
 	if !ok {
@@ -580,10 +580,10 @@ func TestDeriveDiff_DeletedSign(t *testing.T) {
 	}
 }
 
-func TestDeriveDiff_ChangedFg(t *testing.T) {
+func TestTokenizeDiff_ChangedFg(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("diff.changed.fg")
 	if !ok {
@@ -596,10 +596,10 @@ func TestDeriveDiff_ChangedFg(t *testing.T) {
 	}
 }
 
-func TestDeriveDiff_ChangedBg(t *testing.T) {
+func TestTokenizeDiff_ChangedBg(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("diff.changed.bg")
 	if !ok {
@@ -613,10 +613,10 @@ func TestDeriveDiff_ChangedBg(t *testing.T) {
 	}
 }
 
-func TestDeriveDiff_Ignored(t *testing.T) {
+func TestTokenizeDiff_Ignored(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("diff.ignored")
 	if !ok {
@@ -629,10 +629,10 @@ func TestDeriveDiff_Ignored(t *testing.T) {
 	}
 }
 
-func TestDeriveStatusDiff_AllPresent(t *testing.T) {
+func TestTokenizeStatusDiff_AllPresent(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	statusPaths := []string{
 		"status.error",
@@ -686,10 +686,10 @@ func TestDeriveStatusDiff_AllPresent(t *testing.T) {
 
 // --- Syntax token tests ---
 
-func TestDeriveSyntax_Keyword(t *testing.T) {
+func TestTokenizeSyntax_Keyword(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.keyword")
 	if !ok {
@@ -702,10 +702,10 @@ func TestDeriveSyntax_Keyword(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_String(t *testing.T) {
+func TestTokenizeSyntax_String(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.string")
 	if !ok {
@@ -718,10 +718,10 @@ func TestDeriveSyntax_String(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Function(t *testing.T) {
+func TestTokenizeSyntax_Function(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.function")
 	if !ok {
@@ -734,10 +734,10 @@ func TestDeriveSyntax_Function(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Comment(t *testing.T) {
+func TestTokenizeSyntax_Comment(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.comment")
 	if !ok {
@@ -753,10 +753,10 @@ func TestDeriveSyntax_Comment(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Variable(t *testing.T) {
+func TestTokenizeSyntax_Variable(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.variable")
 	if !ok {
@@ -769,10 +769,10 @@ func TestDeriveSyntax_Variable(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Constant(t *testing.T) {
+func TestTokenizeSyntax_Constant(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.constant")
 	if !ok {
@@ -785,10 +785,10 @@ func TestDeriveSyntax_Constant(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Operator(t *testing.T) {
+func TestTokenizeSyntax_Operator(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.operator")
 	if !ok {
@@ -801,10 +801,10 @@ func TestDeriveSyntax_Operator(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Type(t *testing.T) {
+func TestTokenizeSyntax_Type(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.type")
 	if !ok {
@@ -817,10 +817,10 @@ func TestDeriveSyntax_Type(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Number(t *testing.T) {
+func TestTokenizeSyntax_Number(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.number")
 	if !ok {
@@ -833,10 +833,10 @@ func TestDeriveSyntax_Number(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Tag(t *testing.T) {
+func TestTokenizeSyntax_Tag(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.tag")
 	if !ok {
@@ -849,10 +849,10 @@ func TestDeriveSyntax_Tag(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Property(t *testing.T) {
+func TestTokenizeSyntax_Property(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.property")
 	if !ok {
@@ -865,10 +865,10 @@ func TestDeriveSyntax_Property(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Parameter(t *testing.T) {
+func TestTokenizeSyntax_Parameter(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.parameter")
 	if !ok {
@@ -881,10 +881,10 @@ func TestDeriveSyntax_Parameter(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Regexp(t *testing.T) {
+func TestTokenizeSyntax_Regexp(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.regexp")
 	if !ok {
@@ -897,10 +897,10 @@ func TestDeriveSyntax_Regexp(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Escape(t *testing.T) {
+func TestTokenizeSyntax_Escape(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.escape")
 	if !ok {
@@ -913,10 +913,10 @@ func TestDeriveSyntax_Escape(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_Constructor(t *testing.T) {
+func TestTokenizeSyntax_Constructor(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.constructor")
 	if !ok {
@@ -929,10 +929,10 @@ func TestDeriveSyntax_Constructor(t *testing.T) {
 	}
 }
 
-func TestDeriveSyntax_AllPresent(t *testing.T) {
+func TestTokenizeSyntax_AllPresent(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	syntaxPaths := []string{
 		"syntax.keyword",
@@ -972,10 +972,10 @@ func TestDeriveSyntax_AllPresent(t *testing.T) {
 
 // --- Markup token tests ---
 
-func TestDeriveMarkup_Heading(t *testing.T) {
+func TestTokenizeMarkup_Heading(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.heading")
 	if !ok {
@@ -991,10 +991,10 @@ func TestDeriveMarkup_Heading(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_Link(t *testing.T) {
+func TestTokenizeMarkup_Link(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.link")
 	if !ok {
@@ -1007,10 +1007,10 @@ func TestDeriveMarkup_Link(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_Code(t *testing.T) {
+func TestTokenizeMarkup_Code(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.code")
 	if !ok {
@@ -1023,10 +1023,10 @@ func TestDeriveMarkup_Code(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_Bold(t *testing.T) {
+func TestTokenizeMarkup_Bold(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.bold")
 	if !ok {
@@ -1042,10 +1042,10 @@ func TestDeriveMarkup_Bold(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_Italic(t *testing.T) {
+func TestTokenizeMarkup_Italic(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.italic")
 	if !ok {
@@ -1061,10 +1061,10 @@ func TestDeriveMarkup_Italic(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_Strikethrough(t *testing.T) {
+func TestTokenizeMarkup_Strikethrough(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.strikethrough")
 	if !ok {
@@ -1080,10 +1080,10 @@ func TestDeriveMarkup_Strikethrough(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_Quote(t *testing.T) {
+func TestTokenizeMarkup_Quote(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.quote")
 	if !ok {
@@ -1099,10 +1099,10 @@ func TestDeriveMarkup_Quote(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_ListBullet(t *testing.T) {
+func TestTokenizeMarkup_ListBullet(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.list.bullet")
 	if !ok {
@@ -1115,10 +1115,10 @@ func TestDeriveMarkup_ListBullet(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_ListChecked(t *testing.T) {
+func TestTokenizeMarkup_ListChecked(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.list.checked")
 	if !ok {
@@ -1131,10 +1131,10 @@ func TestDeriveMarkup_ListChecked(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_ListUnchecked(t *testing.T) {
+func TestTokenizeMarkup_ListUnchecked(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.list.unchecked")
 	if !ok {
@@ -1147,10 +1147,10 @@ func TestDeriveMarkup_ListUnchecked(t *testing.T) {
 	}
 }
 
-func TestDeriveMarkup_AllPresent(t *testing.T) {
+func TestTokenizeMarkup_AllPresent(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	markupPaths := []string{
 		"markup.heading",
@@ -1185,10 +1185,10 @@ func TestDeriveMarkup_AllPresent(t *testing.T) {
 
 // --- Accent token tests ---
 
-func TestDeriveAccent_Primary(t *testing.T) {
+func TestTokenizeAccent_Primary(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("accent.primary")
 	if !ok {
@@ -1201,10 +1201,10 @@ func TestDeriveAccent_Primary(t *testing.T) {
 	}
 }
 
-func TestDeriveAccent_Secondary(t *testing.T) {
+func TestTokenizeAccent_Secondary(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("accent.secondary")
 	if !ok {
@@ -1217,10 +1217,10 @@ func TestDeriveAccent_Secondary(t *testing.T) {
 	}
 }
 
-func TestDeriveAccent_Foreground(t *testing.T) {
+func TestTokenizeAccent_Foreground(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("accent.foreground")
 	if !ok {
@@ -1235,10 +1235,10 @@ func TestDeriveAccent_Foreground(t *testing.T) {
 
 // --- Border token tests ---
 
-func TestDeriveBorder_Default(t *testing.T) {
+func TestTokenizeBorder_Default(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("border.default")
 	if !ok {
@@ -1252,10 +1252,10 @@ func TestDeriveBorder_Default(t *testing.T) {
 	}
 }
 
-func TestDeriveBorder_Focus(t *testing.T) {
+func TestTokenizeBorder_Focus(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("border.focus")
 	if !ok {
@@ -1269,10 +1269,10 @@ func TestDeriveBorder_Focus(t *testing.T) {
 	}
 }
 
-func TestDeriveBorder_Muted(t *testing.T) {
+func TestTokenizeBorder_Muted(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("border.muted")
 	if !ok {
@@ -1287,10 +1287,10 @@ func TestDeriveBorder_Muted(t *testing.T) {
 
 // --- Scrollbar token tests ---
 
-func TestDeriveScrollbar_Thumb(t *testing.T) {
+func TestTokenizeScrollbar_Thumb(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("scrollbar.thumb")
 	if !ok {
@@ -1304,10 +1304,10 @@ func TestDeriveScrollbar_Thumb(t *testing.T) {
 	}
 }
 
-func TestDeriveScrollbar_Track(t *testing.T) {
+func TestTokenizeScrollbar_Track(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("scrollbar.track")
 	if !ok {
@@ -1322,10 +1322,10 @@ func TestDeriveScrollbar_Track(t *testing.T) {
 
 // --- State token tests ---
 
-func TestDeriveState_Hover(t *testing.T) {
+func TestTokenizeState_Hover(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("state.hover")
 	if !ok {
@@ -1349,10 +1349,10 @@ func TestDeriveState_Hover(t *testing.T) {
 	}
 }
 
-func TestDeriveState_Active(t *testing.T) {
+func TestTokenizeState_Active(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("state.active")
 	if !ok {
@@ -1366,10 +1366,10 @@ func TestDeriveState_Active(t *testing.T) {
 	}
 }
 
-func TestDeriveState_DisabledFg(t *testing.T) {
+func TestTokenizeState_DisabledFg(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("state.disabled.fg")
 	if !ok {
@@ -1395,10 +1395,10 @@ func TestDeriveState_DisabledFg(t *testing.T) {
 
 // --- Git token tests ---
 
-func TestDeriveGit_Added(t *testing.T) {
+func TestTokenizeGit_Added(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("git.added")
 	if !ok {
@@ -1411,10 +1411,10 @@ func TestDeriveGit_Added(t *testing.T) {
 	}
 }
 
-func TestDeriveGit_Modified(t *testing.T) {
+func TestTokenizeGit_Modified(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("git.modified")
 	if !ok {
@@ -1427,10 +1427,10 @@ func TestDeriveGit_Modified(t *testing.T) {
 	}
 }
 
-func TestDeriveGit_Deleted(t *testing.T) {
+func TestTokenizeGit_Deleted(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("git.deleted")
 	if !ok {
@@ -1443,10 +1443,10 @@ func TestDeriveGit_Deleted(t *testing.T) {
 	}
 }
 
-func TestDeriveGit_Ignored(t *testing.T) {
+func TestTokenizeGit_Ignored(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("git.ignored")
 	if !ok {
@@ -1461,10 +1461,10 @@ func TestDeriveGit_Ignored(t *testing.T) {
 
 // --- Terminal ANSI token tests ---
 
-func TestDeriveTerminal_AllColors(t *testing.T) {
+func TestTokenizeTerminal_AllColors(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tests := []struct {
 		path string
@@ -1505,10 +1505,10 @@ func TestDeriveTerminal_AllColors(t *testing.T) {
 
 // --- All 31 accent/border/scrollbar/state/git/terminal tokens present ---
 
-func TestDeriveAccentGitTerminal_AllPresent(t *testing.T) {
+func TestTokenizeAccentGitTerminal_AllPresent(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	allPaths := []string{
 		// Accent (3)
@@ -1565,24 +1565,24 @@ func TestDeriveAccentGitTerminal_AllPresent(t *testing.T) {
 // Comprehensive Integration Tests (Task 10 — Full Derivation Validation)
 // =============================================================================
 
-// TestFullDerivation_TokenCount verifies that full derivation produces at least
+// TestFullTokenization_TokenCount verifies that full tokenization produces at least
 // 87 tokens from the Tokyo Night Dark palette.
-func TestFullDerivation_TokenCount(t *testing.T) {
+func TestFullTokenization_TokenCount(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	if ts.Len() < 87 {
 		t.Errorf("expected at least 87 tokens, got %d", ts.Len())
 	}
 }
 
-// TestFullDerivation_AllColorsPresent verifies that every token path has a
+// TestFullTokenization_AllColorsPresent verifies that every token path has a
 // valid RGB color.
-func TestFullDerivation_AllColorsPresent(t *testing.T) {
+func TestFullTokenization_AllColorsPresent(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	for _, path := range ts.Paths() {
 		tok, ok := ts.Get(path)
@@ -1597,12 +1597,12 @@ func TestFullDerivation_AllColorsPresent(t *testing.T) {
 	}
 }
 
-// TestFullDerivation_SurfaceValues verifies exact hex values for all surface
+// TestFullTokenization_SurfaceValues verifies exact hex values for all surface
 // tokens against the Tokyo Night Dark palette.
-func TestFullDerivation_SurfaceValues(t *testing.T) {
+func TestFullTokenization_SurfaceValues(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tests := []struct {
 		path string
@@ -1629,13 +1629,13 @@ func TestFullDerivation_SurfaceValues(t *testing.T) {
 	}
 }
 
-// TestFullDerivation_BlendedValues verifies that all blended tokens match
+// TestFullTokenization_BlendedValues verifies that all blended tokens match
 // independently computed BlendBg results. This is the key cross-check:
 // the test independently computes the same blend operations and compares.
-func TestFullDerivation_BlendedValues(t *testing.T) {
+func TestFullTokenization_BlendedValues(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tests := []struct {
 		path   string
@@ -1672,12 +1672,12 @@ func TestFullDerivation_BlendedValues(t *testing.T) {
 	}
 }
 
-// TestFullDerivation_SyntaxCommentStyle verifies that syntax.comment has
+// TestFullTokenization_SyntaxCommentStyle verifies that syntax.comment has
 // Italic=true and the correct color (#565f89 = base03).
-func TestFullDerivation_SyntaxCommentStyle(t *testing.T) {
+func TestFullTokenization_SyntaxCommentStyle(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("syntax.comment")
 	if !ok {
@@ -1696,12 +1696,12 @@ func TestFullDerivation_SyntaxCommentStyle(t *testing.T) {
 	}
 }
 
-// TestFullDerivation_MarkupHeadingStyle verifies that markup.heading has
+// TestFullTokenization_MarkupHeadingStyle verifies that markup.heading has
 // Bold=true and the correct color (#7aa2f7 = base0D).
-func TestFullDerivation_MarkupHeadingStyle(t *testing.T) {
+func TestFullTokenization_MarkupHeadingStyle(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tok, ok := ts.Get("markup.heading")
 	if !ok {
@@ -1720,12 +1720,12 @@ func TestFullDerivation_MarkupHeadingStyle(t *testing.T) {
 	}
 }
 
-// TestFullDerivation_TerminalColors verifies that all 16 terminal tokens
+// TestFullTokenization_TerminalColors verifies that all 16 terminal tokens
 // map to their correct base slots from the Tokyo Night Dark palette.
-func TestFullDerivation_TerminalColors(t *testing.T) {
+func TestFullTokenization_TerminalColors(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
 
 	tests := []struct {
 		path string
@@ -1772,24 +1772,24 @@ func TestFullDerivation_TerminalColors(t *testing.T) {
 	}
 }
 
-// TestFullDerivation_WriteReadRoundTrip verifies that serializing the full
-// derived TokenSet to YAML via WriteUniversal and reading it back via
-// ReadUniversal produces an identical TokenSet.
-func TestFullDerivation_WriteReadRoundTrip(t *testing.T) {
+// TestFullTokenization_WriteReadRoundTrip verifies that serializing the full
+// tokenized TokenSet to YAML via WriteTokens and reading it back via
+// ReadTokens produces an identical TokenSet.
+func TestFullTokenization_WriteReadRoundTrip(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	original := d.Derive(pal)
+	d := tokenizer.New()
+	original := d.Tokenize(pal)
 
 	// Write to buffer.
 	var buf bytes.Buffer
-	if err := fileio.WriteUniversal(&buf, original); err != nil {
-		t.Fatalf("WriteUniversal failed: %v", err)
+	if err := fileio.WriteTokens(&buf, original); err != nil {
+		t.Fatalf("WriteTokens failed: %v", err)
 	}
 
 	// Read back from buffer.
-	roundTripped, err := fileio.ReadUniversal(strings.NewReader(buf.String()))
+	roundTripped, err := fileio.ReadTokens(strings.NewReader(buf.String()))
 	if err != nil {
-		t.Fatalf("ReadUniversal failed: %v", err)
+		t.Fatalf("ReadTokens failed: %v", err)
 	}
 
 	// Compare counts.
@@ -1848,14 +1848,14 @@ func safeIndex(s []string, i int) string {
 	return s[i]
 }
 
-// TestFullDerivation_Deterministic verifies that two independent derivations
+// TestFullTokenization_Deterministic verifies that two independent tokenizations
 // from the same palette produce byte-identical TokenSets.
-func TestFullDerivation_Deterministic(t *testing.T) {
+func TestFullTokenization_Deterministic(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
+	d := tokenizer.New()
 
-	ts1 := d.Derive(pal)
-	ts2 := d.Derive(pal)
+	ts1 := d.Tokenize(pal)
+	ts2 := d.Tokenize(pal)
 
 	// Same count.
 	if ts1.Len() != ts2.Len() {
@@ -1901,13 +1901,13 @@ func TestFullDerivation_Deterministic(t *testing.T) {
 
 	// Additionally verify byte-identical serialization.
 	var buf1, buf2 bytes.Buffer
-	if err := fileio.WriteUniversal(&buf1, ts1); err != nil {
-		t.Fatalf("WriteUniversal ts1 failed: %v", err)
+	if err := fileio.WriteTokens(&buf1, ts1); err != nil {
+		t.Fatalf("WriteTokens ts1 failed: %v", err)
 	}
-	if err := fileio.WriteUniversal(&buf2, ts2); err != nil {
-		t.Fatalf("WriteUniversal ts2 failed: %v", err)
+	if err := fileio.WriteTokens(&buf2, ts2); err != nil {
+		t.Fatalf("WriteTokens ts2 failed: %v", err)
 	}
 	if buf1.String() != buf2.String() {
-		t.Error("serialized YAML output differs between two derivations")
+		t.Error("serialized YAML output differs between two tokenizations")
 	}
 }

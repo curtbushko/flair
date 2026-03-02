@@ -17,28 +17,28 @@ import (
 
 const testBgHex = "#1a1b26"
 
-func TestWriteUniversal_Empty(t *testing.T) {
+func TestWriteTokens_Empty(t *testing.T) {
 	ts := domain.NewTokenSet()
 	var buf bytes.Buffer
 
-	err := fileio.WriteUniversal(&buf, ts)
+	err := fileio.WriteTokens(&buf, ts)
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
 	// Output should be valid YAML
-	var uf ports.UniversalFile
-	if err := yaml.Unmarshal(buf.Bytes(), &uf); err != nil {
+	var tf ports.TokensFile
+	if err := yaml.Unmarshal(buf.Bytes(), &tf); err != nil {
 		t.Fatalf("output is not valid YAML: %v\noutput:\n%s", err, buf.String())
 	}
 
 	// Tokens map should be empty (or nil, either is acceptable)
-	if len(uf.Tokens) != 0 {
-		t.Errorf("expected empty tokens map, got %d entries", len(uf.Tokens))
+	if len(tf.Tokens) != 0 {
+		t.Errorf("expected empty tokens map, got %d entries", len(tf.Tokens))
 	}
 }
 
-func TestWriteUniversal_ColorOnly(t *testing.T) {
+func TestWriteTokens_ColorOnly(t *testing.T) {
 	ts := domain.NewTokenSet()
 	bg, err := domain.ParseHex(testBgHex)
 	if err != nil {
@@ -47,18 +47,18 @@ func TestWriteUniversal_ColorOnly(t *testing.T) {
 	ts.Set("surface.background", domain.Token{Color: bg})
 
 	var buf bytes.Buffer
-	if err := fileio.WriteUniversal(&buf, ts); err != nil {
+	if err := fileio.WriteTokens(&buf, ts); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	var uf ports.UniversalFile
-	if err := yaml.Unmarshal(buf.Bytes(), &uf); err != nil {
+	var tf ports.TokensFile
+	if err := yaml.Unmarshal(buf.Bytes(), &tf); err != nil {
 		t.Fatalf("output is not valid YAML: %v\noutput:\n%s", err, buf.String())
 	}
 
-	tok, ok := uf.Tokens["surface.background"]
+	tok, ok := tf.Tokens["surface.background"]
 	if !ok {
-		t.Fatalf("expected 'surface.background' in tokens, got keys: %v", tokenKeys(uf.Tokens))
+		t.Fatalf("expected 'surface.background' in tokens, got keys: %v", tokenKeys(tf.Tokens))
 	}
 
 	if tok.Color != testBgHex {
@@ -72,7 +72,7 @@ func TestWriteUniversal_ColorOnly(t *testing.T) {
 	}
 }
 
-func TestWriteUniversal_WithStyles(t *testing.T) {
+func TestWriteTokens_WithStyles(t *testing.T) {
 	ts := domain.NewTokenSet()
 	c, err := domain.ParseHex("#565f89")
 	if err != nil {
@@ -81,18 +81,18 @@ func TestWriteUniversal_WithStyles(t *testing.T) {
 	ts.Set("syntax.comment", domain.Token{Color: c, Italic: true})
 
 	var buf bytes.Buffer
-	if err := fileio.WriteUniversal(&buf, ts); err != nil {
+	if err := fileio.WriteTokens(&buf, ts); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	var uf ports.UniversalFile
-	if err := yaml.Unmarshal(buf.Bytes(), &uf); err != nil {
+	var tf ports.TokensFile
+	if err := yaml.Unmarshal(buf.Bytes(), &tf); err != nil {
 		t.Fatalf("output is not valid YAML: %v\noutput:\n%s", err, buf.String())
 	}
 
-	tok, ok := uf.Tokens["syntax.comment"]
+	tok, ok := tf.Tokens["syntax.comment"]
 	if !ok {
-		t.Fatalf("expected 'syntax.comment' in tokens, got keys: %v", tokenKeys(uf.Tokens))
+		t.Fatalf("expected 'syntax.comment' in tokens, got keys: %v", tokenKeys(tf.Tokens))
 	}
 
 	if tok.Color != "#565f89" {
@@ -104,7 +104,7 @@ func TestWriteUniversal_WithStyles(t *testing.T) {
 	}
 }
 
-func TestWriteUniversal_NoneColor(t *testing.T) {
+func TestWriteTokens_NoneColor(t *testing.T) {
 	ts := domain.NewTokenSet()
 	ts.Set("markup.bold", domain.Token{
 		Color: domain.NoneColor(),
@@ -112,18 +112,18 @@ func TestWriteUniversal_NoneColor(t *testing.T) {
 	})
 
 	var buf bytes.Buffer
-	if err := fileio.WriteUniversal(&buf, ts); err != nil {
+	if err := fileio.WriteTokens(&buf, ts); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	var uf ports.UniversalFile
-	if err := yaml.Unmarshal(buf.Bytes(), &uf); err != nil {
+	var tf ports.TokensFile
+	if err := yaml.Unmarshal(buf.Bytes(), &tf); err != nil {
 		t.Fatalf("output is not valid YAML: %v\noutput:\n%s", err, buf.String())
 	}
 
-	tok, ok := uf.Tokens["markup.bold"]
+	tok, ok := tf.Tokens["markup.bold"]
 	if !ok {
-		t.Fatalf("expected 'markup.bold' in tokens, got keys: %v", tokenKeys(uf.Tokens))
+		t.Fatalf("expected 'markup.bold' in tokens, got keys: %v", tokenKeys(tf.Tokens))
 	}
 
 	// NoneColor should result in empty color string
@@ -136,7 +136,7 @@ func TestWriteUniversal_NoneColor(t *testing.T) {
 	}
 }
 
-func TestWriteUniversal_AllPaths(t *testing.T) {
+func TestWriteTokens_AllPaths(t *testing.T) {
 	ts := domain.NewTokenSet()
 
 	paths := []string{
@@ -153,21 +153,21 @@ func TestWriteUniversal_AllPaths(t *testing.T) {
 	}
 
 	var buf bytes.Buffer
-	if err := fileio.WriteUniversal(&buf, ts); err != nil {
+	if err := fileio.WriteTokens(&buf, ts); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	var uf ports.UniversalFile
-	if err := yaml.Unmarshal(buf.Bytes(), &uf); err != nil {
+	var tf ports.TokensFile
+	if err := yaml.Unmarshal(buf.Bytes(), &tf); err != nil {
 		t.Fatalf("output is not valid YAML: %v\noutput:\n%s", err, buf.String())
 	}
 
-	if len(uf.Tokens) != len(paths) {
-		t.Errorf("expected %d tokens, got %d", len(paths), len(uf.Tokens))
+	if len(tf.Tokens) != len(paths) {
+		t.Errorf("expected %d tokens, got %d", len(paths), len(tf.Tokens))
 	}
 
 	for _, p := range paths {
-		if _, ok := uf.Tokens[p]; !ok {
+		if _, ok := tf.Tokens[p]; !ok {
 			t.Errorf("expected path %q in tokens map", p)
 		}
 	}
@@ -195,7 +195,7 @@ func TestWriteUniversal_AllPaths(t *testing.T) {
 	}
 }
 
-func TestWriteUniversal_WithVersionedWriter(t *testing.T) {
+func TestWriteTokens_WithVersionedWriter(t *testing.T) {
 	ts := domain.NewTokenSet()
 	c, err := domain.ParseHex("#7aa2f7")
 	if err != nil {
@@ -204,30 +204,30 @@ func TestWriteUniversal_WithVersionedWriter(t *testing.T) {
 	ts.Set("accent.primary", domain.Token{Color: c})
 
 	var buf bytes.Buffer
-	vw := wrappers.NewVersionedWriter(&buf, domain.FileKindUniversal, "tokyonight")
+	vw := wrappers.NewVersionedWriter(&buf, domain.FileKindTokens, "tokyonight")
 
-	if err := fileio.WriteUniversal(vw, ts); err != nil {
+	if err := fileio.WriteTokens(vw, ts); err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
 	output := buf.String()
 
 	// Should start with schema_version header
-	wantHeader := fmt.Sprintf("schema_version: %d\nkind: universal\ntheme_name: tokyonight\n",
-		domain.CurrentVersion(domain.FileKindUniversal))
+	wantHeader := fmt.Sprintf("schema_version: %d\nkind: tokens\ntheme_name: tokyonight\n",
+		domain.CurrentVersion(domain.FileKindTokens))
 	if !strings.HasPrefix(output, wantHeader) {
 		t.Errorf("output does not start with expected header.\ngot:\n%s\nwant prefix:\n%s", output, wantHeader)
 	}
 
-	// The full output (after header) should be valid YAML when parsed as UniversalFile
+	// The full output (after header) should be valid YAML when parsed as TokensFile
 	// Parse just the part after the header
 	afterHeader := strings.TrimPrefix(output, wantHeader)
-	var uf ports.UniversalFile
-	if err := yaml.Unmarshal([]byte(afterHeader), &uf); err != nil {
+	var tf ports.TokensFile
+	if err := yaml.Unmarshal([]byte(afterHeader), &tf); err != nil {
 		t.Fatalf("post-header content is not valid YAML: %v\ncontent:\n%s", err, afterHeader)
 	}
 
-	tok, ok := uf.Tokens["accent.primary"]
+	tok, ok := tf.Tokens["accent.primary"]
 	if !ok {
 		t.Fatalf("expected 'accent.primary' in tokens")
 	}
@@ -236,16 +236,16 @@ func TestWriteUniversal_WithVersionedWriter(t *testing.T) {
 	}
 }
 
-// --- ReadUniversal tests ---
+// --- ReadTokens tests ---
 
-func TestReadUniversal_Valid(t *testing.T) {
+func TestReadTokens_Valid(t *testing.T) {
 	yamlData := `tokens:
   surface.background:
     color: "#1a1b26"
   syntax.keyword:
     color: "#bb9af7"
 `
-	ts, err := fileio.ReadUniversal(bytes.NewReader([]byte(yamlData)))
+	ts, err := fileio.ReadTokens(bytes.NewReader([]byte(yamlData)))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -271,7 +271,7 @@ func TestReadUniversal_Valid(t *testing.T) {
 	}
 }
 
-func TestReadUniversal_StyleFlags(t *testing.T) {
+func TestReadTokens_StyleFlags(t *testing.T) {
 	yamlData := `tokens:
   syntax.comment:
     color: "#565f89"
@@ -285,7 +285,7 @@ func TestReadUniversal_StyleFlags(t *testing.T) {
     undercurl: true
     strikethrough: true
 `
-	ts, err := fileio.ReadUniversal(bytes.NewReader([]byte(yamlData)))
+	ts, err := fileio.ReadTokens(bytes.NewReader([]byte(yamlData)))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -324,7 +324,7 @@ func TestReadUniversal_StyleFlags(t *testing.T) {
 	}
 }
 
-func TestUniversal_RoundTrip(t *testing.T) {
+func TestTokens_RoundTrip(t *testing.T) {
 	// Build a TokenSet with mixed color-only and styled tokens.
 	original := domain.NewTokenSet()
 
@@ -348,15 +348,15 @@ func TestUniversal_RoundTrip(t *testing.T) {
 
 	// Write
 	var buf bytes.Buffer
-	writeErr := fileio.WriteUniversal(&buf, original)
+	writeErr := fileio.WriteTokens(&buf, original)
 	if writeErr != nil {
-		t.Fatalf("WriteUniversal error: %v", writeErr)
+		t.Fatalf("WriteTokens error: %v", writeErr)
 	}
 
 	// Read back
-	restored, readErr := fileio.ReadUniversal(bytes.NewReader(buf.Bytes()))
+	restored, readErr := fileio.ReadTokens(bytes.NewReader(buf.Bytes()))
 	if readErr != nil {
-		t.Fatalf("ReadUniversal error: %v", readErr)
+		t.Fatalf("ReadTokens error: %v", readErr)
 	}
 
 	// Compare
@@ -396,17 +396,17 @@ func TestUniversal_RoundTrip(t *testing.T) {
 	}
 }
 
-func TestReadUniversal_VersionMismatch(t *testing.T) {
+func TestReadTokens_VersionMismatch(t *testing.T) {
 	yamlData := `schema_version: 99
-kind: universal
+kind: tokens
 theme_name: test
 tokens:
   surface.background:
     color: "#1a1b26"
 `
-	vr := wrappers.NewValidatingReader(bytes.NewReader([]byte(yamlData)), domain.FileKindUniversal)
+	vr := wrappers.NewValidatingReader(bytes.NewReader([]byte(yamlData)), domain.FileKindTokens)
 
-	_, err := fileio.ReadUniversal(vr)
+	_, err := fileio.ReadTokens(vr)
 	if err == nil {
 		t.Fatal("expected error for version mismatch, got nil")
 	}
@@ -420,10 +420,10 @@ tokens:
 	}
 }
 
-func TestReadUniversal_EmptyTokens(t *testing.T) {
+func TestReadTokens_EmptyTokens(t *testing.T) {
 	yamlData := `tokens: {}
 `
-	ts, err := fileio.ReadUniversal(bytes.NewReader([]byte(yamlData)))
+	ts, err := fileio.ReadTokens(bytes.NewReader([]byte(yamlData)))
 	if err != nil {
 		t.Fatalf("unexpected error: %v", err)
 	}
@@ -433,17 +433,17 @@ func TestReadUniversal_EmptyTokens(t *testing.T) {
 	}
 }
 
-func TestReadUniversal_InvalidYAML(t *testing.T) {
+func TestReadTokens_InvalidYAML(t *testing.T) {
 	malformed := []byte(`{not valid yaml: [[[`)
 
-	_, err := fileio.ReadUniversal(bytes.NewReader(malformed))
+	_, err := fileio.ReadTokens(bytes.NewReader(malformed))
 	if err == nil {
 		t.Fatal("expected error for invalid YAML, got nil")
 	}
 }
 
 // tokenKeys is a test helper that returns the keys of a token map.
-func tokenKeys(m map[string]ports.UniversalToken) []string {
+func tokenKeys(m map[string]ports.TokenEntry) []string {
 	keys := make([]string, 0, len(m))
 	for k := range m {
 		keys = append(keys, k)

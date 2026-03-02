@@ -12,7 +12,7 @@ import (
 
 func TestVersionedWriter_PrependsHeader(t *testing.T) {
 	var buf bytes.Buffer
-	vw := wrappers.NewVersionedWriter(&buf, domain.FileKindUniversal, "tokyonight")
+	vw := wrappers.NewVersionedWriter(&buf, domain.FileKindTokens, "tokyonight")
 
 	content := "tokens:\n  fg: '#c0caf5'\n"
 	_, err := vw.Write([]byte(content))
@@ -21,8 +21,8 @@ func TestVersionedWriter_PrependsHeader(t *testing.T) {
 	}
 
 	got := buf.String()
-	wantHeader := fmt.Sprintf("schema_version: %d\nkind: universal\ntheme_name: tokyonight\n",
-		domain.CurrentVersion(domain.FileKindUniversal))
+	wantHeader := fmt.Sprintf("schema_version: %d\nkind: tokens\ntheme_name: tokyonight\n",
+		domain.CurrentVersion(domain.FileKindTokens))
 
 	if !strings.HasPrefix(got, wantHeader) {
 		t.Errorf("buffer does not start with expected header.\ngot:\n%s\nwant prefix:\n%s", got, wantHeader)
@@ -72,7 +72,7 @@ func TestVersionedWriter_CorrectVersionPerKind(t *testing.T) {
 		wantKind string
 	}{
 		{domain.FileKindPalette, "palette"},
-		{domain.FileKindUniversal, "universal"},
+		{domain.FileKindTokens, "tokens"},
 		{domain.FileKindVimMapping, "vim-mapping"},
 		{domain.FileKindCSSMapping, "css-mapping"},
 		{domain.FileKindGtkMapping, "gtk-mapping"},
@@ -107,7 +107,7 @@ func TestVersionedWriter_CorrectVersionPerKind(t *testing.T) {
 
 func TestVersionedWriter_EmptyWrite(t *testing.T) {
 	var buf bytes.Buffer
-	vw := wrappers.NewVersionedWriter(&buf, domain.FileKindUniversal, "empty-theme")
+	vw := wrappers.NewVersionedWriter(&buf, domain.FileKindTokens, "empty-theme")
 
 	_, err := vw.Write([]byte{})
 	if err != nil {
@@ -115,8 +115,8 @@ func TestVersionedWriter_EmptyWrite(t *testing.T) {
 	}
 
 	got := buf.String()
-	wantHeader := fmt.Sprintf("schema_version: %d\nkind: universal\ntheme_name: empty-theme\n",
-		domain.CurrentVersion(domain.FileKindUniversal))
+	wantHeader := fmt.Sprintf("schema_version: %d\nkind: tokens\ntheme_name: empty-theme\n",
+		domain.CurrentVersion(domain.FileKindTokens))
 
 	if got != wantHeader {
 		t.Errorf("empty write should still produce header.\ngot:\n%q\nwant:\n%q", got, wantHeader)

@@ -67,9 +67,9 @@ func TestDefault_LoadsCurrentTheme(t *testing.T) {
 		t.Fatalf("failed to create theme dir: %v", err)
 	}
 
-	// Create universal.yaml with minimal tokens
-	universalYAML := `schema_version: 1
-kind: universal
+	// Create tokens.yaml with minimal tokens
+	tokensYAML := `schema_version: 1
+kind: tokens
 theme_name: test-theme
 tokens:
   surface.background:
@@ -105,8 +105,8 @@ tokens:
   border.focus:
     color: "#7aa2f7"
 `
-	if err := os.WriteFile(filepath.Join(themeDir, "universal.yaml"), []byte(universalYAML), 0o644); err != nil {
-		t.Fatalf("failed to write universal.yaml: %v", err)
+	if err := os.WriteFile(filepath.Join(themeDir, "tokens.yaml"), []byte(tokensYAML), 0o644); err != nil {
+		t.Fatalf("failed to write tokens.yaml: %v", err)
 	}
 
 	// Create style.json so we can create a symlink

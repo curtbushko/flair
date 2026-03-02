@@ -43,7 +43,7 @@ func TestPreviewCmd_ValidTheme(t *testing.T) {
 		t.Error("output should contain ANSI escape sequences")
 	}
 
-	// Should contain semantic token names from universal.yaml.
+	// Should contain semantic token names from tokens.yaml.
 	if !strings.Contains(output, "surface.background") {
 		t.Error("output should contain semantic token names like surface.background")
 	}

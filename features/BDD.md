@@ -231,8 +231,8 @@ features/
   - [ ] Scenario: Status tokens match derivation table
   - [ ] Scenario: Syntax tokens match derivation table
   - [ ] Scenario: Terminal ANSI colors correct
-  - [ ] Scenario: Write universal.yaml via io.Writer
-  - [ ] Scenario: Read universal.yaml round-trip
+  - [ ] Scenario: Write tokens.yaml via io.Writer
+  - [ ] Scenario: Read tokens.yaml round-trip
   - [ ] Scenario: ValidatingReader catches version mismatch
 
 - [ ] 3.2 — Step definitions for derivation
@@ -296,7 +296,7 @@ features/
 
 - [ ] 6.3 — `features/cli/regenerate.feature` (Feature 4.8)
   - [ ] Scenario: Edit palette.yaml regenerates everything
-  - [ ] Scenario: Edit universal.yaml regenerates mappings + outputs
+  - [ ] Scenario: Edit tokens.yaml regenerates mappings + outputs
   - [ ] Scenario: Edit vim-mapping.yaml regenerates only style.lua
   - [ ] Scenario: No edits shows "nothing to do"
 

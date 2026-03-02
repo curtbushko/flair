@@ -19,9 +19,9 @@ var outputFiles = []string{
 	"style.json",
 }
 
-// universalToken represents a single semantic token in universal.yaml.
+// tokensEntry represents a single semantic token entry in tokens.yaml.
 // This is a private type to avoid exposing YAML details.
-type universalToken struct {
+type tokensEntry struct {
 	Color         string `yaml:"color"`
 	Bold          bool   `yaml:"bold,omitempty"`
 	Italic        bool   `yaml:"italic,omitempty"`
@@ -30,9 +30,9 @@ type universalToken struct {
 	Strikethrough bool   `yaml:"strikethrough,omitempty"`
 }
 
-// universalFile represents the structure of universal.yaml.
-type universalFile struct {
-	Tokens map[string]universalToken `yaml:"tokens"`
+// tokensFile represents the structure of tokens.yaml.
+type tokensFile struct {
+	Tokens map[string]tokensEntry `yaml:"tokens"`
 }
 
 // ErrNoSelectedTheme is returned when no theme is currently selected.
@@ -70,9 +70,9 @@ func LoadNamed(name string) (*Theme, error) {
 // LoadNamedFrom loads a specific theme by name from the specified config directory.
 func LoadNamedFrom(configDir, name string) (*Theme, error) {
 	themeDir := filepath.Join(configDir, name)
-	universalPath := filepath.Join(themeDir, "universal.yaml")
+	tokensPath := filepath.Join(themeDir, "tokens.yaml")
 
-	data, err := os.ReadFile(universalPath)
+	data, err := os.ReadFile(tokensPath)
 	if err != nil {
 		if os.IsNotExist(err) {
 			return nil, fmt.Errorf("load theme %q: %w", name, ErrThemeNotFound)
@@ -80,9 +80,9 @@ func LoadNamedFrom(configDir, name string) (*Theme, error) {
 		return nil, fmt.Errorf("load theme %q: %w", name, err)
 	}
 
-	var uf universalFile
+	var uf tokensFile
 	if err := yaml.Unmarshal(data, &uf); err != nil {
-		return nil, fmt.Errorf("load theme %q: parse universal.yaml: %w", name, err)
+		return nil, fmt.Errorf("load theme %q: parse tokens.yaml: %w", name, err)
 	}
 
 	colors := make(map[string]Color, len(uf.Tokens))
@@ -111,7 +111,7 @@ func ListThemes() ([]string, error) {
 }
 
 // ListThemesFrom returns the names of all available themes in the specified config directory.
-// Theme directories are identified by the presence of a universal.yaml file.
+// Theme directories are identified by the presence of a tokens.yaml file.
 func ListThemesFrom(configDir string) ([]string, error) {
 	entries, err := os.ReadDir(configDir)
 	if err != nil {
@@ -127,8 +127,8 @@ func ListThemesFrom(configDir string) ([]string, error) {
 			continue
 		}
 
-		// Check for universal.yaml to confirm it's a valid theme directory.
-		universalPath := filepath.Join(configDir, entry.Name(), "universal.yaml")
+		// Check for tokens.yaml to confirm it's a valid theme directory.
+		universalPath := filepath.Join(configDir, entry.Name(), "tokens.yaml")
 		if _, err := os.Stat(universalPath); err == nil {
 			themes = append(themes, entry.Name())
 		}

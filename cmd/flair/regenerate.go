@@ -11,7 +11,7 @@ import (
 const regenerateUsage = `Usage: flair regenerate <theme-name> [options]
 
 Re-derive downstream files by inspecting modification times. Only stale
-files are regenerated: palette edits re-derive everything, universal edits
+files are regenerated: palette edits re-derive everything, tokens edits
 re-map all targets, and mapping edits re-generate only that output.
 
 Options:

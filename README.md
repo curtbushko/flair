@@ -253,7 +253,7 @@ internal/
     palettes/      # Built-in palette source (go:embed)
     store/         # Filesystem-based theme store
     yaml/          # YAML parser adapter
-    deriver/       # Palette-to-universal token derivation
+    tokenizer/     # Palette-to-universal token derivation
     mapper/        # Universal-to-target mapping (vim, css, gtk, qss, stylix)
     generator/     # Mapping-to-output file generation
     fileio/        # YAML file readers and writers

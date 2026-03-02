@@ -154,9 +154,9 @@ palette:
 		t.Fatalf("write palette: %v", err)
 	}
 
-	// Write universal.yaml with schema_version header.
-	universalData := []byte("schema_version: 1\nkind: universal\ntokens: {}\n")
-	if err := os.WriteFile(filepath.Join(themeDir, "universal.yaml"), universalData, 0o644); err != nil {
+	// Write tokens.yaml with schema_version header.
+	tokensData := []byte("schema_version: 1\nkind: tokens\ntokens: {}\n")
+	if err := os.WriteFile(filepath.Join(themeDir, "tokens.yaml"), tokensData, 0o644); err != nil {
 		t.Fatalf("write universal: %v", err)
 	}
 

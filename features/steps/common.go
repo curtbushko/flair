@@ -15,11 +15,11 @@ import (
 
 	"github.com/cucumber/godog"
 
-	"github.com/curtbushko/flair/internal/adapters/deriver"
 	"github.com/curtbushko/flair/internal/adapters/generator"
 	"github.com/curtbushko/flair/internal/adapters/mapper"
 	"github.com/curtbushko/flair/internal/adapters/palettes"
 	"github.com/curtbushko/flair/internal/adapters/store"
+	"github.com/curtbushko/flair/internal/adapters/tokenizer"
 	"github.com/curtbushko/flair/internal/adapters/wrappers"
 	yamlparser "github.com/curtbushko/flair/internal/adapters/yaml"
 	"github.com/curtbushko/flair/internal/domain"
@@ -114,7 +114,7 @@ func InitializeScenario(ctx *godog.ScenarioContext) {
 	registerStoreSteps(ctx, tc)
 	registerBuiltinSteps(ctx, tc)
 	registerWrapperSteps(ctx, tc)
-	registerDeriverSteps(ctx, tc)
+	registerTokenizerSteps(ctx, tc)
 	registerMapperSteps(ctx, tc)
 	registerGeneratorSteps(ctx, tc)
 	registerE2ESteps(ctx, tc)
@@ -517,7 +517,7 @@ func (tc *TestContext) allFileKindConstants() error {
 func (tc *TestContext) eachShouldHaveVersionGreaterThan0() error {
 	kinds := []domain.FileKind{
 		domain.FileKindPalette,
-		domain.FileKindUniversal,
+		domain.FileKindTokens,
 		domain.FileKindVimMapping,
 		domain.FileKindCSSMapping,
 		domain.FileKindGtkMapping,
@@ -848,9 +848,9 @@ func (tc *TestContext) needsUpgradeShouldBe(expected string) error {
 	return nil
 }
 
-// --- Token Deriver Step Definitions ---
+// --- Tokenizer Step Definitions ---
 
-func registerDeriverSteps(ctx *godog.ScenarioContext, tc *TestContext) {
+func registerTokenizerSteps(ctx *godog.ScenarioContext, tc *TestContext) {
 	ctx.Step(`^I derive tokens from the Tokyo Night Dark palette$`, tc.iDeriveTokensFromTokyoNightDark)
 	ctx.Step(`^the TokenSet should have at least (\d+) tokens$`, tc.theTokenSetShouldHaveAtLeastTokens)
 	ctx.Step(`^token "([^"]*)" should have color "([^"]*)"$`, tc.tokenShouldHaveColor)
@@ -864,8 +864,8 @@ func (tc *TestContext) iDeriveTokensFromTokyoNightDark() error {
 			return err
 		}
 	}
-	drv := deriver.New()
-	tc.tokenSet = drv.Derive(tc.palette)
+	tok := tokenizer.New()
+	tc.tokenSet = tok.Tokenize(tc.palette)
 	return nil
 }
 
@@ -1203,8 +1203,8 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 	tc.themeName = scheme
 
 	// Derive tokens
-	drv := deriver.New()
-	tc.tokenSet = drv.Derive(pal)
+	tok := tokenizer.New()
+	tc.tokenSet = tok.Tokenize(pal)
 
 	// Create ResolvedTheme
 	tc.resolvedTheme = &domain.ResolvedTheme{
@@ -1233,12 +1233,12 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 		return closeErr
 	}
 
-	// Write universal.yaml
-	uw, uwErr := tc.fsStore.OpenWriter(scheme, "universal.yaml")
+	// Write tokens.yaml
+	uw, uwErr := tc.fsStore.OpenWriter(scheme, "tokens.yaml")
 	if uwErr != nil {
 		return uwErr
 	}
-	vwu := wrappers.NewVersionedWriter(uw, domain.FileKindUniversal, scheme)
+	vwu := wrappers.NewVersionedWriter(uw, domain.FileKindTokens, scheme)
 	if _, writeErr := vwu.Write([]byte("tokens: test\n")); writeErr != nil {
 		_ = uw.Close()
 		return writeErr
@@ -1389,7 +1389,7 @@ func (tc *TestContext) iRunTheFullPipelineFor(scheme string) error {
 func (tc *TestContext) all12FilesShouldBeCreated() error {
 	files := []string{
 		"palette.yaml",
-		"universal.yaml",
+		"tokens.yaml",
 		"vim-mapping.yaml",
 		"css-mapping.yaml",
 		"gtk-mapping.yaml",

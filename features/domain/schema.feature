@@ -7,8 +7,8 @@ Feature: Schema version management
     Given file kind "palette"
     Then CurrentVersion should return 1
 
-  Scenario: CurrentVersion for universal
-    Given file kind "universal"
+  Scenario: CurrentVersion for tokens
+    Given file kind "tokens"
     Then CurrentVersion should return 1
 
   Scenario: CurrentVersion for vim-mapping

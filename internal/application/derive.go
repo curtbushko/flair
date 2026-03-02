@@ -15,16 +15,16 @@ import (
 // to produce a fully resolved theme. It depends on port interfaces,
 // keeping the application layer adapter-agnostic.
 type DeriveThemeUseCase struct {
-	parser  ports.PaletteParser
-	deriver ports.TokenDeriver
+	parser    ports.PaletteParser
+	tokenizer ports.Tokenizer
 }
 
 // NewDeriveThemeUseCase returns a new DeriveThemeUseCase wired to the
-// given parser and deriver ports.
-func NewDeriveThemeUseCase(parser ports.PaletteParser, deriver ports.TokenDeriver) *DeriveThemeUseCase {
+// given parser and tokenizer ports.
+func NewDeriveThemeUseCase(parser ports.PaletteParser, tokenizer ports.Tokenizer) *DeriveThemeUseCase {
 	return &DeriveThemeUseCase{
-		parser:  parser,
-		deriver: deriver,
+		parser:    parser,
+		tokenizer: tokenizer,
 	}
 }
 
@@ -36,7 +36,7 @@ func (uc *DeriveThemeUseCase) Execute(r io.Reader) (*domain.ResolvedTheme, error
 		return nil, fmt.Errorf("parse palette: %w", err)
 	}
 
-	tokens := uc.deriver.Derive(palette)
+	tokens := uc.tokenizer.Tokenize(palette)
 
 	return &domain.ResolvedTheme{
 		Name:    palette.Name,

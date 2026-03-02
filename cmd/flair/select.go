@@ -175,15 +175,15 @@ func (l *appThemeLoader) LoadTokens(name string) (viewer.TokenData, error) {
 		Diff:    make(map[string]string),
 	}
 
-	// Try to read universal.yaml.
-	rc, err := l.app.Store.OpenReader(name, "universal.yaml")
+	// Try to read tokens.yaml.
+	rc, err := l.app.Store.OpenReader(name, "tokens.yaml")
 	if err != nil {
-		// No universal.yaml, try to derive from palette.
+		// No tokens.yaml, try to derive from palette.
 		return l.deriveTokensFromPalette(name, td)
 	}
 	defer func() { _ = rc.Close() }()
 
-	ts, err := fileio.ReadUniversal(rc)
+	ts, err := fileio.ReadTokens(rc)
 	if err != nil {
 		return td, err
 	}
@@ -213,7 +213,7 @@ func (l *appThemeLoader) LoadTokens(name string) (viewer.TokenData, error) {
 	return td, nil
 }
 
-// deriveTokensFromPalette derives tokens from a palette when universal.yaml doesn't exist.
+// deriveTokensFromPalette derives tokens from a palette when tokens.yaml doesn't exist.
 func (l *appThemeLoader) deriveTokensFromPalette(name string, td viewer.TokenData) (viewer.TokenData, error) {
 	// Try to parse palette from store.
 	rc, err := l.app.Store.OpenReader(name, "palette.yaml")
@@ -221,7 +221,7 @@ func (l *appThemeLoader) deriveTokensFromPalette(name string, td viewer.TokenDat
 		defer func() { _ = rc.Close() }()
 		palette, err := l.app.Preview.Parser().Parse(rc)
 		if err == nil {
-			ts := l.app.Preview.Deriver().Derive(palette)
+			ts := l.app.Preview.Tokenizer().Tokenize(palette)
 			return l.tokenSetToTokenData(ts), nil
 		}
 	}
@@ -236,7 +236,7 @@ func (l *appThemeLoader) deriveTokensFromPalette(name string, td viewer.TokenDat
 		if err != nil {
 			return td, nil
 		}
-		ts := l.app.Preview.Deriver().Derive(palette)
+		ts := l.app.Preview.Tokenizer().Tokenize(palette)
 		return l.tokenSetToTokenData(ts), nil
 	}
 

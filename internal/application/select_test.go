@@ -103,7 +103,7 @@ func TestSelectThemeUseCase_AutoGeneratesBuiltin(t *testing.T) {
 	targets := makeStubTargets()
 	generateUC := application.NewGenerateThemeUseCase(
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 		store,
 		builtins,

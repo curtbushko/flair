@@ -106,7 +106,7 @@ func newParser() *yamlparser.Parser {
 
 // populateAllFiles adds all expected theme files to the mock store.
 func populateAllFiles(store *mockValidateStore, theme string) {
-	store.putFile(theme, "universal.yaml", []byte("schema_version: 1\nkind: universal\n"))
+	store.putFile(theme, "tokens.yaml", []byte("schema_version: 1\nkind: tokens\n"))
 	for _, f := range outputFiles {
 		store.putFile(theme, f, []byte("content"))
 	}
@@ -224,7 +224,7 @@ palette:
 func TestValidateThemeUseCase_MissingFiles(t *testing.T) {
 	store := newMockValidateStore()
 	store.putFile("my-theme", "palette.yaml", validPaletteYAML())
-	// Missing universal.yaml and output files
+	// Missing tokens.yaml and output files
 
 	uc := NewValidateThemeUseCase(store, newParser(), testSchemaValidator)
 	violations, err := uc.Execute("my-theme")
@@ -236,16 +236,16 @@ func TestValidateThemeUseCase_MissingFiles(t *testing.T) {
 		t.Fatal("expected violations for missing files, got none")
 	}
 
-	// Should mention universal.yaml
+	// Should mention tokens.yaml
 	found := false
 	for _, v := range violations {
-		if strings.Contains(v, "universal.yaml") {
+		if strings.Contains(v, "tokens.yaml") {
 			found = true
 			break
 		}
 	}
 	if !found {
-		t.Errorf("expected violation mentioning universal.yaml, got: %v", violations)
+		t.Errorf("expected violation mentioning tokens.yaml, got: %v", violations)
 	}
 }
 

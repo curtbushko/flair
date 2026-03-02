@@ -4,10 +4,10 @@ Feature: Reader/Writer wrappers
   So that schema versions are handled consistently
 
   Scenario: VersionedWriter prepends schema header
-    Given a VersionedWriter for kind "universal" and theme "tokyonight"
+    Given a VersionedWriter for kind "tokens" and theme "tokyonight"
     When I write "tokens:\n  syntax.keyword: '#bb9af7'"
     Then the output should start with "schema_version: 1"
-    And the output should contain "kind: universal"
+    And the output should contain "kind: tokens"
     And the output should contain "theme_name: tokyonight"
 
   Scenario: VersionedWriter includes correct version for palette
@@ -23,18 +23,18 @@ Feature: Reader/Writer wrappers
     And the output should contain "kind: vim-mapping"
 
   Scenario: ValidatingReader passes valid schema version
-    Given YAML with schema_version 1 for kind "universal"
+    Given YAML with schema_version 1 for kind "tokens"
     When I wrap it in ValidatingReader and read
     Then reading should succeed
 
   Scenario: ValidatingReader rejects outdated schema version
-    Given YAML with schema_version 0 for kind "universal"
+    Given YAML with schema_version 0 for kind "tokens"
     When I wrap it in ValidatingReader and read
     Then reading should fail with SchemaVersionError
     And NeedsUpgrade should be false
 
   Scenario: ValidatingReader rejects future schema version
-    Given YAML with schema_version 99 for kind "universal"
+    Given YAML with schema_version 99 for kind "tokens"
     When I wrap it in ValidatingReader and read
     Then reading should fail with SchemaVersionError
     And NeedsUpgrade should be true

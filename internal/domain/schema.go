@@ -3,7 +3,7 @@ package domain
 // Schema versions for each file type. Bump when the file format changes.
 const (
 	SchemaPalette       = 1
-	SchemaUniversal     = 1
+	SchemaTokens        = 1
 	SchemaVimMapping    = 1
 	SchemaCSSMapping    = 1
 	SchemaGtkMapping    = 1
@@ -17,7 +17,7 @@ type FileKind string
 // FileKind constants for each file type produced by flair.
 const (
 	FileKindPalette       FileKind = "palette"
-	FileKindUniversal     FileKind = "universal"
+	FileKindTokens        FileKind = "tokens"
 	FileKindVimMapping    FileKind = "vim-mapping"
 	FileKindCSSMapping    FileKind = "css-mapping"
 	FileKindGtkMapping    FileKind = "gtk-mapping"
@@ -31,8 +31,8 @@ func CurrentVersion(kind FileKind) int {
 	switch kind {
 	case FileKindPalette:
 		return SchemaPalette
-	case FileKindUniversal:
-		return SchemaUniversal
+	case FileKindTokens:
+		return SchemaTokens
 	case FileKindVimMapping:
 		return SchemaVimMapping
 	case FileKindCSSMapping:

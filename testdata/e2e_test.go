@@ -12,7 +12,7 @@ import (
 	"testing"
 	"time"
 
-	"github.com/curtbushko/flair/internal/adapters/deriver"
+	"github.com/curtbushko/flair/internal/adapters/tokenizer"
 	"github.com/curtbushko/flair/internal/adapters/fileio"
 	"github.com/curtbushko/flair/internal/adapters/generator"
 	"github.com/curtbushko/flair/internal/adapters/mapper"
@@ -28,7 +28,7 @@ var update = flag.Bool("update", false, "update golden files")
 
 // goldenFiles maps each output filename to its golden file path under expected/.
 var goldenFiles = map[string]string{
-	"universal.yaml":      "expected/universal.yaml",
+	"tokens.yaml":         "expected/tokens.yaml",
 	"vim-mapping.yaml":    "expected/vim-mapping.yaml",
 	"css-mapping.yaml":    "expected/css-mapping.yaml",
 	"gtk-mapping.yaml":    "expected/gtk-mapping.yaml",
@@ -52,16 +52,16 @@ func runPipeline(t *testing.T, tmpDir string) string {
 	}
 
 	parser := yamlparser.NewParser()
-	drv := deriver.New()
+	tok := tokenizer.New()
 	fsStore := store.NewFsStore(tmpDir)
 
 	targets := buildTargets()
 
 	uc := application.NewGenerateThemeUseCase(
-		parser, drv, targets, fsStore, nil,
+		parser, tok, targets, fsStore, nil,
 		application.WithPaletteWriter(writePaletteYAML),
-		application.WithUniversalWriter(func(w io.Writer, ts *domain.TokenSet) error {
-			return fileio.WriteUniversal(w, ts)
+		application.WithTokensWriter(func(w io.Writer, ts *domain.TokenSet) error {
+			return fileio.WriteTokens(w, ts)
 		}),
 	)
 
@@ -310,17 +310,17 @@ func runPipelineBuiltin(t *testing.T, tmpDir string) string {
 	t.Helper()
 
 	parser := yamlparser.NewParser()
-	drv := deriver.New()
+	tok := tokenizer.New()
 	fsStore := store.NewFsStore(tmpDir)
 	builtinSrc := palettes.NewSource()
 
 	targets := buildTargets()
 
 	uc := application.NewGenerateThemeUseCase(
-		parser, drv, targets, fsStore, builtinSrc,
+		parser, tok, targets, fsStore, builtinSrc,
 		application.WithPaletteWriter(writePaletteYAML),
-		application.WithUniversalWriter(func(w io.Writer, ts *domain.TokenSet) error {
-			return fileio.WriteUniversal(w, ts)
+		application.WithTokensWriter(func(w io.Writer, ts *domain.TokenSet) error {
+			return fileio.WriteTokens(w, ts)
 		}),
 	)
 
@@ -332,10 +332,10 @@ func runPipelineBuiltin(t *testing.T, tmpDir string) string {
 }
 
 // allGeneratedFiles lists every file the pipeline creates (palette.yaml +
-// universal.yaml + 5 mapping files + 5 output files = 12 total).
+// tokens.yaml + 5 mapping files + 5 output files = 12 total).
 var allGeneratedFiles = []string{
 	"palette.yaml",
-	"universal.yaml",
+	"tokens.yaml",
 	"vim-mapping.yaml",
 	"css-mapping.yaml",
 	"gtk-mapping.yaml",
@@ -386,17 +386,17 @@ func runPipelineForScheme(t *testing.T, tmpDir, schemeName string) string {
 	t.Helper()
 
 	parser := yamlparser.NewParser()
-	drv := deriver.New()
+	tok := tokenizer.New()
 	fsStore := store.NewFsStore(tmpDir)
 	builtinSrc := palettes.NewSource()
 
 	targets := buildTargets()
 
 	uc := application.NewGenerateThemeUseCase(
-		parser, drv, targets, fsStore, builtinSrc,
+		parser, tok, targets, fsStore, builtinSrc,
 		application.WithPaletteWriter(writePaletteYAML),
-		application.WithUniversalWriter(func(w io.Writer, ts *domain.TokenSet) error {
-			return fileio.WriteUniversal(w, ts)
+		application.WithTokensWriter(func(w io.Writer, ts *domain.TokenSet) error {
+			return fileio.WriteTokens(w, ts)
 		}),
 	)
 
@@ -607,13 +607,13 @@ func sleepForMtime() {
 // newRegenUseCase builds a RegenerateThemeUseCase with real adapters.
 func newRegenUseCase(fsStore *store.FsStore) *application.RegenerateThemeUseCase {
 	parser := yamlparser.NewParser()
-	drv := deriver.New()
+	tok := tokenizer.New()
 	targets := buildTargets()
 
 	return application.NewRegenerateThemeUseCase(
-		fsStore, parser, drv, targets,
-		application.WithRegenUniversalWriter(func(w io.Writer, ts *domain.TokenSet) error {
-			return fileio.WriteUniversal(w, ts)
+		fsStore, parser, tok, targets,
+		application.WithRegenTokensWriter(func(w io.Writer, ts *domain.TokenSet) error {
+			return fileio.WriteTokens(w, ts)
 		}),
 	)
 }
@@ -640,12 +640,12 @@ func recordMtimes(t *testing.T, themeDir string) map[string]time.Time {
 	return mtimes
 }
 
-// TestE2E_Regenerate_UniversalEdit_DownstreamOnly generates a full theme,
-// records mtimes of all files, edits universal.yaml, runs regenerate, and
-// verifies: palette.yaml is unchanged, universal.yaml content is preserved
+// TestE2E_Regenerate_TokensEdit_DownstreamOnly generates a full theme,
+// records mtimes of all files, edits tokens.yaml, runs regenerate, and
+// verifies: palette.yaml is unchanged, tokens.yaml content is preserved
 // (not overwritten), and all 5 mapping files + 5 output files are regenerated
 // (their mtimes are updated and content is rewritten).
-func TestE2E_Regenerate_UniversalEdit_DownstreamOnly(t *testing.T) {
+func TestE2E_Regenerate_TokensEdit_DownstreamOnly(t *testing.T) {
 	tmpDir := t.TempDir()
 	themeDir := runPipeline(t, tmpDir)
 	themeName := "tokyo-night-dark"
@@ -658,12 +658,12 @@ func TestE2E_Regenerate_UniversalEdit_DownstreamOnly(t *testing.T) {
 	// Sleep to ensure mtime granularity is exceeded.
 	sleepForMtime()
 
-	// Edit universal.yaml (simulating user edit).
-	universalPath := filepath.Join(themeDir, "universal.yaml")
-	touchFileWithComment(t, universalPath)
+	// Edit tokens.yaml (simulating user edit).
+	tokensPath := filepath.Join(themeDir, "tokens.yaml")
+	touchFileWithComment(t, tokensPath)
 
-	// Record the universal.yaml content after edit to verify it is preserved.
-	editedUniversalChecksum := checksumFile(t, universalPath)
+	// Record the tokens.yaml content after edit to verify it is preserved.
+	editedTokensChecksum := checksumFile(t, tokensPath)
 
 	// Run regenerate.
 	regenUC := newRegenUseCase(fsStore)
@@ -690,10 +690,10 @@ func TestE2E_Regenerate_UniversalEdit_DownstreamOnly(t *testing.T) {
 		t.Error("palette.yaml mtime changed during regeneration; expected it to remain untouched")
 	}
 
-	// 2. universal.yaml must NOT be overwritten (user edit preserved).
-	afterUniversalChecksum := checksumFile(t, filepath.Join(themeDir, "universal.yaml"))
-	if afterUniversalChecksum != editedUniversalChecksum {
-		t.Error("universal.yaml was overwritten during regeneration; expected user edit to be preserved")
+	// 2. tokens.yaml must NOT be overwritten (user edit preserved).
+	afterTokensChecksum := checksumFile(t, filepath.Join(themeDir, "tokens.yaml"))
+	if afterTokensChecksum != editedTokensChecksum {
+		t.Error("tokens.yaml was overwritten during regeneration; expected user edit to be preserved")
 	}
 
 	// 3. All 5 mapping files must have been rewritten (mtime updated).
@@ -829,12 +829,12 @@ func TestE2E_Regenerate_MappingEdit_SingleTarget(t *testing.T) {
 		t.Error("palette.yaml mtime changed; expected unchanged")
 	}
 
-	// 2. universal.yaml must be unchanged (both content and mtime).
-	if afterChecksums["universal.yaml"] != beforeChecksums["universal.yaml"] {
-		t.Error("universal.yaml content was modified; expected unchanged")
+	// 2. tokens.yaml must be unchanged (both content and mtime).
+	if afterChecksums["tokens.yaml"] != beforeChecksums["tokens.yaml"] {
+		t.Error("tokens.yaml content was modified; expected unchanged")
 	}
-	if !afterMtimes["universal.yaml"].Equal(beforeMtimes["universal.yaml"]) {
-		t.Error("universal.yaml mtime changed; expected unchanged")
+	if !afterMtimes["tokens.yaml"].Equal(beforeMtimes["tokens.yaml"]) {
+		t.Error("tokens.yaml mtime changed; expected unchanged")
 	}
 
 	// 3. Only style.lua (vim output) should be regenerated (mtime updated).

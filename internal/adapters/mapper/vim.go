@@ -76,7 +76,7 @@ func mapBase(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	bg := func(path string) *domain.Color { return colorOf(theme, path) }
 
 	// --- Core editor groups ---
-	hl["Normal"] = ports.VimHighlight{Fg: fg("text.primary")}    // No bg for transparency
+	hl["Normal"] = ports.VimHighlight{Fg: fg("text.primary")}      // No bg for transparency
 	hl["NormalFloat"] = ports.VimHighlight{Fg: fg("text.primary")} // No bg for transparency
 	hl["NormalNC"] = ports.VimHighlight{Fg: fg("text.primary")}    // No bg for transparency
 	hl["Comment"] = ports.VimHighlight{Fg: fg("syntax.comment"), Italic: true}

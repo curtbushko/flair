@@ -15,9 +15,9 @@ Feature: ThemeStore filesystem operations
     Then FileExists("tokyonight", "test.yaml") should return true
 
   Scenario: OpenReader reads existing file
-    Given theme "tokyonight" exists with file "universal.yaml"
-    When I call OpenWriter("tokyonight", "universal.yaml") and write "test content"
-    And I call OpenReader("tokyonight", "universal.yaml")
+    Given theme "tokyonight" exists with file "tokens.yaml"
+    When I call OpenWriter("tokyonight", "tokens.yaml") and write "test content"
+    And I call OpenReader("tokyonight", "tokens.yaml")
     Then the content should be "test content"
 
   Scenario: Select creates symlinks

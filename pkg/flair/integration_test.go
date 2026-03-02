@@ -10,7 +10,7 @@ import (
 	"github.com/curtbushko/flair/pkg/flair"
 )
 
-// createCompleteTestTheme creates a theme directory with a complete universal.yaml
+// createCompleteTestTheme creates a theme directory with a complete tokens.yaml
 // containing all token paths for surface, text, status, syntax, diff, and terminal colors.
 func createCompleteTestTheme(t *testing.T, configDir, themeName string) {
 	t.Helper()
@@ -20,8 +20,8 @@ func createCompleteTestTheme(t *testing.T, configDir, themeName string) {
 		t.Fatalf("failed to create theme dir: %v", err)
 	}
 
-	// Complete universal.yaml with all token categories
-	universalYAML := `tokens:
+	// Complete tokens.yaml with all token categories
+	tokensYAML := `tokens:
   # Surface colors
   surface.background:
     color: '#1a1b26'
@@ -168,8 +168,8 @@ func createCompleteTestTheme(t *testing.T, configDir, themeName string) {
   accent.primary:
     color: '#7aa2f7'
 `
-	if err := os.WriteFile(filepath.Join(themeDir, "universal.yaml"), []byte(universalYAML), 0o644); err != nil {
-		t.Fatalf("failed to write universal.yaml: %v", err)
+	if err := os.WriteFile(filepath.Join(themeDir, "tokens.yaml"), []byte(tokensYAML), 0o644); err != nil {
+		t.Fatalf("failed to write tokens.yaml: %v", err)
 	}
 
 	// Create style.json for symlink tests
@@ -179,7 +179,7 @@ func createCompleteTestTheme(t *testing.T, configDir, themeName string) {
 }
 
 func TestIntegration_LoadAndAccessColors(t *testing.T) {
-	// Arrange: Create a mock theme directory with complete universal.yaml containing all token paths
+	// Arrange: Create a mock theme directory with complete tokens.yaml containing all token paths
 	configDir := t.TempDir()
 	themeName := "tokyo-night-dark"
 
@@ -392,7 +392,7 @@ func TestIntegration_ListAndLoadMultipleThemes(t *testing.T) {
 }
 
 func TestLoad_MissingUniversalYaml(t *testing.T) {
-	// Arrange: Theme directory exists but universal.yaml is missing
+	// Arrange: Theme directory exists but tokens.yaml is missing
 	configDir := t.TempDir()
 	themeName := "incomplete-theme"
 
@@ -400,14 +400,14 @@ func TestLoad_MissingUniversalYaml(t *testing.T) {
 	if err := os.MkdirAll(themeDir, 0o755); err != nil {
 		t.Fatalf("failed to create theme dir: %v", err)
 	}
-	// Don't create universal.yaml
+	// Don't create tokens.yaml
 
 	// Act: Call LoadNamedFrom()
 	_, err := flair.LoadNamedFrom(configDir, themeName)
 
 	// Assert: Returns descriptive error about missing file
 	if err == nil {
-		t.Fatal("LoadNamedFrom() error = nil, want error for missing universal.yaml")
+		t.Fatal("LoadNamedFrom() error = nil, want error for missing tokens.yaml")
 	}
 
 	// Error should wrap ErrThemeNotFound
@@ -417,7 +417,7 @@ func TestLoad_MissingUniversalYaml(t *testing.T) {
 }
 
 func TestLoad_MalformedYaml(t *testing.T) {
-	// Arrange: universal.yaml contains invalid YAML syntax
+	// Arrange: tokens.yaml contains invalid YAML syntax
 	configDir := t.TempDir()
 	themeName := "malformed-theme"
 
@@ -434,8 +434,8 @@ func TestLoad_MalformedYaml(t *testing.T) {
   text.primary:
     color: '#c0caf5'
 `
-	if err := os.WriteFile(filepath.Join(themeDir, "universal.yaml"), []byte(malformedYAML), 0o644); err != nil {
-		t.Fatalf("failed to write malformed universal.yaml: %v", err)
+	if err := os.WriteFile(filepath.Join(themeDir, "tokens.yaml"), []byte(malformedYAML), 0o644); err != nil {
+		t.Fatalf("failed to write malformed tokens.yaml: %v", err)
 	}
 
 	// Act: Call LoadNamedFrom()
@@ -518,7 +518,7 @@ func TestLoad_XDGConfigHome(t *testing.T) {
 }
 
 func TestLoad_InvalidHexColor(t *testing.T) {
-	// Arrange: universal.yaml contains invalid hex color
+	// Arrange: tokens.yaml contains invalid hex color
 	configDir := t.TempDir()
 	themeName := "invalid-color-theme"
 
@@ -531,8 +531,8 @@ func TestLoad_InvalidHexColor(t *testing.T) {
   surface.background:
     color: '#invalid'
 `
-	if err := os.WriteFile(filepath.Join(themeDir, "universal.yaml"), []byte(invalidColorYAML), 0o644); err != nil {
-		t.Fatalf("failed to write universal.yaml: %v", err)
+	if err := os.WriteFile(filepath.Join(themeDir, "tokens.yaml"), []byte(invalidColorYAML), 0o644); err != nil {
+		t.Fatalf("failed to write tokens.yaml: %v", err)
 	}
 
 	// Act: Call LoadNamedFrom()

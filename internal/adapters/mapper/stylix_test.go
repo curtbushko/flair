@@ -4,8 +4,8 @@ import (
 	"strings"
 	"testing"
 
-	"github.com/curtbushko/flair/internal/adapters/deriver"
 	"github.com/curtbushko/flair/internal/adapters/mapper"
+	"github.com/curtbushko/flair/internal/adapters/tokenizer"
 	"github.com/curtbushko/flair/internal/domain"
 	"github.com/curtbushko/flair/internal/ports"
 )
@@ -50,12 +50,12 @@ func tokyoNightDarkPalette(t *testing.T) *domain.Palette {
 }
 
 // buildResolvedTheme constructs a ResolvedTheme from the Tokyo Night Dark palette
-// using the default deriver.
+// using the default tokenizer.
 func buildResolvedTheme(t *testing.T) *domain.ResolvedTheme {
 	t.Helper()
 	pal := tokyoNightDarkPalette(t)
-	d := deriver.New()
-	ts := d.Derive(pal)
+	tok := tokenizer.New()
+	ts := tok.Tokenize(pal)
 	return &domain.ResolvedTheme{
 		Name:    "tokyo-night-dark",
 		Variant: "dark",

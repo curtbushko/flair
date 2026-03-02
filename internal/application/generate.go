@@ -13,21 +13,21 @@ import (
 // this to write raw palette YAML (optionally via VersionedWriter).
 type PaletteWriter func(w io.Writer, palette *domain.Palette) error
 
-// UniversalWriter writes a token set to an io.Writer. The composition root
-// wires this to fileio.WriteUniversal (optionally via VersionedWriter).
-type UniversalWriter func(w io.Writer, tokens *domain.TokenSet) error
+// TokensWriter writes a token set to an io.Writer. The composition root
+// wires this to fileio.WriteTokens (optionally via VersionedWriter).
+type TokensWriter func(w io.Writer, tokens *domain.TokenSet) error
 
 // GenerateThemeUseCase orchestrates the full theme generation pipeline:
-// parse palette -> derive tokens -> for each target: map -> write mapping -> generate output.
+// parse palette -> tokenize -> for each target: map -> write mapping -> generate output.
 // It depends only on port interfaces, keeping the application layer adapter-agnostic.
 type GenerateThemeUseCase struct {
-	parser          ports.PaletteParser
-	deriver         ports.TokenDeriver
-	targets         []ports.Target
-	store           ports.ThemeStore
-	builtins        ports.PaletteSource
-	paletteWriter   PaletteWriter
-	universalWriter UniversalWriter
+	parser        ports.PaletteParser
+	tokenizer     ports.Tokenizer
+	targets       []ports.Target
+	store         ports.ThemeStore
+	builtins      ports.PaletteSource
+	paletteWriter PaletteWriter
+	tokensWriter  TokensWriter
 }
 
 // NewGenerateThemeUseCase returns a new GenerateThemeUseCase wired to the given
@@ -35,18 +35,18 @@ type GenerateThemeUseCase struct {
 // pass-through writers if not provided via options.
 func NewGenerateThemeUseCase(
 	parser ports.PaletteParser,
-	deriver ports.TokenDeriver,
+	tokenizer ports.Tokenizer,
 	targets []ports.Target,
 	store ports.ThemeStore,
 	builtins ports.PaletteSource,
 	opts ...GenerateOption,
 ) *GenerateThemeUseCase {
 	uc := &GenerateThemeUseCase{
-		parser:   parser,
-		deriver:  deriver,
-		targets:  targets,
-		store:    store,
-		builtins: builtins,
+		parser:    parser,
+		tokenizer: tokenizer,
+		targets:   targets,
+		store:     store,
+		builtins:  builtins,
 	}
 	for _, opt := range opts {
 		opt(uc)
@@ -64,16 +64,16 @@ func WithPaletteWriter(pw PaletteWriter) GenerateOption {
 	}
 }
 
-// WithUniversalWriter sets a custom universal writer function.
-func WithUniversalWriter(uw UniversalWriter) GenerateOption {
+// WithTokensWriter sets a custom tokens writer function.
+func WithTokensWriter(tw TokensWriter) GenerateOption {
 	return func(uc *GenerateThemeUseCase) {
-		uc.universalWriter = uw
+		uc.tokensWriter = tw
 	}
 }
 
 // Execute runs the full pipeline from an io.Reader palette source.
 // If targetFilter is non-empty, only that target is generated (plus
-// palette.yaml and universal.yaml).
+// palette.yaml and tokens.yaml).
 func (uc *GenerateThemeUseCase) Execute(r io.Reader, themeName, targetFilter string) error {
 	// 1. Parse palette
 	palette, err := uc.parser.Parse(r)
@@ -107,8 +107,8 @@ func (uc *GenerateThemeUseCase) ExecuteBuiltin(builtinName, themeName, targetFil
 
 // generate is the core pipeline: derive tokens, ensure dir, write files, map+generate targets.
 func (uc *GenerateThemeUseCase) generate(palette *domain.Palette, themeName, targetFilter string) error {
-	// 2. Derive tokens
-	tokens := uc.deriver.Derive(palette)
+	// 2. Tokenize palette
+	tokens := uc.tokenizer.Tokenize(palette)
 
 	// 3. Ensure theme directory exists
 	if err := uc.store.EnsureThemeDir(themeName); err != nil {
@@ -120,9 +120,9 @@ func (uc *GenerateThemeUseCase) generate(palette *domain.Palette, themeName, tar
 		return fmt.Errorf("write palette: %w", err)
 	}
 
-	// 5. Write universal.yaml
-	if err := uc.writeUniversal(tokens, themeName); err != nil {
-		return fmt.Errorf("write universal: %w", err)
+	// 5. Write tokens.yaml
+	if err := uc.writeTokens(tokens, themeName); err != nil {
+		return fmt.Errorf("write tokens: %w", err)
 	}
 
 	// 6. Build resolved theme for mappers
@@ -193,20 +193,20 @@ func (uc *GenerateThemeUseCase) writePalette(palette *domain.Palette, themeName 
 	return writeErr
 }
 
-// writeUniversal writes universal.yaml to the theme directory.
-func (uc *GenerateThemeUseCase) writeUniversal(tokens *domain.TokenSet, themeName string) error {
-	w, err := uc.store.OpenWriter(themeName, "universal.yaml")
+// writeTokens writes tokens.yaml to the theme directory.
+func (uc *GenerateThemeUseCase) writeTokens(tokens *domain.TokenSet, themeName string) error {
+	w, err := uc.store.OpenWriter(themeName, "tokens.yaml")
 	if err != nil {
 		return err
 	}
 	defer func() { _ = w.Close() }()
 
-	if uc.universalWriter != nil {
-		return uc.universalWriter(w, tokens)
+	if uc.tokensWriter != nil {
+		return uc.tokensWriter(w, tokens)
 	}
 
-	// Default: write a minimal universal marker.
-	_, writeErr := fmt.Fprintf(w, "# universal for %s\n", themeName)
+	// Default: write a minimal tokens marker.
+	_, writeErr := fmt.Fprintf(w, "# tokens for %s\n", themeName)
 	return writeErr
 }
 

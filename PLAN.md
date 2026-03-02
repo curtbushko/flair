@@ -73,10 +73,26 @@ message.
 
 ### Customization Model
 
-No override system. Instead, users copy a theme directory and edit any
-intermediate file directly. Running `flair generate` on a directory
-re-derives downstream files from the furthest-upstream file that was
-modified. The intermediate YAML files are the customization surface.
+Two complementary approaches for customization:
+
+**1. Token Overrides (Simple):** Add an `overrides` section to palette.yaml
+to customize specific semantic tokens without touching intermediate files.
+Overrides are applied after tokenization, allowing fine-grained tweaks:
+
+```yaml
+palette:
+  base00: "1a1b26"
+  # ...
+overrides:
+  syntax.keyword:
+    color: "#ff00ff"
+    italic: true
+```
+
+**2. Direct Editing (Advanced):** Users can edit any intermediate file
+directly. Running `flair regenerate` on a directory re-derives downstream
+files from the furthest-upstream file that was modified. The intermediate
+YAML files are the full customization surface for advanced users.
 
 ### Go Patterns: Reader/Writer + Embedding for Composition
 
@@ -127,7 +143,7 @@ Track progress by marking items `[x]` as completed.
 - [x] 1.7 — Domain: Palette validation rules (luminance ordering, completeness)
 - [x] 1.8 — Domain: Error types (ParseError, ValidationError, GenerateError, SchemaVersionError)
 - [x] 1.9 — Domain: Schema version constants and file type registry
-- [x] 1.10 — Port interfaces (PaletteParser, PaletteSource, TokenDeriver, Mapper, Generator, ThemeStore)
+- [x] 1.10 — Port interfaces (PaletteParser, PaletteSource, Tokenizer, Mapper, Generator, ThemeStore)
 - [x] 1.11 — Port file structs (PaletteFile, UniversalFile, VimMappingFile, etc.)
 - [x] 1.12 — Port theme structs (VimTheme, GtkTheme, QssTheme, CssTheme, StylixTheme)
 - [x] 1.13 — Adapter: YAML palette parser (io.Reader → domain.Palette, common tinted-theming format only)
@@ -147,7 +163,7 @@ Track progress by marking items `[x]` as completed.
 
 ### Phase 2: Layer B — Token Derivation
 
-- [x] 2.1 — Adapter: Default token deriver (base24 → ~87 semantic tokens)
+- [x] 2.1 — Adapter: Default tokenizer (base24 → ~87 semantic tokens)
   - [x] 2.1a — Surface tokens (11 tokens)
   - [x] 2.1b — Text tokens (7 tokens)
   - [x] 2.1c — Status tokens (6 tokens)
@@ -281,6 +297,115 @@ imported by external projects without pulling in flair's internal implementation
 - [ ] 7.3 — `pkg/charm/bubbles/` — Themed bubbles (list, table, viewport, etc.)
 - [ ] 7.4 — Style viewer pages for each supported Charm package
 
+### Phase 8: Token Overrides
+
+**Goal:** Allow users to override specific semantic tokens directly in palette.yaml,
+providing a simple customization mechanism without needing to edit intermediate files.
+
+Users can add an `overrides` section to their palette.yaml that specifies token-level
+customizations. These overrides are applied AFTER the default tokenization, allowing
+fine-grained control over specific tokens while inheriting the rest from the palette.
+
+#### Example
+
+```yaml
+system: "base24"
+name: "Tokyo Night Dark Custom"
+author: "Custom User"
+variant: "dark"
+palette:
+  base00: "1a1b26"
+  base01: "1f2335"
+  # ... all 24 base colors ...
+
+overrides:
+  syntax.keyword:
+    color: "#ff00ff"
+    italic: true
+  syntax.comment:
+    color: "#666666"
+  surface.background:
+    color: "#000000"
+  status.error:
+    color: "#ff0000"
+    bold: true
+```
+
+#### Implementation Checklist
+
+- [ ] 8.1 — Domain: Token override types
+  - [ ] 8.1a — Define `TokenOverride` struct (color, bold, italic, underline, etc.)
+  - [ ] 8.1b — Add `Overrides map[string]TokenOverride` field to `domain.Palette`
+  - [ ] 8.1c — Unit tests for override parsing and application
+
+- [ ] 8.2 — Adapter: YAML parser updates
+  - [ ] 8.2a — Update `adapters/yaml/parser.go` to parse `overrides` section
+  - [ ] 8.2b — Validate override token paths against known token paths
+  - [ ] 8.2c — Validate override colors (hex format)
+  - [ ] 8.2d — Unit tests for override YAML parsing
+
+- [ ] 8.3 — Adapter: Tokenizer override application
+  - [ ] 8.3a — Update `Tokenizer.Tokenize()` to accept optional overrides
+  - [ ] 8.3b — Apply overrides after default derivation
+  - [ ] 8.3c — Merge override styles with derived styles (override wins)
+  - [ ] 8.3d — Unit tests for override application
+
+- [ ] 8.4 — Adapter: Palette writer updates
+  - [ ] 8.4a — Update `fileio.WritePalette()` to include overrides section
+  - [ ] 8.4b — Preserve user overrides during regeneration
+  - [ ] 8.4c — Unit tests for round-trip (parse → write → parse)
+
+- [ ] 8.5 — Application: Use case updates
+  - [ ] 8.5a — Update `GenerateThemeUseCase` to pass overrides to tokenizer
+  - [ ] 8.5b — Update `RegenerateThemeUseCase` to preserve overrides
+  - [ ] 8.5c — Update `PreviewThemeUseCase` to display overridden tokens
+  - [ ] 8.5d — Integration tests for override flow
+
+- [ ] 8.6 — CLI: Override-related commands
+  - [ ] 8.6a — `flair override <theme> <token> <color>` — Add/update override
+  - [ ] 8.6b — `flair override <theme> --list` — List current overrides
+  - [ ] 8.6c — `flair override <theme> --remove <token>` — Remove override
+  - [ ] 8.6d — Help text and documentation
+
+- [ ] 8.7 — Validation
+  - [ ] 8.7a — Validate override token paths exist in token inventory
+  - [ ] 8.7b — Warning for overrides that shadow derived values
+  - [ ] 8.7c — Update `validate` command to check overrides
+
+- [ ] 8.8 — Documentation & Polish
+  - [ ] 8.8a — README section: Customizing with overrides
+  - [ ] 8.8b — Example: Creating a custom theme with overrides
+  - [ ] 8.8c — BDD feature files for override scenarios
+
+#### Override File Format (in palette.yaml)
+
+```yaml
+overrides:
+  <token-path>:
+    color: "<hex-color>"      # Optional: Override color (e.g., "#ff00ff")
+    bold: true|false          # Optional: Override bold style
+    italic: true|false        # Optional: Override italic style
+    underline: true|false     # Optional: Override underline style
+    undercurl: true|false     # Optional: Override undercurl style
+    strikethrough: true|false # Optional: Override strikethrough style
+```
+
+#### Supported Token Paths
+
+Any token path from the token inventory can be overridden:
+- `surface.*` — Surface/background tokens
+- `text.*` — Text color tokens
+- `status.*` — Status tokens (error, warning, success, info)
+- `syntax.*` — Syntax highlighting tokens
+- `markup.*` — Markup tokens
+- `diff.*` — Diff tokens
+- `accent.*` — Accent tokens
+- `border.*` — Border tokens
+- `terminal.*` — Terminal ANSI colors
+- `git.*` — Git status tokens
+- `state.*` — State tokens (hover, active, disabled)
+- `scrollbar.*` — Scrollbar tokens
+
 ---
 
 ## Hexagonal Architecture Mapping
@@ -297,7 +422,7 @@ error types, schema
 versions
 
 PaletteParser,         Ports             Interfaces defining boundaries.
-TokenDeriver,                            Depend only on domain types.
+Tokenizer,                               Depend only on domain types.
 Mapper, Generator,                       Also: file structs (PaletteFile,
 ThemeStore                               UniversalFile, *MappingFile) and
                                          mapped theme structs (DTOs) shared
@@ -314,7 +439,7 @@ SelectTheme,
 ListThemes
 
 YAML parser,           Adapters          Concrete implementations of ports.
-Default deriver,                         Depend on ports + domain.
+Default tokenizer,                       Depend on ports + domain.
 ThemeStore (fs),                         Adapters do NOT depend on each
 file readers/writers,                    other.
 Built-in palettes,                       Reader/Writer wrappers (Versioned
@@ -341,7 +466,7 @@ CLI, DI wiring         Cmd               Composition root. Wires adapters
      ┌───────▼──────┐  ┌───▼──────────────────┐
      │ application  │  │      adapters         │
      │ (use cases)  │  │  ┌─────┐ ┌─────────┐ │
-     │              │  │  │yaml │ │ deriver  │ │
+     │              │  │  │yaml │ │tokenizer │ │
      │              │  │  └─────┘ └─────────┘ │
      └───────┬──────┘  │  ┌─────┐ ┌─────────┐ │
              │         │  │store│ │palettes │ │
@@ -440,7 +565,7 @@ flair/
 │   ├── ports/
 │   │   ├── parser.go                   # PaletteParser interface (io.Reader based)
 │   │   ├── palettes.go                 # PaletteSource interface
-│   │   ├── deriver.go                  # TokenDeriver interface
+│   │   ├── tokenizer.go                # Tokenizer interface
 │   │   ├── mapper.go                   # Mapper interface
 │   │   ├── generator.go               # Generator interface + Target struct
 │   │   ├── store.go                    # ThemeStore interface (dirs, symlinks, file I/O)
@@ -489,9 +614,9 @@ flair/
 │   │   │   ├── gruvbox-dark.yaml
 │   │   │   └── catppuccin-mocha.yaml
 │   │   │
-│   │   ├── deriver/
-│   │   │   ├── deriver.go             # TokenDeriver impl (default derivation rules)
-│   │   │   └── deriver_test.go
+│   │   ├── tokenizer/
+│   │   │   ├── tokenizer.go           # Tokenizer impl (default derivation rules)
+│   │   │   └── tokenizer_test.go
 │   │   │
 │   │   ├── mapper/
 │   │   │   ├── vim.go                 # Vim Mapper: ResolvedTheme → ports.VimTheme
@@ -670,13 +795,24 @@ type FileHeader struct {
     ThemeName     string         `yaml:"theme_name"`
 }
 
-// PaletteFile is the input palette (base24).
+// TokenOverride specifies customization for a single token.
+type TokenOverride struct {
+    Color         string `yaml:"color,omitempty"`         // "#ff00ff"
+    Bold          *bool  `yaml:"bold,omitempty"`          // nil = inherit
+    Italic        *bool  `yaml:"italic,omitempty"`
+    Underline     *bool  `yaml:"underline,omitempty"`
+    Undercurl     *bool  `yaml:"undercurl,omitempty"`
+    Strikethrough *bool  `yaml:"strikethrough,omitempty"`
+}
+
+// PaletteFile is the input palette (base24) with optional token overrides.
 type PaletteFile struct {
     FileHeader `yaml:",inline"`
-    System     string            `yaml:"system"`
-    Author     string            `yaml:"author"`
-    Variant    string            `yaml:"variant"`
-    Palette    map[string]string `yaml:"palette"` // "base00": "1a1b26"
+    System     string                    `yaml:"system"`
+    Author     string                    `yaml:"author"`
+    Variant    string                    `yaml:"variant"`
+    Palette    map[string]string         `yaml:"palette"`   // "base00": "1a1b26"
+    Overrides  map[string]TokenOverride  `yaml:"overrides,omitempty"` // token overrides
 }
 
 // UniversalToken is a single semantic token in universal.yaml.
@@ -871,14 +1007,14 @@ type PaletteSource interface {
 ```
 
 ```go
-// internal/ports/deriver.go
+// internal/ports/tokenizer.go
 package ports
 
 import "github.com/curtbushko/flair/internal/domain"
 
-// TokenDeriver derives the full semantic token set from a base24 palette.
-type TokenDeriver interface {
-    Derive(p domain.Palette) domain.TokenSet
+// Tokenizer derives the full semantic token set from a base24 palette.
+type Tokenizer interface {
+    Tokenize(p domain.Palette) domain.TokenSet
 }
 ```
 
@@ -1409,10 +1545,10 @@ import (
 
 type DeriveThemeUseCase struct {
     parser  ports.PaletteParser
-    deriver ports.TokenDeriver
+    tokenizer ports.Tokenizer
 }
 
-func NewDeriveThemeUseCase(p ports.PaletteParser, d ports.TokenDeriver) *DeriveThemeUseCase
+func NewDeriveThemeUseCase(p ports.PaletteParser, t ports.Tokenizer) *DeriveThemeUseCase
 
 // Execute parses a palette from a reader and derives the full semantic token set.
 // The caller provides the reader (file, built-in bytes.Reader, etc.).
@@ -1426,16 +1562,16 @@ package application
 import "github.com/curtbushko/flair/internal/ports"
 
 type GenerateThemeUseCase struct {
-    parser   ports.PaletteParser
-    deriver  ports.TokenDeriver
-    targets  []ports.Target
-    store    ports.ThemeStore
-    builtins ports.PaletteSource
+    parser    ports.PaletteParser
+    tokenizer ports.Tokenizer
+    targets   []ports.Target
+    store     ports.ThemeStore
+    builtins  ports.PaletteSource
 }
 
 func NewGenerateThemeUseCase(
     p ports.PaletteParser,
-    d ports.TokenDeriver,
+    t ports.Tokenizer,
     targets []ports.Target,
     store ports.ThemeStore,
     builtins ports.PaletteSource,
@@ -1455,13 +1591,13 @@ package application
 import "github.com/curtbushko/flair/internal/ports"
 
 type RegenerateThemeUseCase struct {
-    deriver ports.TokenDeriver
+    tokenizer ports.Tokenizer
     targets []ports.Target
     store   ports.ThemeStore
 }
 
 func NewRegenerateThemeUseCase(
-    d ports.TokenDeriver,
+    t ports.Tokenizer,
     targets []ports.Target,
     store ports.ThemeStore,
 ) *RegenerateThemeUseCase
@@ -1544,11 +1680,11 @@ import (
 
 type PreviewThemeUseCase struct {
     parser  ports.PaletteParser
-    deriver ports.TokenDeriver
+    tokenizer ports.Tokenizer
     store   ports.ThemeStore
 }
 
-func NewPreviewThemeUseCase(p ports.PaletteParser, d ports.TokenDeriver, s ports.ThemeStore) *PreviewThemeUseCase
+func NewPreviewThemeUseCase(p ports.PaletteParser, t ports.Tokenizer, s ports.ThemeStore) *PreviewThemeUseCase
 
 // Execute writes an ANSI-colored preview to w.
 func (uc *PreviewThemeUseCase) Execute(themeName string, w io.Writer) error
@@ -1574,7 +1710,8 @@ func (uc *InitThemeUseCase) Execute(themeName string) error
 
 ## Input YAML Format
 
-Flair accepts the **common format** from tinted-theming (spec 0.11+).
+Flair accepts the **common format** from tinted-theming (spec 0.11+),
+extended with an optional `overrides` section for token customization.
 
 ```yaml
 system: "base24"
@@ -1586,10 +1723,19 @@ palette:
   base00: "1a1b26"
   base01: "1f2335"
   # ... all 24 slots (or 16 with base16 fallbacks)
+
+# Optional: Override specific tokens after derivation
+overrides:
+  syntax.keyword:
+    color: "#ff00ff"
+    italic: true
+  surface.background:
+    color: "#000000"
 ```
 
 When imported via `flair generate`, the file is rewritten as `palette.yaml`
 inside the theme directory with the `schema_version` and `kind` header added.
+Any overrides are preserved and applied during token derivation.
 
 ---
 
@@ -1687,6 +1833,15 @@ palette:
   base15: "97d8f8"    # Bright Cyan
   base16: "8db6fa"    # Bright Blue
   base17: "c8acf8"    # Bright Magenta
+
+# Optional: Override specific tokens after derivation
+# Uncomment and customize as needed:
+# overrides:
+#   syntax.keyword:
+#     color: "#ff00ff"
+#     italic: true
+#   syntax.comment:
+#     color: "#666666"
 ```
 
 ---
@@ -1931,7 +2086,7 @@ External dependencies:
 
 1. **Phase 1** builds the full inner core: domain types, error types, schema versions, port interfaces (all io.Reader/io.Writer based), port file structs, port theme DTOs, YAML palette parser, ThemeStore adapter, built-in palettes adapter, VersionedWriter and ValidatingReader wrappers. After Phase 1 you can parse a palette (from file or built-in via io.Reader) and manage theme directories. `go-arch-lint check` passes.
 
-2. **Phase 2** adds the deriver adapter, universal.yaml read/write, and the DeriveTheme use case. After Phase 2 you can go from palette → universal.yaml.
+2. **Phase 2** adds the tokenizer adapter, universal.yaml read/write, and the DeriveTheme use case. After Phase 2 you can go from palette → universal.yaml.
 
 3. **Phase 3** builds targets one at a time. Stylix first (simplest), then CSS, Vim, GTK, QSS. Each target includes mapper, mapping file read/write, and generator. GenerateTheme use case added once first target works.
 

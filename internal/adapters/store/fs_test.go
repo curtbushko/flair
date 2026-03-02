@@ -126,10 +126,10 @@ func TestFsStore_OpenWriter(t *testing.T) {
 	}
 
 	data := []byte("schema_version: 1\n")
-	writeAndClose(t, s, "tokyonight", "universal.yaml", data)
+	writeAndClose(t, s, "tokyonight", "tokens.yaml", data)
 
 	// Verify file exists on disk with correct content.
-	got, err := os.ReadFile(filepath.Join(dir, "tokyonight", "universal.yaml"))
+	got, err := os.ReadFile(filepath.Join(dir, "tokyonight", "tokens.yaml"))
 	if err != nil {
 		t.Fatalf("ReadFile: %v", err)
 	}
@@ -149,11 +149,11 @@ func TestFsStore_OpenReader(t *testing.T) {
 	}
 
 	data := []byte("tokens:\n  text.primary: '#7aa2f7'\n")
-	if err := os.WriteFile(filepath.Join(themeDir, "universal.yaml"), data, 0o644); err != nil {
+	if err := os.WriteFile(filepath.Join(themeDir, "tokens.yaml"), data, 0o644); err != nil {
 		t.Fatal(err)
 	}
 
-	rc, err := s.OpenReader("tokyonight", "universal.yaml")
+	rc, err := s.OpenReader("tokyonight", "tokens.yaml")
 	if err != nil {
 		t.Fatalf("OpenReader() error = %v", err)
 	}

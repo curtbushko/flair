@@ -1,5 +1,5 @@
 // Package fileio provides adapters for reading and writing flair pipeline
-// files (universal.yaml, mapping files) via io.Reader and io.Writer.
+// files (tokens.yaml, mapping files) via io.Reader and io.Writer.
 package fileio
 
 import (
@@ -13,40 +13,40 @@ import (
 	"github.com/curtbushko/flair/internal/ports"
 )
 
-// ReadUniversal reads YAML from r and returns a TokenSet. The YAML is
-// expected to conform to the ports.UniversalFile structure. Each
-// UniversalToken is converted back to a domain.Token: an empty color
+// ReadTokens reads YAML from r and returns a TokenSet. The YAML is
+// expected to conform to the ports.TokensFile structure. Each
+// TokenEntry is converted back to a domain.Token: an empty color
 // string produces a NoneColor, while non-empty strings are parsed as hex.
 //
 // The caller may wrap r with a ValidatingReader to enforce schema version
 // checking before the YAML is decoded.
-func ReadUniversal(r io.Reader) (*domain.TokenSet, error) {
+func ReadTokens(r io.Reader) (*domain.TokenSet, error) {
 	data, err := io.ReadAll(r)
 	if err != nil {
-		return nil, fmt.Errorf("read universal: %w", err)
+		return nil, fmt.Errorf("read tokens: %w", err)
 	}
 
-	var uf ports.UniversalFile
-	if err := yaml.Unmarshal(data, &uf); err != nil {
-		return nil, fmt.Errorf("read universal: %w", err)
+	var tf ports.TokensFile
+	if err := yaml.Unmarshal(data, &tf); err != nil {
+		return nil, fmt.Errorf("read tokens: %w", err)
 	}
 
 	ts := domain.NewTokenSet()
-	for path, ut := range uf.Tokens {
+	for path, te := range tf.Tokens {
 		tok := domain.Token{
-			Bold:          ut.Bold,
-			Italic:        ut.Italic,
-			Underline:     ut.Underline,
-			Undercurl:     ut.Undercurl,
-			Strikethrough: ut.Strikethrough,
+			Bold:          te.Bold,
+			Italic:        te.Italic,
+			Underline:     te.Underline,
+			Undercurl:     te.Undercurl,
+			Strikethrough: te.Strikethrough,
 		}
 
-		if ut.Color == "" {
+		if te.Color == "" {
 			tok.Color = domain.NoneColor()
 		} else {
-			c, err := domain.ParseHex(ut.Color)
+			c, err := domain.ParseHex(te.Color)
 			if err != nil {
-				return nil, fmt.Errorf("read universal: token %q: %w", path, err)
+				return nil, fmt.Errorf("read tokens: token %q: %w", path, err)
 			}
 			tok.Color = c
 		}
@@ -57,22 +57,22 @@ func ReadUniversal(r io.Reader) (*domain.TokenSet, error) {
 	return ts, nil
 }
 
-// WriteUniversal serializes a TokenSet as YAML to w using the
-// ports.UniversalFile structure. Domain tokens are converted to
-// ports.UniversalToken (color as hex string, style flags preserved).
+// WriteTokens serializes a TokenSet as YAML to w using the
+// ports.TokensFile structure. Domain tokens are converted to
+// ports.TokenEntry (color as hex string, style flags preserved).
 // Token paths are sorted for deterministic output.
 //
 // The caller is responsible for wrapping w with a VersionedWriter if
 // schema version headers are desired.
-func WriteUniversal(w io.Writer, ts *domain.TokenSet) error {
-	uf := ports.UniversalFile{
-		Tokens: make(map[string]ports.UniversalToken, ts.Len()),
+func WriteTokens(w io.Writer, ts *domain.TokenSet) error {
+	tf := ports.TokensFile{
+		Tokens: make(map[string]ports.TokenEntry, ts.Len()),
 	}
 
 	paths := ts.Paths() // already sorted
 	for _, path := range paths {
 		tok, _ := ts.Get(path)
-		ut := ports.UniversalToken{
+		te := ports.TokenEntry{
 			Bold:          tok.Bold,
 			Italic:        tok.Italic,
 			Underline:     tok.Underline,
@@ -81,43 +81,43 @@ func WriteUniversal(w io.Writer, ts *domain.TokenSet) error {
 		}
 
 		if !tok.Color.IsNone {
-			ut.Color = tok.Color.Hex()
+			te.Color = tok.Color.Hex()
 		}
 
-		uf.Tokens[path] = ut
+		tf.Tokens[path] = te
 	}
 
 	// Encode using a yaml.Encoder with sorted map keys for determinism.
-	out, err := marshalSortedUniversal(uf)
+	out, err := marshalSortedTokens(tf)
 	if err != nil {
-		return fmt.Errorf("write universal: %w", err)
+		return fmt.Errorf("write tokens: %w", err)
 	}
 
 	if _, err := w.Write(out); err != nil {
-		return fmt.Errorf("write universal: %w", err)
+		return fmt.Errorf("write tokens: %w", err)
 	}
 
 	return nil
 }
 
-// marshalSortedUniversal encodes a UniversalFile to YAML with sorted
+// marshalSortedTokens encodes a TokensFile to YAML with sorted
 // token keys. The standard yaml.Marshal does not guarantee map key order,
 // so we build the YAML node tree manually.
-func marshalSortedUniversal(uf ports.UniversalFile) ([]byte, error) {
+func marshalSortedTokens(tf ports.TokensFile) ([]byte, error) {
 	// Build the tokens mapping node with sorted keys.
 	tokensNode := &yaml.Node{
 		Kind: yaml.MappingNode,
 		Tag:  "!!map",
 	}
 
-	paths := make([]string, 0, len(uf.Tokens))
-	for p := range uf.Tokens {
+	paths := make([]string, 0, len(tf.Tokens))
+	for p := range tf.Tokens {
 		paths = append(paths, p)
 	}
 	sort.Strings(paths)
 
 	for _, path := range paths {
-		tok := uf.Tokens[path]
+		tok := tf.Tokens[path]
 
 		keyNode := &yaml.Node{
 			Kind:  yaml.ScalarNode,

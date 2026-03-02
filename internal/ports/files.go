@@ -18,8 +18,8 @@ type PaletteFile struct {
 	Palette    map[string]string `yaml:"palette"`
 }
 
-// UniversalToken is a single semantic token in universal.yaml.
-type UniversalToken struct {
+// TokenEntry is a single semantic token in tokens.yaml.
+type TokenEntry struct {
 	Color         string `yaml:"color"`
 	Bold          bool   `yaml:"bold,omitempty"`
 	Italic        bool   `yaml:"italic,omitempty"`
@@ -28,10 +28,10 @@ type UniversalToken struct {
 	Strikethrough bool   `yaml:"strikethrough,omitempty"`
 }
 
-// UniversalFile is the derived semantic token set.
-type UniversalFile struct {
+// TokensFile is the derived semantic token set.
+type TokensFile struct {
 	FileHeader `yaml:",inline"`
-	Tokens     map[string]UniversalToken `yaml:"tokens"`
+	Tokens     map[string]TokenEntry `yaml:"tokens"`
 }
 
 // VimMappingHighlight is a single Vim highlight group in the mapping file.

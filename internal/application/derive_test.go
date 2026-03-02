@@ -7,7 +7,7 @@ import (
 	"os"
 	"testing"
 
-	"github.com/curtbushko/flair/internal/adapters/deriver"
+	"github.com/curtbushko/flair/internal/adapters/tokenizer"
 	yamlparser "github.com/curtbushko/flair/internal/adapters/yaml"
 	"github.com/curtbushko/flair/internal/application"
 	"github.com/curtbushko/flair/internal/domain"
@@ -25,12 +25,12 @@ func (s *stubParser) Parse(_ io.Reader) (*domain.Palette, error) {
 	return s.palette, s.err
 }
 
-// stubDeriver is a test stub for ports.TokenDeriver.
-type stubDeriver struct {
+// stubTokenizer is a test stub for ports.Tokenizer.
+type stubTokenizer struct {
 	tokenSet *domain.TokenSet
 }
 
-func (s *stubDeriver) Derive(_ *domain.Palette) *domain.TokenSet {
+func (s *stubTokenizer) Tokenize(_ *domain.Palette) *domain.TokenSet {
 	return s.tokenSet
 }
 
@@ -64,7 +64,7 @@ func TestDeriveThemeUseCase_Execute(t *testing.T) {
 
 	uc := application.NewDeriveThemeUseCase(
 		&stubParser{palette: pal},
-		&stubDeriver{tokenSet: ts},
+		&stubTokenizer{tokenSet: ts},
 	)
 
 	theme, err := uc.Execute(bytes.NewReader([]byte("dummy")))
@@ -98,7 +98,7 @@ func TestDeriveThemeUseCase_ParseError(t *testing.T) {
 	parseErr := errors.New("bad yaml")
 	uc := application.NewDeriveThemeUseCase(
 		&stubParser{err: parseErr},
-		&stubDeriver{tokenSet: domain.NewTokenSet()},
+		&stubTokenizer{tokenSet: domain.NewTokenSet()},
 	)
 
 	_, err := uc.Execute(bytes.NewReader([]byte("bad")))
@@ -116,7 +116,7 @@ func TestDeriveThemeUseCase_Metadata(t *testing.T) {
 
 	uc := application.NewDeriveThemeUseCase(
 		&stubParser{palette: pal},
-		&stubDeriver{tokenSet: ts},
+		&stubTokenizer{tokenSet: ts},
 	)
 
 	theme, err := uc.Execute(bytes.NewReader([]byte("dummy")))
@@ -139,9 +139,9 @@ func TestDeriveThemeUseCase_Integration(t *testing.T) {
 	}
 
 	parser := yamlparser.NewParser()
-	deriv := deriver.New()
+	tok := tokenizer.New()
 
-	uc := application.NewDeriveThemeUseCase(parser, deriv)
+	uc := application.NewDeriveThemeUseCase(parser, tok)
 
 	theme, err := uc.Execute(bytes.NewReader(yamlBytes))
 	if err != nil {

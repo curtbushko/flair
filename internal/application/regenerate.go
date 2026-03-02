@@ -10,30 +10,30 @@ import (
 )
 
 // RegenerateThemeUseCase inspects modification times to determine which
-// downstream files need re-derivation, then regenerates only the stale ones.
+// downstream files need re-tokenization, then regenerates only the stale ones.
 //
 // Dependency chain:
 //
-//	palette.yaml -> universal.yaml -> mapping files -> output files
+//	palette.yaml -> tokens.yaml -> mapping files -> output files
 //
-// If palette is newer than universal, everything downstream is regenerated.
-// If universal is newer than mappings, all mappings + outputs are regenerated.
+// If palette is newer than tokens, everything downstream is regenerated.
+// If tokens is newer than mappings, all mappings + outputs are regenerated.
 // If a mapping is newer than its output, only that output is regenerated.
 type RegenerateThemeUseCase struct {
-	store           ports.ThemeStore
-	parser          ports.PaletteParser
-	deriver         ports.TokenDeriver
-	targets         []ports.Target
-	universalWriter UniversalWriter
+	store        ports.ThemeStore
+	parser       ports.PaletteParser
+	tokenizer    ports.Tokenizer
+	targets      []ports.Target
+	tokensWriter TokensWriter
 }
 
 // RegenerateOption configures optional dependencies on RegenerateThemeUseCase.
 type RegenerateOption func(*RegenerateThemeUseCase)
 
-// WithRegenUniversalWriter sets a custom universal writer for regeneration.
-func WithRegenUniversalWriter(uw UniversalWriter) RegenerateOption {
+// WithRegenTokensWriter sets a custom tokens writer for regeneration.
+func WithRegenTokensWriter(tw TokensWriter) RegenerateOption {
 	return func(uc *RegenerateThemeUseCase) {
-		uc.universalWriter = uw
+		uc.tokensWriter = tw
 	}
 }
 
@@ -41,15 +41,15 @@ func WithRegenUniversalWriter(uw UniversalWriter) RegenerateOption {
 func NewRegenerateThemeUseCase(
 	store ports.ThemeStore,
 	parser ports.PaletteParser,
-	deriver ports.TokenDeriver,
+	tokenizer ports.Tokenizer,
 	targets []ports.Target,
 	opts ...RegenerateOption,
 ) *RegenerateThemeUseCase {
 	uc := &RegenerateThemeUseCase{
-		store:   store,
-		parser:  parser,
-		deriver: deriver,
-		targets: targets,
+		store:     store,
+		parser:    parser,
+		tokenizer: tokenizer,
+		targets:   targets,
 	}
 	for _, opt := range opts {
 		opt(uc)
@@ -78,16 +78,16 @@ func (uc *RegenerateThemeUseCase) Execute(themeName, targetFilter string) (strin
 		return "", fmt.Errorf("palette mtime: %w", err)
 	}
 
-	universalMtime, universalErr := uc.store.FileMtime(themeName, "universal.yaml")
+	tokensMtime, tokensErr := uc.store.FileMtime(themeName, "tokens.yaml")
 
 	// Determine what needs regeneration.
-	// If universal.yaml is missing (error from FileMtime), force full regeneration
+	// If tokens.yaml is missing (error from FileMtime), force full regeneration
 	// from palette rather than relying on zero-time coincidence.
-	paletteEdited := universalErr != nil || paletteMtime.After(universalMtime)
-	universalEdited := !paletteEdited && uc.isUniversalNewerThanMappings(themeName, universalMtime, targetFilter)
+	paletteEdited := tokensErr != nil || paletteMtime.After(tokensMtime)
+	tokensEdited := !paletteEdited && uc.isTokensNewerThanMappings(themeName, tokensMtime, targetFilter)
 
 	// Resolve the theme for downstream operations.
-	tokens := uc.deriver.Derive(palette)
+	tokens := uc.tokenizer.Tokenize(palette)
 	resolved := &domain.ResolvedTheme{
 		Name:    palette.Name,
 		Variant: palette.Variant,
@@ -95,7 +95,7 @@ func (uc *RegenerateThemeUseCase) Execute(themeName, targetFilter string) (strin
 		Tokens:  tokens,
 	}
 
-	regenerated, err := uc.applyRegeneration(resolved, themeName, targetFilter, paletteEdited, universalEdited)
+	regenerated, err := uc.applyRegeneration(resolved, themeName, targetFilter, paletteEdited, tokensEdited)
 	if err != nil {
 		return "", err
 	}
@@ -111,27 +111,27 @@ func (uc *RegenerateThemeUseCase) Execute(themeName, targetFilter string) (strin
 // on which upstream file was edited.
 func (uc *RegenerateThemeUseCase) applyRegeneration(
 	resolved *domain.ResolvedTheme, themeName, targetFilter string,
-	paletteEdited, universalEdited bool,
+	paletteEdited, tokensEdited bool,
 ) ([]string, error) {
 	switch {
 	case paletteEdited:
 		return uc.regenFromPalette(resolved, themeName, targetFilter)
-	case universalEdited:
+	case tokensEdited:
 		return uc.regenerateTargets(resolved, themeName, targetFilter)
 	default:
 		return uc.regenerateStaleMappings(resolved, themeName, targetFilter)
 	}
 }
 
-// regenFromPalette re-derives universal.yaml and all targets.
+// regenFromPalette re-derives tokens.yaml and all targets.
 func (uc *RegenerateThemeUseCase) regenFromPalette(
 	resolved *domain.ResolvedTheme, themeName, targetFilter string,
 ) ([]string, error) {
-	if err := uc.writeUniversal(resolved.Tokens, themeName); err != nil {
-		return nil, fmt.Errorf("write universal: %w", err)
+	if err := uc.writeTokens(resolved.Tokens, themeName); err != nil {
+		return nil, fmt.Errorf("write tokens: %w", err)
 	}
 
-	regenerated := []string{"universal.yaml"}
+	regenerated := []string{"tokens.yaml"}
 
 	regen, err := uc.regenerateTargets(resolved, themeName, targetFilter)
 	if err != nil {
@@ -141,8 +141,8 @@ func (uc *RegenerateThemeUseCase) regenFromPalette(
 	return append(regenerated, regen...), nil
 }
 
-// isUniversalNewerThanMappings checks if universal.yaml is newer than any mapping file.
-func (uc *RegenerateThemeUseCase) isUniversalNewerThanMappings(themeName string, universalMtime time.Time, targetFilter string) bool {
+// isTokensNewerThanMappings checks if tokens.yaml is newer than any mapping file.
+func (uc *RegenerateThemeUseCase) isTokensNewerThanMappings(themeName string, tokensMtime time.Time, targetFilter string) bool {
 	for _, tgt := range uc.targets {
 		if targetFilter != "" && tgt.Mapper.Name() != targetFilter {
 			continue
@@ -152,7 +152,7 @@ func (uc *RegenerateThemeUseCase) isUniversalNewerThanMappings(themeName string,
 			// File missing -> needs regen.
 			return true
 		}
-		if universalMtime.After(mappingMtime) {
+		if tokensMtime.After(mappingMtime) {
 			return true
 		}
 	}
@@ -255,19 +255,19 @@ func (uc *RegenerateThemeUseCase) readPalette(themeName string) (*domain.Palette
 	return uc.parser.Parse(rc)
 }
 
-// writeUniversal writes universal.yaml to the theme directory.
-func (uc *RegenerateThemeUseCase) writeUniversal(tokens *domain.TokenSet, themeName string) error {
-	w, err := uc.store.OpenWriter(themeName, "universal.yaml")
+// writeTokens writes tokens.yaml to the theme directory.
+func (uc *RegenerateThemeUseCase) writeTokens(tokens *domain.TokenSet, themeName string) error {
+	w, err := uc.store.OpenWriter(themeName, "tokens.yaml")
 	if err != nil {
 		return err
 	}
 	defer func() { _ = w.Close() }()
 
-	if uc.universalWriter != nil {
-		return uc.universalWriter(w, tokens)
+	if uc.tokensWriter != nil {
+		return uc.tokensWriter(w, tokens)
 	}
 
-	_, writeErr := fmt.Fprintf(w, "# universal for %s\n", themeName)
+	_, writeErr := fmt.Fprintf(w, "# tokens for %s\n", themeName)
 	return writeErr
 }
 

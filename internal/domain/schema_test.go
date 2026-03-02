@@ -13,7 +13,7 @@ func TestCurrentVersion_AllKinds(t *testing.T) {
 		wantVer int
 	}{
 		{"palette", domain.FileKindPalette, 1},
-		{"universal", domain.FileKindUniversal, 1},
+		{"tokens", domain.FileKindTokens, 1},
 		{"vim-mapping", domain.FileKindVimMapping, 1},
 		{"css-mapping", domain.FileKindCSSMapping, 1},
 		{"gtk-mapping", domain.FileKindGtkMapping, 1},
@@ -34,7 +34,7 @@ func TestCurrentVersion_AllKinds(t *testing.T) {
 func TestCurrentVersion_AllPositive(t *testing.T) {
 	allKinds := []domain.FileKind{
 		domain.FileKindPalette,
-		domain.FileKindUniversal,
+		domain.FileKindTokens,
 		domain.FileKindVimMapping,
 		domain.FileKindCSSMapping,
 		domain.FileKindGtkMapping,
@@ -65,7 +65,7 @@ func TestFileKind_StringValues(t *testing.T) {
 		want string
 	}{
 		{domain.FileKindPalette, "palette"},
-		{domain.FileKindUniversal, "universal"},
+		{domain.FileKindTokens, "tokens"},
 		{domain.FileKindVimMapping, "vim-mapping"},
 		{domain.FileKindCSSMapping, "css-mapping"},
 		{domain.FileKindGtkMapping, "gtk-mapping"},

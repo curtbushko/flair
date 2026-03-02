@@ -1,24 +1,24 @@
-// Package deriver implements the default token derivation rules that transform
+// Package tokenizer implements the default token derivation rules that transform
 // a base24 palette into a semantic token set.
-package deriver
+package tokenizer
 
 import (
 	"github.com/curtbushko/flair/internal/domain"
 )
 
-// DefaultDeriver implements ports.TokenDeriver using the standard derivation
+// DefaultTokenizer implements ports.Tokenizer using the standard derivation
 // rules defined in the PLAN.md token inventory.
-type DefaultDeriver struct{}
+type DefaultTokenizer struct{}
 
-// New returns a new DefaultDeriver.
-func New() *DefaultDeriver {
-	return &DefaultDeriver{}
+// New returns a new DefaultTokenizer.
+func New() *DefaultTokenizer {
+	return &DefaultTokenizer{}
 }
 
-// Derive transforms a base24 palette into a complete semantic token set.
+// Tokenize transforms a base24 palette into a complete semantic token set.
 // Currently derives surface tokens; additional token groups will be added
 // in subsequent tasks.
-func (d *DefaultDeriver) Derive(p *domain.Palette) *domain.TokenSet {
+func (d *DefaultTokenizer) Tokenize(p *domain.Palette) *domain.TokenSet {
 	ts := domain.NewTokenSet()
 	deriveSurface(p, ts)
 	deriveText(p, ts)

@@ -4,12 +4,12 @@ import (
 	"fmt"
 	"io"
 
-	"github.com/curtbushko/flair/internal/adapters/deriver"
 	"github.com/curtbushko/flair/internal/adapters/fileio"
 	"github.com/curtbushko/flair/internal/adapters/generator"
 	"github.com/curtbushko/flair/internal/adapters/mapper"
 	"github.com/curtbushko/flair/internal/adapters/palettes"
 	"github.com/curtbushko/flair/internal/adapters/store"
+	"github.com/curtbushko/flair/internal/adapters/tokenizer"
 	"github.com/curtbushko/flair/internal/adapters/wrappers"
 	yamlparser "github.com/curtbushko/flair/internal/adapters/yaml"
 	"github.com/curtbushko/flair/internal/application"
@@ -36,7 +36,7 @@ type App struct {
 func Wire(configDir string) *App {
 	// Adapters
 	parser := yamlparser.NewParser()
-	drv := deriver.New()
+	tok := tokenizer.New()
 	fsStore := store.NewFsStore(configDir)
 	builtins := palettes.NewSource()
 
@@ -80,21 +80,24 @@ func Wire(configDir string) *App {
 	}
 
 	// Use cases
-	deriveUC := application.NewDeriveThemeUseCase(parser, drv)
+	deriveUC := application.NewDeriveThemeUseCase(parser, tok)
 	generateUC := application.NewGenerateThemeUseCase(
-		parser, drv, targets, fsStore, builtins,
-		application.WithUniversalWriter(func(w io.Writer, ts *domain.TokenSet) error {
-			return fileio.WriteUniversal(w, ts)
+		parser, tok, targets, fsStore, builtins,
+		application.WithPaletteWriter(func(w io.Writer, pal *domain.Palette) error {
+			return fileio.WritePalette(w, pal)
+		}),
+		application.WithTokensWriter(func(w io.Writer, ts *domain.TokenSet) error {
+			return fileio.WriteTokens(w, ts)
 		}),
 	)
 	selectUC := application.NewSelectThemeUseCase(fsStore, builtins, generateUC)
 	listUC := application.NewListThemesUseCase(fsStore, builtins)
 	validateUC := application.NewValidateThemeUseCase(fsStore, parser, schemaValidatorFunc())
-	previewUC := application.NewPreviewThemeUseCase(fsStore, parser, fileio.ReadUniversal, drv, builtins)
+	previewUC := application.NewPreviewThemeUseCase(fsStore, parser, fileio.ReadTokens, tok, builtins)
 	regenerateUC := application.NewRegenerateThemeUseCase(
-		fsStore, parser, drv, targets,
-		application.WithRegenUniversalWriter(func(w io.Writer, ts *domain.TokenSet) error {
-			return fileio.WriteUniversal(w, ts)
+		fsStore, parser, tok, targets,
+		application.WithRegenTokensWriter(func(w io.Writer, ts *domain.TokenSet) error {
+			return fileio.WriteTokens(w, ts)
 		}),
 	)
 

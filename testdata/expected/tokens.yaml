@@ -11,6 +11,18 @@ tokens:
         color: '#5d7ab8'
     border.muted:
         color: '#1f2335'
+    comment.error:
+        color: '#ff899d'
+    comment.hint:
+        color: '#ff9e64'
+    comment.info:
+        color: '#8db6fa'
+    comment.note:
+        color: '#ff9e64'
+    comment.todo:
+        color: '#7aa2f7'
+    comment.warning:
+        color: '#e0af68'
     diff.added.bg:
         color: '#3b4837'
     diff.added.fg:
@@ -38,15 +50,33 @@ tokens:
     git.modified:
         color: '#7aa2f7'
     markup.bold:
-        color: ""
+        color: '#c0caf5'
         bold: true
     markup.code:
         color: '#9ece6a'
     markup.heading:
         color: '#7aa2f7'
         bold: true
+    markup.heading.1:
+        color: '#7aa2f7'
+        bold: true
+    markup.heading.2:
+        color: '#e0af68'
+        bold: true
+    markup.heading.3:
+        color: '#afd67a'
+        bold: true
+    markup.heading.4:
+        color: '#f7768e'
+        bold: true
+    markup.heading.5:
+        color: '#c8acf8'
+        bold: true
+    markup.heading.6:
+        color: '#7aa2f7'
+        bold: true
     markup.italic:
-        color: ""
+        color: '#c0caf5'
         italic: true
     markup.link:
         color: '#7dcfff'
@@ -60,7 +90,7 @@ tokens:
         color: '#565f89'
         italic: true
     markup.strikethrough:
-        color: ""
+        color: '#565f89'
         strikethrough: true
     scrollbar.thumb:
         color: '#32364e'
@@ -75,15 +105,27 @@ tokens:
     status.error:
         color: '#ff899d'
     status.hint:
-        color: '#97d8f8'
+        color: '#ff9e64'
     status.info:
-        color: '#97d8f8'
+        color: '#afd67a'
     status.success:
         color: '#afd67a'
     status.todo:
         color: '#7aa2f7'
     status.warning:
         color: '#e9c582'
+    statusline.a.bg:
+        color: '#a9b1d6'
+    statusline.a.fg:
+        color: '#1a1b26'
+    statusline.b.bg:
+        color: '#16161e'
+    statusline.b.fg:
+        color: '#c0caf5'
+    statusline.c.bg:
+        color: '#1f2335'
+    statusline.c.fg:
+        color: '#c0caf5'
     surface.background:
         color: '#1a1b26'
     surface.background.darkest:
@@ -124,9 +166,9 @@ tokens:
     syntax.operator:
         color: '#8db6fa'
     syntax.parameter:
-        color: '#e9c582'
+        color: '#e0af68'
     syntax.property:
-        color: '#afd67a'
+        color: '#9ece6a'
     syntax.regexp:
         color: '#7dcfff'
     syntax.string:

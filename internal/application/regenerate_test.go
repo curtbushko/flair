@@ -81,16 +81,16 @@ func makeRegenTargets() []ports.Target {
 func makeRegenUseCase(
 	store *mtimeStubStore,
 	parser ports.PaletteParser,
-	deriver ports.TokenDeriver,
+	tokenizer ports.Tokenizer,
 	targets []ports.Target,
 ) *application.RegenerateThemeUseCase {
 	return application.NewRegenerateThemeUseCase(
 		store,
 		parser,
-		deriver,
+		tokenizer,
 		targets,
-		application.WithRegenUniversalWriter(func(w io.Writer, ts *domain.TokenSet) error {
-			_, err := w.Write([]byte("universal-data"))
+		application.WithRegenTokensWriter(func(w io.Writer, ts *domain.TokenSet) error {
+			_, err := w.Write([]byte("tokens-data"))
 			return err
 		}),
 	)
@@ -107,7 +107,7 @@ func TestRegenerateThemeUseCase_PaletteEdited(t *testing.T) {
 	now := time.Now()
 	// Palette is newest -> everything downstream should regenerate.
 	store.setMtime(regenTestTheme, "palette.yaml", now)
-	store.setMtime(regenTestTheme, "universal.yaml", now.Add(-2*time.Second))
+	store.setMtime(regenTestTheme, "tokens.yaml", now.Add(-2*time.Second))
 	for _, tgt := range targets {
 		store.setMtime(regenTestTheme, tgt.MappingFile, now.Add(-3*time.Second))
 		store.setMtime(regenTestTheme, tgt.Generator.DefaultFilename(), now.Add(-4*time.Second))
@@ -121,7 +121,7 @@ func TestRegenerateThemeUseCase_PaletteEdited(t *testing.T) {
 	uc := makeRegenUseCase(
 		store,
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 	)
 
@@ -131,8 +131,8 @@ func TestRegenerateThemeUseCase_PaletteEdited(t *testing.T) {
 	}
 
 	// Should regenerate universal + all mappings + all outputs.
-	if !store.hasFile(regenTestTheme, "universal.yaml") {
-		t.Error("expected universal.yaml to be regenerated")
+	if !store.hasFile(regenTestTheme, "tokens.yaml") {
+		t.Error("expected tokens.yaml to be regenerated")
 	}
 	for _, tgt := range targets {
 		if !store.hasFile(regenTestTheme, tgt.MappingFile) {
@@ -158,7 +158,7 @@ func TestRegenerateThemeUseCase_UniversalEdited(t *testing.T) {
 	// Universal is newest among downstream (newer than mappings but older than palette is okay,
 	// but here palette is older, so universal is the trigger).
 	store.setMtime(regenTestTheme, "palette.yaml", now.Add(-5*time.Second))
-	store.setMtime(regenTestTheme, "universal.yaml", now)
+	store.setMtime(regenTestTheme, "tokens.yaml", now)
 	for _, tgt := range targets {
 		store.setMtime(regenTestTheme, tgt.MappingFile, now.Add(-3*time.Second))
 		store.setMtime(regenTestTheme, tgt.Generator.DefaultFilename(), now.Add(-4*time.Second))
@@ -171,7 +171,7 @@ func TestRegenerateThemeUseCase_UniversalEdited(t *testing.T) {
 	uc := makeRegenUseCase(
 		store,
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 	)
 
@@ -205,7 +205,7 @@ func TestRegenerateThemeUseCase_MappingEdited(t *testing.T) {
 	now := time.Now()
 	// All files are old, but one mapping is newer than its output.
 	store.setMtime(regenTestTheme, "palette.yaml", now.Add(-10*time.Second))
-	store.setMtime(regenTestTheme, "universal.yaml", now.Add(-10*time.Second))
+	store.setMtime(regenTestTheme, "tokens.yaml", now.Add(-10*time.Second))
 	for _, tgt := range targets {
 		store.setMtime(regenTestTheme, tgt.MappingFile, now.Add(-10*time.Second))
 		store.setMtime(regenTestTheme, tgt.Generator.DefaultFilename(), now.Add(-5*time.Second))
@@ -221,7 +221,7 @@ func TestRegenerateThemeUseCase_MappingEdited(t *testing.T) {
 	uc := makeRegenUseCase(
 		store,
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 	)
 
@@ -249,7 +249,7 @@ func TestRegenerateThemeUseCase_NoEdits(t *testing.T) {
 	now := time.Now()
 	// All downstream files are newer than their upstream -> nothing to do.
 	store.setMtime(regenTestTheme, "palette.yaml", now.Add(-10*time.Second))
-	store.setMtime(regenTestTheme, "universal.yaml", now.Add(-5*time.Second))
+	store.setMtime(regenTestTheme, "tokens.yaml", now.Add(-5*time.Second))
 	for _, tgt := range targets {
 		store.setMtime(regenTestTheme, tgt.MappingFile, now.Add(-3*time.Second))
 		store.setMtime(regenTestTheme, tgt.Generator.DefaultFilename(), now.Add(-1*time.Second))
@@ -262,7 +262,7 @@ func TestRegenerateThemeUseCase_NoEdits(t *testing.T) {
 	uc := makeRegenUseCase(
 		store,
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 	)
 
@@ -285,7 +285,7 @@ func TestRegenerateThemeUseCase_TargetFilter(t *testing.T) {
 	now := time.Now()
 	// Palette is newest -> would normally regen everything.
 	store.setMtime(regenTestTheme, "palette.yaml", now)
-	store.setMtime(regenTestTheme, "universal.yaml", now.Add(-2*time.Second))
+	store.setMtime(regenTestTheme, "tokens.yaml", now.Add(-2*time.Second))
 	for _, tgt := range targets {
 		store.setMtime(regenTestTheme, tgt.MappingFile, now.Add(-3*time.Second))
 		store.setMtime(regenTestTheme, tgt.Generator.DefaultFilename(), now.Add(-4*time.Second))
@@ -298,7 +298,7 @@ func TestRegenerateThemeUseCase_TargetFilter(t *testing.T) {
 	uc := makeRegenUseCase(
 		store,
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 	)
 
@@ -317,8 +317,8 @@ func TestRegenerateThemeUseCase_TargetFilter(t *testing.T) {
 	// Check that other target outputs were NOT regenerated by looking at fresh writes.
 	// Since the store writes on execute, check that only vim-related files got new writes.
 	// For simplicity, we check the universal was written (palette edit triggers it).
-	if !store.hasFile(regenTestTheme, "universal.yaml") {
-		t.Error("expected universal.yaml to be regenerated when palette is edited")
+	if !store.hasFile(regenTestTheme, "tokens.yaml") {
+		t.Error("expected tokens.yaml to be regenerated when palette is edited")
 	}
 }
 
@@ -334,7 +334,7 @@ func TestRegenerateThemeUseCase_ThemeNotFound(t *testing.T) {
 	uc := makeRegenUseCase(
 		store,
 		&stubGenParser{palette: pal},
-		&stubGenDeriver{tokenSet: ts},
+		&stubGenTokenizer{tokenSet: ts},
 		targets,
 	)
 

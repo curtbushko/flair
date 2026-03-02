@@ -11,7 +11,7 @@ import (
 // expectedFiles lists the files that a complete theme directory should contain.
 var expectedFiles = []string{
 	"palette.yaml",
-	"universal.yaml",
+	"tokens.yaml",
 	"vim-mapping.yaml",
 	"css-mapping.yaml",
 	"gtk-mapping.yaml",
@@ -59,8 +59,8 @@ func (uc *ValidateThemeUseCase) Execute(themeName string) ([]string, error) {
 		violations = append(violations, domain.ValidatePalette(palette)...)
 	}
 
-	// 4. Validate universal.yaml schema version.
-	violations = append(violations, uc.validateSchemaVersion(themeName, "universal.yaml", domain.FileKindUniversal)...)
+	// 4. Validate tokens.yaml schema version.
+	violations = append(violations, uc.validateSchemaVersion(themeName, "tokens.yaml", domain.FileKindTokens)...)
 
 	return violations, nil
 }
