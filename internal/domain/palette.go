@@ -40,12 +40,13 @@ var base16Fallbacks = map[int]int{
 
 // Palette represents a complete base24 color palette.
 type Palette struct {
-	Name    string
-	Author  string
-	Variant string
-	System  string
-	Slug    string
-	Colors  [24]Color
+	Name      string
+	Author    string
+	Variant   string
+	System    string
+	Slug      string
+	Colors    [24]Color
+	Overrides map[string]TokenOverride // Optional token overrides by path (nil when none)
 }
 
 // NewPalette constructs a Palette from a map of slot names to hex color strings.

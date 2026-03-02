@@ -334,43 +334,43 @@ overrides:
 #### Implementation Checklist
 
 - [ ] 8.1 — Domain: Token override types
-  - [ ] 8.1a — Define `TokenOverride` struct (color, bold, italic, underline, etc.)
-  - [ ] 8.1b — Add `Overrides map[string]TokenOverride` field to `domain.Palette`
-  - [ ] 8.1c — Unit tests for override parsing and application
+  - [x] 8.1a — Define `TokenOverride` struct (color, bold, italic, underline, etc.)
+  - [x] 8.1b — Add `Overrides map[string]TokenOverride` field to `domain.Palette`
+  - [x] 8.1c — Unit tests for override parsing and application
 
 - [ ] 8.2 — Adapter: YAML parser updates
-  - [ ] 8.2a — Update `adapters/yaml/parser.go` to parse `overrides` section
-  - [ ] 8.2b — Validate override token paths against known token paths
-  - [ ] 8.2c — Validate override colors (hex format)
-  - [ ] 8.2d — Unit tests for override YAML parsing
+  - [x] 8.2a — Update `adapters/yaml/parser.go` to parse `overrides` section
+  - [x] 8.2b — Validate override token paths against known token paths
+  - [x] 8.2c — Validate override colors (hex format)
+  - [x] 8.2d — Unit tests for override YAML parsing
 
 - [ ] 8.3 — Adapter: Tokenizer override application
-  - [ ] 8.3a — Update `Tokenizer.Tokenize()` to accept optional overrides
-  - [ ] 8.3b — Apply overrides after default derivation
-  - [ ] 8.3c — Merge override styles with derived styles (override wins)
-  - [ ] 8.3d — Unit tests for override application
+  - [x] 8.3a — Update `Tokenizer.Tokenize()` to accept optional overrides
+  - [x] 8.3b — Apply overrides after default derivation
+  - [x] 8.3c — Merge override styles with derived styles (override wins)
+  - [x] 8.3d — Unit tests for override application
 
 - [ ] 8.4 — Adapter: Palette writer updates
-  - [ ] 8.4a — Update `fileio.WritePalette()` to include overrides section
-  - [ ] 8.4b — Preserve user overrides during regeneration
-  - [ ] 8.4c — Unit tests for round-trip (parse → write → parse)
+  - [x] 8.4a — Update `fileio.WritePalette()` to include overrides section
+  - [x] 8.4b — Preserve user overrides during regeneration
+  - [x] 8.4c — Unit tests for round-trip (parse → write → parse)
 
 - [ ] 8.5 — Application: Use case updates
-  - [ ] 8.5a — Update `GenerateThemeUseCase` to pass overrides to tokenizer
-  - [ ] 8.5b — Update `RegenerateThemeUseCase` to preserve overrides
-  - [ ] 8.5c — Update `PreviewThemeUseCase` to display overridden tokens
-  - [ ] 8.5d — Integration tests for override flow
+  - [x] 8.5a — Update `GenerateThemeUseCase` to pass overrides to tokenizer
+  - [x] 8.5b — Update `RegenerateThemeUseCase` to preserve overrides
+  - [x] 8.5c — Update `PreviewThemeUseCase` to display overridden tokens
+  - [x] 8.5d — Integration tests for override flow
 
 - [ ] 8.6 — CLI: Override-related commands
-  - [ ] 8.6a — `flair override <theme> <token> <color>` — Add/update override
-  - [ ] 8.6b — `flair override <theme> --list` — List current overrides
-  - [ ] 8.6c — `flair override <theme> --remove <token>` — Remove override
-  - [ ] 8.6d — Help text and documentation
+  - [x] 8.6a — `flair override <theme> <token> <color>` — Add/update override
+  - [x] 8.6b — `flair override <theme> --list` — List current overrides
+  - [x] 8.6c — `flair override <theme> --remove <token>` — Remove override
+  - [x] 8.6d — Help text and documentation
 
 - [ ] 8.7 — Validation
-  - [ ] 8.7a — Validate override token paths exist in token inventory
-  - [ ] 8.7b — Warning for overrides that shadow derived values
-  - [ ] 8.7c — Update `validate` command to check overrides
+  - [x] 8.7a — Validate override token paths exist in token inventory
+  - [x] 8.7b — Warning for overrides that shadow derived values
+  - [x] 8.7c — Update `validate` command to check overrides
 
 - [ ] 8.8 — Documentation & Polish
   - [ ] 8.8a — README section: Customizing with overrides
@@ -405,6 +405,144 @@ Any token path from the token inventory can be overridden:
 - `git.*` — Git status tokens
 - `state.*` — State tokens (hover, active, disabled)
 - `scrollbar.*` — Scrollbar tokens
+- `statusline.*` — Statusline tokens (a/b/c sections with fg/bg)
+
+---
+
+### Phase 9: Lualine & Bufferline Statusline Integration
+
+**Goal:** Ensure lualine and bufferline plugins use the `statusline.*` tokens for
+consistent theming across Neovim's statusline and buffer/tab bar.
+
+Both plugins should derive their colors from the same semantic tokens:
+- `statusline.a.fg/bg` — Mode indicator section (brightest)
+- `statusline.b.fg/bg` — Secondary info section (branch, file info)
+- `statusline.c.fg/bg` — Main content section (filename, position)
+- `surface.background.statusbar` — Overall bar background
+
+#### Current State
+
+Lualine support is already implemented:
+- `mapLualine()` in `internal/adapters/mapper/vim.go` creates a lualine theme
+- Generator outputs `local lualine_theme = {...}` and applies it via `pcall`
+
+#### Implementation Checklist
+
+- [ ] 9.1 — Port types for bufferline
+  - [ ] 9.1a — Define `BufferlineTheme` struct in `ports/themes.go`
+  - [ ] 9.1b — Define `BufferlineColors` struct (fg, bg, sp for each state)
+  - [ ] 9.1c — Add `Bufferline *BufferlineTheme` field to `VimTheme`
+  - [ ] 9.1d — Unit tests for bufferline port types
+
+- [ ] 9.2 — Mapper: bufferline mapping
+  - [ ] 9.2a — Add `mapBufferline()` function in `internal/adapters/mapper/vim.go`
+  - [ ] 9.2b — Map selected buffer to `statusline.a.*` tokens (brightest)
+  - [ ] 9.2c — Map visible buffers to `statusline.b.*` tokens
+  - [ ] 9.2d — Map background/hidden to `statusline.c.*` tokens
+  - [ ] 9.2e — Map separator colors from `border.default`
+  - [ ] 9.2f — Map indicator colors from `accent.primary`
+  - [ ] 9.2g — Map modified indicator from `status.warning`
+  - [ ] 9.2h — Map diagnostic counts from `status.error/warning/info/hint`
+  - [ ] 9.2i — Unit tests for bufferline mapping
+
+- [ ] 9.3 — Generator: bufferline output
+  - [ ] 9.3a — Add `generateBufferline()` function in `internal/adapters/generator/vim.go`
+  - [ ] 9.3b — Output `local bufferline_theme = {...}` table
+  - [ ] 9.3c — Output `bufferline.setup({ highlights = bufferline_theme })` via pcall
+  - [ ] 9.3d — Unit tests for bufferline Lua generation
+
+- [ ] 9.4 — Mapping file support
+  - [ ] 9.4a — Update `VimMappingFile` to include bufferline section
+  - [ ] 9.4b — Update `fileio.WriteVimMapping()` to serialize bufferline
+  - [ ] 9.4c — Update `fileio.ReadVimMapping()` to parse bufferline
+  - [ ] 9.4d — Unit tests for round-trip (write → read)
+
+- [ ] 9.5 — Golden file updates
+  - [ ] 9.5a — Update `testdata/expected/style.lua` with bufferline theme
+  - [ ] 9.5b — Update `testdata/expected/vim-mapping.yaml` with bufferline section
+  - [ ] 9.5c — Regenerate golden files with `-update` flag
+
+- [ ] 9.6 — Documentation
+  - [ ] 9.6a — Document bufferline theming in README
+  - [ ] 9.6b — Add example bufferline.nvim setup snippet
+  - [ ] 9.6c — Document statusline.* token overrides for customization
+
+#### Bufferline Theme Structure
+
+```lua
+local bufferline_theme = {
+  fill = {
+    fg = '<statusline.c.fg>',
+    bg = '<surface.background.statusbar>',
+  },
+  background = {
+    fg = '<statusline.c.fg>',
+    bg = '<statusline.c.bg>',
+  },
+  buffer_visible = {
+    fg = '<statusline.b.fg>',
+    bg = '<statusline.b.bg>',
+  },
+  buffer_selected = {
+    fg = '<statusline.a.fg>',
+    bg = '<statusline.a.bg>',
+    bold = true,
+    italic = false,
+  },
+  separator = {
+    fg = '<border.default>',
+    bg = '<statusline.c.bg>',
+  },
+  separator_visible = {
+    fg = '<border.default>',
+    bg = '<statusline.b.bg>',
+  },
+  separator_selected = {
+    fg = '<border.default>',
+    bg = '<statusline.a.bg>',
+  },
+  indicator_selected = {
+    fg = '<accent.primary>',
+    bg = '<statusline.a.bg>',
+  },
+  modified = {
+    fg = '<status.warning>',
+    bg = '<statusline.c.bg>',
+  },
+  modified_visible = {
+    fg = '<status.warning>',
+    bg = '<statusline.b.bg>',
+  },
+  modified_selected = {
+    fg = '<status.warning>',
+    bg = '<statusline.a.bg>',
+  },
+  error = {
+    fg = '<status.error>',
+  },
+  warning = {
+    fg = '<status.warning>',
+  },
+  info = {
+    fg = '<status.info>',
+  },
+  hint = {
+    fg = '<status.hint>',
+  },
+}
+```
+
+#### Usage in bufferline.nvim
+
+```lua
+-- After flair generates style.lua, users can setup bufferline:
+require('bufferline').setup({
+  highlights = bufferline_theme,
+  options = {
+    -- other options...
+  },
+})
+```
 
 ---
 

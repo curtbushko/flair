@@ -21,6 +21,9 @@ import (
 	"github.com/curtbushko/flair/internal/ports"
 )
 
+// testOverrideColor is the hex color used for override tests.
+const testOverrideColor = "#ff00ff"
+
 // --- Stub implementations ---
 
 // stubPaletteSource is a test stub for ports.PaletteSource.
@@ -767,4 +770,183 @@ func qssThemeToMappingFile(theme *ports.QssTheme) ports.QssMappingFile {
 	return ports.QssMappingFile{
 		Rules: rules,
 	}
+}
+
+// --- Override flow tests ---
+
+// TestGenerateThemeUseCase_WithOverrides verifies that palette overrides flow
+// through the tokenization pipeline and appear in the generated tokens.yaml.
+func TestGenerateThemeUseCase_WithOverrides(t *testing.T) {
+	// Arrange: Create a palette with overrides
+	pal := makeGenPalette(t)
+
+	// Add override for syntax.keyword with a custom color
+	overrideColor, err := domain.ParseHex(testOverrideColor)
+	if err != nil {
+		t.Fatalf("parse override color: %v", err)
+	}
+	pal.Overrides = map[string]domain.TokenOverride{
+		"syntax.keyword": {
+			Color:  &overrideColor,
+			Bold:   true,
+			Italic: true,
+		},
+	}
+
+	store := newStubThemeStore()
+	builtins := newStubPaletteSource()
+
+	// Create a tokenizer that actually applies overrides (not a stub)
+	tok := tokenizer.New()
+
+	// Single target for simplicity
+	targets := []ports.Target{
+		{
+			Mapper: &stubGenMapper{
+				name:   "vim",
+				result: &ports.StylixTheme{Values: map[string]string{"key": "val"}},
+			},
+			Generator: &stubGenGenerator{
+				name:            "vim",
+				defaultFilename: "style.lua",
+			},
+			MappingFile:     "vim-mapping.yaml",
+			MappingFileKind: domain.FileKindVimMapping,
+			WriteMappingFile: func(w io.Writer, _ ports.MappedTheme) error {
+				_, writeErr := w.Write([]byte("mapping-data"))
+				return writeErr
+			},
+		},
+	}
+
+	// Capture tokens.yaml output
+	var capturedTokens *domain.TokenSet
+	tokensWriter := func(w io.Writer, ts *domain.TokenSet) error {
+		capturedTokens = ts
+		_, writeErr := w.Write([]byte("tokens-yaml"))
+		return writeErr
+	}
+
+	uc := application.NewGenerateThemeUseCase(
+		&stubGenParser{palette: pal},
+		tok,
+		targets,
+		store,
+		builtins,
+		application.WithTokensWriter(tokensWriter),
+	)
+
+	// Act
+	err = uc.Execute(bytes.NewReader([]byte("palette-yaml")), "test-theme", "")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Assert: tokens.yaml contains overridden values
+	if capturedTokens == nil {
+		t.Fatal("tokens were not captured")
+	}
+
+	keywordToken, ok := capturedTokens.Get("syntax.keyword")
+	if !ok {
+		t.Fatal("syntax.keyword token not found")
+	}
+
+	// Verify the color was overridden
+	if keywordToken.Color.Hex() != testOverrideColor {
+		t.Errorf("syntax.keyword color = %s, want %s", keywordToken.Color.Hex(), testOverrideColor)
+	}
+
+	// Verify style flags were applied (Bold and Italic should be true)
+	if !keywordToken.Bold {
+		t.Error("syntax.keyword Bold = false, want true")
+	}
+	if !keywordToken.Italic {
+		t.Error("syntax.keyword Italic = false, want true")
+	}
+}
+
+// TestGenerateThemeUseCase_OverrideInMapping verifies that overridden token values
+// propagate correctly to mapping files.
+func TestGenerateThemeUseCase_OverrideInMapping(t *testing.T) {
+	// Arrange: Create a palette with syntax.keyword override
+	pal := makeGenPalette(t)
+	overrideColor, err := domain.ParseHex(testOverrideColor)
+	if err != nil {
+		t.Fatalf("parse override color: %v", err)
+	}
+	pal.Overrides = map[string]domain.TokenOverride{
+		"syntax.keyword": {
+			Color: &overrideColor,
+		},
+	}
+
+	store := newStubThemeStore()
+	builtins := newStubPaletteSource()
+	tok := tokenizer.New()
+
+	// Create a mapper that captures the resolved theme
+	var capturedResolved *domain.ResolvedTheme
+	capturingMapper := &capturingGenMapper{
+		name: "vim",
+		captureFunc: func(resolved *domain.ResolvedTheme) {
+			capturedResolved = resolved
+		},
+	}
+
+	targets := []ports.Target{
+		{
+			Mapper:          capturingMapper,
+			Generator:       &stubGenGenerator{name: "vim", defaultFilename: "style.lua"},
+			MappingFile:     "vim-mapping.yaml",
+			MappingFileKind: domain.FileKindVimMapping,
+			WriteMappingFile: func(w io.Writer, _ ports.MappedTheme) error {
+				_, writeErr := w.Write([]byte("mapping-data"))
+				return writeErr
+			},
+		},
+	}
+
+	uc := application.NewGenerateThemeUseCase(
+		&stubGenParser{palette: pal},
+		tok,
+		targets,
+		store,
+		builtins,
+	)
+
+	// Act
+	err = uc.Execute(bytes.NewReader([]byte("palette-yaml")), "test-theme", "")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Assert: The resolved theme's tokens contain the overridden value
+	if capturedResolved == nil {
+		t.Fatal("resolved theme was not captured")
+	}
+
+	keywordToken, ok := capturedResolved.Tokens.Get("syntax.keyword")
+	if !ok {
+		t.Fatal("syntax.keyword token not found in resolved theme")
+	}
+
+	if keywordToken.Color.Hex() != testOverrideColor {
+		t.Errorf("syntax.keyword in mapping = %s, want %s", keywordToken.Color.Hex(), testOverrideColor)
+	}
+}
+
+// capturingGenMapper captures the resolved theme passed to Map() for inspection.
+type capturingGenMapper struct {
+	name        string
+	captureFunc func(*domain.ResolvedTheme)
+}
+
+func (m *capturingGenMapper) Name() string { return m.name }
+
+func (m *capturingGenMapper) Map(resolved *domain.ResolvedTheme) (ports.MappedTheme, error) {
+	if m.captureFunc != nil {
+		m.captureFunc(resolved)
+	}
+	return &ports.StylixTheme{Values: map[string]string{"key": "val"}}, nil
 }

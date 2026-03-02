@@ -42,6 +42,12 @@ func NewValidateThemeUseCase(store ports.ThemeStore, parser ports.PaletteParser,
 	return &ValidateThemeUseCase{store: store, parser: parser, schemaValidator: sv}
 }
 
+// Parser returns the palette parser used by this use case.
+// This allows other commands to reuse the parser for reading palette files.
+func (uc *ValidateThemeUseCase) Parser() ports.PaletteParser {
+	return uc.parser
+}
+
 // Execute validates the named theme directory and returns all violations found.
 // A nil error with an empty slice means the theme is valid.
 func (uc *ValidateThemeUseCase) Execute(themeName string) ([]string, error) {
@@ -57,9 +63,12 @@ func (uc *ValidateThemeUseCase) Execute(themeName string) ([]string, error) {
 	// 3. Run domain palette validation if we got a valid palette.
 	if palette != nil {
 		violations = append(violations, domain.ValidatePalette(palette)...)
+
+		// 4. Validate override paths exist in token inventory.
+		violations = append(violations, domain.ValidateOverrides(palette.Overrides)...)
 	}
 
-	// 4. Validate tokens.yaml schema version.
+	// 5. Validate tokens.yaml schema version.
 	violations = append(violations, uc.validateSchemaVersion(themeName, "tokens.yaml", domain.FileKindTokens)...)
 
 	return violations, nil

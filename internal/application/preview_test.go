@@ -267,3 +267,136 @@ func TestPreviewThemeUseCase_PaletteWithoutTokens(t *testing.T) {
 		t.Error("output should contain derived semantic tokens")
 	}
 }
+
+// --- Override preview tests ---
+
+// writePaletteWithOverridesToStore writes a palette.yaml with overrides
+// into the stub store for the test theme.
+func writePaletteWithOverridesToStore(t *testing.T, store *stubThemeStore) {
+	t.Helper()
+
+	paletteYAML := `system: "base24"
+name: "Test Palette"
+author: "test"
+variant: "dark"
+palette:
+  base00: "1a1b26"
+  base01: "1f2335"
+  base02: "292e42"
+  base03: "565f89"
+  base04: "a9b1d6"
+  base05: "c0caf5"
+  base06: "c0caf5"
+  base07: "c8d3f5"
+  base08: "f7768e"
+  base09: "ff9e64"
+  base0A: "e0af68"
+  base0B: "9ece6a"
+  base0C: "7dcfff"
+  base0D: "7aa2f7"
+  base0E: "bb9af7"
+  base0F: "db4b4b"
+  base10: "16161e"
+  base11: "101014"
+  base12: "ff899d"
+  base13: "e9c582"
+  base14: "afd67a"
+  base15: "97d8f8"
+  base16: "8db6fa"
+  base17: "c8acf8"
+overrides:
+  syntax.keyword:
+    color: "#ff00ff"
+    bold: true
+`
+
+	if err := store.EnsureThemeDir(testThemeName); err != nil {
+		t.Fatalf("ensure theme dir: %v", err)
+	}
+	w, err := store.OpenWriter(testThemeName, "palette.yaml")
+	if err != nil {
+		t.Fatalf("open palette writer: %v", err)
+	}
+	_, _ = w.Write([]byte(paletteYAML))
+	_ = w.Close()
+}
+
+// TestPreviewThemeUseCase_ShowsOverrides verifies that preview output displays
+// tokens with their overridden values (derived on-the-fly when no tokens.yaml).
+func TestPreviewThemeUseCase_ShowsOverrides(t *testing.T) {
+	// Arrange: Set up store with palette containing overrides (no tokens.yaml)
+	store := newStubThemeStore()
+	writePaletteWithOverridesToStore(t, store)
+	// Note: NOT writing tokens.yaml so that tokens are derived with overrides
+
+	parser := yamlparser.NewParser()
+	tok := tokenizer.New()
+	builtins := palettes.NewSource()
+	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadTokens, tok, builtins)
+
+	// Act
+	var buf bytes.Buffer
+	err := uc.Execute(testThemeName, &buf)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	output := buf.String()
+
+	// Assert: Output contains the overridden color #ff00ff
+	// The preview renders colors as ANSI escape sequences and hex values.
+	// The hex value "#ff00ff" should appear in the output for syntax.keyword.
+	if !strings.Contains(output, "#ff00ff") {
+		t.Error("output should contain overridden color #ff00ff")
+	}
+
+	// Should contain the token path
+	if !strings.Contains(output, "syntax.keyword") {
+		t.Error("output should contain syntax.keyword token")
+	}
+}
+
+// TestPreviewThemeUseCase_ShowsOverridesFromTokensYAML verifies that preview
+// correctly shows overridden values when reading from tokens.yaml that was
+// generated with overrides applied.
+func TestPreviewThemeUseCase_ShowsOverridesFromTokensYAML(t *testing.T) {
+	// Arrange: Write both palette and tokens.yaml where tokens contain overrides
+	store := newStubThemeStore()
+	writePaletteWithOverridesToStore(t, store)
+
+	// Write tokens.yaml with the overridden syntax.keyword color
+	tokensYAML := `tokens:
+  surface.background:
+    color: "#1a1b26"
+  text.primary:
+    color: "#c0caf5"
+  syntax.keyword:
+    color: "#ff00ff"
+    bold: true
+`
+	w, err := store.OpenWriter(testThemeName, "tokens.yaml")
+	if err != nil {
+		t.Fatalf("open tokens writer: %v", err)
+	}
+	_, _ = w.Write([]byte(tokensYAML))
+	_ = w.Close()
+
+	parser := yamlparser.NewParser()
+	tok := tokenizer.New()
+	builtins := palettes.NewSource()
+	uc := application.NewPreviewThemeUseCase(store, parser, fileio.ReadTokens, tok, builtins)
+
+	// Act
+	var buf bytes.Buffer
+	err = uc.Execute(testThemeName, &buf)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	output := buf.String()
+
+	// Assert: Output contains the overridden color from tokens.yaml
+	if !strings.Contains(output, "#ff00ff") {
+		t.Error("output should contain overridden color #ff00ff from tokens.yaml")
+	}
+}

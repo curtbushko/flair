@@ -35,8 +35,8 @@ func (m *mockValidateStore) FileMtime(string, string) (time.Time, error) {
 	return time.Time{}, errors.New("not implemented")
 }
 
-func (m *mockValidateStore) putFile(theme, file string, data []byte) {
-	m.files[theme+"/"+file] = data
+func (m *mockValidateStore) putFile(file string, data []byte) {
+	m.files[testThemeName+"/"+file] = data
 }
 
 func (m *mockValidateStore) FileExists(theme, file string) bool {
@@ -104,24 +104,27 @@ func newParser() *yamlparser.Parser {
 	return yamlparser.NewParser()
 }
 
+// testThemeName is the standard theme name used across validate tests.
+const testThemeName = "my-theme"
+
 // populateAllFiles adds all expected theme files to the mock store.
-func populateAllFiles(store *mockValidateStore, theme string) {
-	store.putFile(theme, "tokens.yaml", []byte("schema_version: 1\nkind: tokens\n"))
+func populateAllFiles(store *mockValidateStore) {
+	store.putFile("tokens.yaml", []byte("schema_version: 1\nkind: tokens\n"))
 	for _, f := range outputFiles {
-		store.putFile(theme, f, []byte("content"))
+		store.putFile(f, []byte("content"))
 	}
 	for _, mf := range []string{
 		"vim-mapping.yaml", "css-mapping.yaml", "gtk-mapping.yaml",
 		"qss-mapping.yaml", "stylix-mapping.yaml",
 	} {
-		store.putFile(theme, mf, []byte("content"))
+		store.putFile(mf, []byte("content"))
 	}
 }
 
 func TestValidateThemeUseCase_ValidTheme(t *testing.T) {
 	store := newMockValidateStore()
-	store.putFile("my-theme", "palette.yaml", validPaletteYAML())
-	populateAllFiles(store, "my-theme")
+	store.putFile("palette.yaml", validPaletteYAML())
+	populateAllFiles(store)
 
 	uc := NewValidateThemeUseCase(store, newParser(), testSchemaValidator)
 	violations, err := uc.Execute("my-theme")
@@ -195,8 +198,8 @@ palette:
   base16: "ffffff"
   base17: "ffffff"
 `)
-	store.putFile("my-theme", "palette.yaml", badPalette)
-	populateAllFiles(store, "my-theme")
+	store.putFile("palette.yaml", badPalette)
+	populateAllFiles(store)
 
 	uc := NewValidateThemeUseCase(store, newParser(), testSchemaValidator)
 	violations, err := uc.Execute("my-theme")
@@ -223,7 +226,7 @@ palette:
 
 func TestValidateThemeUseCase_MissingFiles(t *testing.T) {
 	store := newMockValidateStore()
-	store.putFile("my-theme", "palette.yaml", validPaletteYAML())
+	store.putFile("palette.yaml", validPaletteYAML())
 	// Missing tokens.yaml and output files
 
 	uc := NewValidateThemeUseCase(store, newParser(), testSchemaValidator)
@@ -284,8 +287,8 @@ palette:
   base16: "2ac3de"
   base17: "bb9af7"
 `)
-	store.putFile("my-theme", "palette.yaml", badVersionPalette)
-	populateAllFiles(store, "my-theme")
+	store.putFile("palette.yaml", badVersionPalette)
+	populateAllFiles(store)
 
 	uc := NewValidateThemeUseCase(store, newParser(), testSchemaValidator)
 	violations, err := uc.Execute("my-theme")
@@ -306,5 +309,131 @@ palette:
 	}
 	if !found {
 		t.Errorf("expected schema version violation, got: %v", violations)
+	}
+}
+
+// paletteWithInvalidOverride returns a palette YAML with an invalid override path.
+func paletteWithInvalidOverride() []byte {
+	return []byte(`schema_version: 1
+kind: palette
+theme_name: test-theme
+system: base24
+author: test
+variant: dark
+palette:
+  base00: "16161e"
+  base01: "1a1b26"
+  base02: "2f3549"
+  base03: "444b6a"
+  base04: "787c99"
+  base05: "a9b1d6"
+  base06: "cbccd1"
+  base07: "d5d6db"
+  base08: "c0caf5"
+  base09: "a9b1d6"
+  base0A: "0db9d7"
+  base0B: "9ece6a"
+  base0C: "b4f9f8"
+  base0D: "2ac3de"
+  base0E: "bb9af7"
+  base0F: "f7768e"
+  base10: "1a1b26"
+  base11: "1a1b26"
+  base12: "c0caf5"
+  base13: "0db9d7"
+  base14: "9ece6a"
+  base15: "b4f9f8"
+  base16: "2ac3de"
+  base17: "bb9af7"
+overrides:
+  invalid.token:
+    color: "#ff0000"
+`)
+}
+
+// paletteWithValidOverride returns a palette YAML with a valid override path.
+func paletteWithValidOverride() []byte {
+	return []byte(`schema_version: 1
+kind: palette
+theme_name: test-theme
+system: base24
+author: test
+variant: dark
+palette:
+  base00: "16161e"
+  base01: "1a1b26"
+  base02: "2f3549"
+  base03: "444b6a"
+  base04: "787c99"
+  base05: "a9b1d6"
+  base06: "cbccd1"
+  base07: "d5d6db"
+  base08: "c0caf5"
+  base09: "a9b1d6"
+  base0A: "0db9d7"
+  base0B: "9ece6a"
+  base0C: "b4f9f8"
+  base0D: "2ac3de"
+  base0E: "bb9af7"
+  base0F: "f7768e"
+  base10: "1a1b26"
+  base11: "1a1b26"
+  base12: "c0caf5"
+  base13: "0db9d7"
+  base14: "9ece6a"
+  base15: "b4f9f8"
+  base16: "2ac3de"
+  base17: "bb9af7"
+overrides:
+  syntax.keyword:
+    color: "#ff0000"
+`)
+}
+
+func TestValidateThemeUseCase_InvalidOverridePath(t *testing.T) {
+	store := newMockValidateStore()
+	store.putFile("palette.yaml", paletteWithInvalidOverride())
+	populateAllFiles(store)
+
+	uc := NewValidateThemeUseCase(store, newParser(), testSchemaValidator)
+	violations, err := uc.Execute("my-theme")
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+	if len(violations) == 0 {
+		t.Fatal("expected violations for invalid override path, got none")
+	}
+
+	// Should mention invalid.token
+	found := false
+	for _, v := range violations {
+		if strings.Contains(v, "invalid.token") || strings.Contains(v, "override") {
+			found = true
+			break
+		}
+	}
+	if !found {
+		t.Errorf("expected violation mentioning invalid override path, got: %v", violations)
+	}
+}
+
+func TestValidateThemeUseCase_ValidOverrides(t *testing.T) {
+	store := newMockValidateStore()
+	store.putFile("palette.yaml", paletteWithValidOverride())
+	populateAllFiles(store)
+
+	uc := NewValidateThemeUseCase(store, newParser(), testSchemaValidator)
+	violations, err := uc.Execute("my-theme")
+
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Should have no violations related to overrides
+	for _, v := range violations {
+		if strings.Contains(v, "override") {
+			t.Errorf("unexpected override violation: %s", v)
+		}
 	}
 }

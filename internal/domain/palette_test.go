@@ -192,3 +192,54 @@ func TestPalette_Slot_Unknown(t *testing.T) {
 		t.Fatal("Slot(baseZZ) expected error, got nil")
 	}
 }
+
+func TestPalette_WithOverrides(t *testing.T) {
+	// Arrange: Create a Palette with Overrides map containing syntax.keyword override
+	colors := makeBase24Colors()
+	pal, err := domain.NewPalette("test", "author", "dark", "base24", colors)
+	if err != nil {
+		t.Fatalf("NewPalette() unexpected error: %v", err)
+	}
+
+	// Create override with color and italic
+	overrideColor, _ := domain.ParseHex("#ff5555")
+	override := domain.TokenOverride{
+		Color:  &overrideColor,
+		Italic: true,
+	}
+
+	// Set the override on the palette
+	pal.Overrides = map[string]domain.TokenOverride{
+		"syntax.keyword": override,
+	}
+
+	// Act: Access the override
+	got, exists := pal.Overrides["syntax.keyword"]
+
+	// Assert: Returns the TokenOverride struct with correct values
+	if !exists {
+		t.Fatal("pal.Overrides[\"syntax.keyword\"] does not exist")
+	}
+	if !got.HasColor() {
+		t.Error("override.HasColor() = false, want true")
+	}
+	if !got.Color.Equal(overrideColor) {
+		t.Errorf("override.Color = %s, want %s", got.Color.Hex(), overrideColor.Hex())
+	}
+	if !got.Italic {
+		t.Error("override.Italic = false, want true")
+	}
+}
+
+func TestPalette_OverridesNilByDefault(t *testing.T) {
+	// Verify that Overrides is nil when no overrides are set (default)
+	colors := makeBase24Colors()
+	pal, err := domain.NewPalette("test", "author", "dark", "base24", colors)
+	if err != nil {
+		t.Fatalf("NewPalette() unexpected error: %v", err)
+	}
+
+	if pal.Overrides != nil {
+		t.Errorf("pal.Overrides = %v, want nil", pal.Overrides)
+	}
+}

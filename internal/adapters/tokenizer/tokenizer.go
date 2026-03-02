@@ -16,8 +16,9 @@ func New() *DefaultTokenizer {
 }
 
 // Tokenize transforms a base24 palette into a complete semantic token set.
-// Currently derives surface tokens; additional token groups will be added
-// in subsequent tasks.
+// After derivation, any overrides defined in the palette are applied.
+// Overridden colors replace derived colors; overridden style flags are
+// merged (OR'd) with derived styles.
 func (d *DefaultTokenizer) Tokenize(p *domain.Palette) *domain.TokenSet {
 	ts := domain.NewTokenSet()
 	deriveSurface(p, ts)
@@ -31,7 +32,30 @@ func (d *DefaultTokenizer) Tokenize(p *domain.Palette) *domain.TokenSet {
 	deriveGit(p, ts)
 	deriveTerminal(p, ts)
 	deriveStatusline(p, ts)
+	applyOverrides(p, ts)
 	return ts
+}
+
+// applyOverrides applies any token overrides from the palette to the token set.
+// For each override path that exists in the token set, the override is applied
+// using TokenOverride.Apply(), which replaces color (if set) and merges style
+// flags with OR logic. Invalid/unknown paths are silently ignored.
+func applyOverrides(p *domain.Palette, ts *domain.TokenSet) {
+	if p.Overrides == nil {
+		return
+	}
+
+	for path, override := range p.Overrides {
+		tok, ok := ts.Get(path)
+		if !ok {
+			// Path doesn't exist in token set; silently ignore
+			continue
+		}
+
+		// Apply the override to the existing token
+		updated := override.Apply(tok)
+		ts.Set(path, updated)
+	}
 }
 
 // deriveSurface derives the 11 surface tokens from the palette.

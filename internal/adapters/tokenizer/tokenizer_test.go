@@ -1911,3 +1911,236 @@ func TestFullTokenization_Deterministic(t *testing.T) {
 		t.Error("serialized YAML output differs between two tokenizations")
 	}
 }
+
+// =============================================================================
+// Token Override Tests (Task 3 — Override Application)
+// =============================================================================
+
+// TestTokenize_WithColorOverride verifies that a color override replaces the
+// default derived color for a token.
+func TestTokenize_WithColorOverride(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+
+	// Add override for syntax.keyword with color #ff00ff
+	overrideColor, err := domain.ParseHex("#ff00ff")
+	if err != nil {
+		t.Fatalf("failed to parse override color: %v", err)
+	}
+	pal.Overrides = map[string]domain.TokenOverride{
+		"syntax.keyword": {Color: &overrideColor},
+	}
+
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.keyword")
+	if !ok {
+		t.Fatal("syntax.keyword not found in token set")
+	}
+
+	want := mustParseHex(t, "#ff00ff")
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.keyword = %s, want %s (override)", tok.Color.Hex(), want.Hex())
+	}
+}
+
+// TestTokenize_WithStyleOverride verifies that a style override adds the
+// specified style flag to a token.
+func TestTokenize_WithStyleOverride(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+
+	// Add override for syntax.keyword with bold=true (keyword is not bold by default)
+	pal.Overrides = map[string]domain.TokenOverride{
+		"syntax.keyword": {Bold: true},
+	}
+
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.keyword")
+	if !ok {
+		t.Fatal("syntax.keyword not found in token set")
+	}
+
+	// Verify bold is now true
+	if !tok.Bold {
+		t.Error("syntax.keyword should have Bold=true after override")
+	}
+
+	// Color should still be the default base0E
+	want := mustParseHex(t, "#bb9af7") // base0E
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.keyword color = %s, want %s (unchanged)", tok.Color.Hex(), want.Hex())
+	}
+}
+
+// TestTokenize_OverrideMergesStyle verifies that style overrides are merged
+// (OR'd) with derived styles, not replaced.
+func TestTokenize_OverrideMergesStyle(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+
+	// syntax.comment has Italic=true by default
+	// Add override with Bold=true, should result in both Bold AND Italic
+	pal.Overrides = map[string]domain.TokenOverride{
+		"syntax.comment": {Bold: true},
+	}
+
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.comment")
+	if !ok {
+		t.Fatal("syntax.comment not found in token set")
+	}
+
+	// Should have BOTH Bold (from override) AND Italic (from derivation)
+	if !tok.Bold {
+		t.Error("syntax.comment should have Bold=true after override")
+	}
+	if !tok.Italic {
+		t.Error("syntax.comment should retain Italic=true from derivation")
+	}
+}
+
+// TestTokenize_OverrideReplacesColor verifies that a color override completely
+// replaces the derived color.
+func TestTokenize_OverrideReplacesColor(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+
+	// Override surface.background with a completely different color
+	overrideColor, err := domain.ParseHex("#000000")
+	if err != nil {
+		t.Fatalf("failed to parse override color: %v", err)
+	}
+	pal.Overrides = map[string]domain.TokenOverride{
+		"surface.background": {Color: &overrideColor},
+	}
+
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("surface.background")
+	if !ok {
+		t.Fatal("surface.background not found in token set")
+	}
+
+	want := mustParseHex(t, "#000000")
+	if !tok.Color.Equal(want) {
+		t.Errorf("surface.background = %s, want %s (override)", tok.Color.Hex(), want.Hex())
+	}
+}
+
+// TestTokenize_NoOverridesUnchanged verifies that tokenization with nil/empty
+// Overrides produces identical results to the baseline (backward compatible).
+func TestTokenize_NoOverridesUnchanged(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	// Ensure Overrides is nil (should be by default, but be explicit)
+	pal.Overrides = nil
+
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	// Verify a few key tokens match their expected default values
+	tests := []struct {
+		path string
+		want string
+	}{
+		{"surface.background", "#1a1b26"},
+		{"syntax.keyword", "#bb9af7"},
+		{"syntax.comment", "#565f89"},
+	}
+
+	for _, tt := range tests {
+		t.Run(tt.path, func(t *testing.T) {
+			tok, ok := ts.Get(tt.path)
+			if !ok {
+				t.Fatalf("%s not found in token set", tt.path)
+			}
+			want := mustParseHex(t, tt.want)
+			if !tok.Color.Equal(want) {
+				t.Errorf("%s = %s, want %s", tt.path, tok.Color.Hex(), want.Hex())
+			}
+		})
+	}
+
+	// Also test with empty map
+	pal.Overrides = map[string]domain.TokenOverride{}
+	ts2 := d.Tokenize(pal)
+
+	// Should produce same results
+	if ts.Len() != ts2.Len() {
+		t.Errorf("nil vs empty overrides: token count differs: %d vs %d", ts.Len(), ts2.Len())
+	}
+}
+
+// TestTokenize_InvalidPathIgnored verifies that an override for a non-existent
+// token path is silently ignored (no error, other tokens unaffected).
+func TestTokenize_InvalidPathIgnored(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+
+	// Add override for a path that doesn't exist
+	overrideColor, err := domain.ParseHex("#ff00ff")
+	if err != nil {
+		t.Fatalf("failed to parse override color: %v", err)
+	}
+	pal.Overrides = map[string]domain.TokenOverride{
+		"invalid.nonexistent.path": {Color: &overrideColor},
+	}
+
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	// Tokenization should succeed
+	if ts == nil {
+		t.Fatal("Tokenize returned nil")
+	}
+
+	// Other tokens should be unaffected
+	tok, ok := ts.Get("syntax.keyword")
+	if !ok {
+		t.Fatal("syntax.keyword not found in token set")
+	}
+
+	want := mustParseHex(t, "#bb9af7") // base0E - default value
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.keyword = %s, want %s (should be unaffected by invalid override)",
+			tok.Color.Hex(), want.Hex())
+	}
+}
+
+// TestTokenize_MultipleOverrides verifies that multiple overrides are all applied.
+func TestTokenize_MultipleOverrides(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+
+	// Add multiple overrides
+	color1, _ := domain.ParseHex("#111111")
+	color2, _ := domain.ParseHex("#222222")
+	pal.Overrides = map[string]domain.TokenOverride{
+		"surface.background": {Color: &color1},
+		"syntax.keyword":     {Color: &color2, Bold: true},
+	}
+
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	// Check first override
+	tok1, ok := ts.Get("surface.background")
+	if !ok {
+		t.Fatal("surface.background not found")
+	}
+	if !tok1.Color.Equal(color1) {
+		t.Errorf("surface.background = %s, want %s", tok1.Color.Hex(), color1.Hex())
+	}
+
+	// Check second override
+	tok2, ok := ts.Get("syntax.keyword")
+	if !ok {
+		t.Fatal("syntax.keyword not found")
+	}
+	if !tok2.Color.Equal(color2) {
+		t.Errorf("syntax.keyword = %s, want %s", tok2.Color.Hex(), color2.Hex())
+	}
+	if !tok2.Bold {
+		t.Error("syntax.keyword should have Bold=true")
+	}
+}

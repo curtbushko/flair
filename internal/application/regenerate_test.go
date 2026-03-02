@@ -6,6 +6,8 @@ import (
 	"testing"
 	"time"
 
+	"github.com/curtbushko/flair/internal/adapters/tokenizer"
+	yamlparser "github.com/curtbushko/flair/internal/adapters/yaml"
 	"github.com/curtbushko/flair/internal/application"
 	"github.com/curtbushko/flair/internal/domain"
 	"github.com/curtbushko/flair/internal/ports"
@@ -375,4 +377,122 @@ func (s *mtimeStubStore) SelectedTheme() (string, error) {
 
 func (s *mtimeStubStore) Select(themeName string) error {
 	return s.stubThemeStore.Select(themeName)
+}
+
+// --- Override preservation tests ---
+
+// TestRegenerateThemeUseCase_PreservesOverrides verifies that overrides defined
+// in palette.yaml are preserved during regeneration (palette edits trigger
+// full regeneration, but overrides should remain intact).
+func TestRegenerateThemeUseCase_PreservesOverrides(t *testing.T) {
+	// Arrange: Create a palette with overrides
+	pal := makeGenPalette(t)
+	overrideColor, err := domain.ParseHex("#ff00ff")
+	if err != nil {
+		t.Fatalf("parse override color: %v", err)
+	}
+	pal.Overrides = map[string]domain.TokenOverride{
+		"syntax.keyword": {
+			Color:  &overrideColor,
+			Bold:   true,
+			Italic: true,
+		},
+	}
+
+	store := newMtimeStubStore()
+	targets := makeRegenTargets()
+
+	// Set up mtimes to trigger full regeneration (palette is newest)
+	now := time.Now()
+	store.setMtime(regenTestTheme, "palette.yaml", now)
+	store.setMtime(regenTestTheme, "tokens.yaml", now.Add(-2*time.Second))
+	for _, tgt := range targets {
+		store.setMtime(regenTestTheme, tgt.MappingFile, now.Add(-3*time.Second))
+		store.setMtime(regenTestTheme, tgt.Generator.DefaultFilename(), now.Add(-4*time.Second))
+	}
+
+	// Seed palette.yaml content with overrides
+	paletteYAML := `system: "base24"
+name: "Tokyo Night Dark"
+author: "test-author"
+variant: "dark"
+palette:
+  base00: "1a1b26"
+  base01: "1f2335"
+  base02: "292e42"
+  base03: "565f89"
+  base04: "a9b1d6"
+  base05: "c0caf5"
+  base06: "c0caf5"
+  base07: "c8d3f5"
+  base08: "f7768e"
+  base09: "ff9e64"
+  base0A: "e0af68"
+  base0B: "9ece6a"
+  base0C: "7dcfff"
+  base0D: "7aa2f7"
+  base0E: "bb9af7"
+  base0F: "db4b4b"
+  base10: "16161e"
+  base11: "101014"
+  base12: "ff899d"
+  base13: "e9c582"
+  base14: "afd67a"
+  base15: "97d8f8"
+  base16: "8db6fa"
+  base17: "c8acf8"
+overrides:
+  syntax.keyword:
+    color: "#ff00ff"
+    bold: true
+    italic: true
+`
+	store.mu.Lock()
+	store.files[regenTestTheme]["palette.yaml"] = &recordedWrite{data: []byte(paletteYAML)}
+	store.mu.Unlock()
+
+	// Use real parser that reads overrides
+	parser := yamlparser.NewParser()
+	tok := tokenizer.New()
+
+	// Capture tokens written during regeneration
+	var capturedTokens *domain.TokenSet
+	uc := application.NewRegenerateThemeUseCase(
+		store,
+		parser,
+		tok,
+		targets,
+		application.WithRegenTokensWriter(func(w io.Writer, ts *domain.TokenSet) error {
+			capturedTokens = ts
+			_, writeErr := w.Write([]byte("tokens-data"))
+			return writeErr
+		}),
+	)
+
+	// Act
+	_, err = uc.Execute(regenTestTheme, "")
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Assert: tokens.yaml contains overridden values
+	if capturedTokens == nil {
+		t.Fatal("tokens were not captured")
+	}
+
+	keywordToken, ok := capturedTokens.Get("syntax.keyword")
+	if !ok {
+		t.Fatal("syntax.keyword token not found")
+	}
+
+	// Verify the override was preserved
+	if keywordToken.Color.Hex() != testOverrideColor {
+		t.Errorf("syntax.keyword color = %s, want %s", keywordToken.Color.Hex(), testOverrideColor)
+	}
+	if !keywordToken.Bold {
+		t.Error("syntax.keyword Bold = false, want true")
+	}
+	if !keywordToken.Italic {
+		t.Error("syntax.keyword Italic = false, want true")
+	}
 }

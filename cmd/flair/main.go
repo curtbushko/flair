@@ -17,6 +17,7 @@ const usageText = `Usage: flair <command> [options]
 
 Commands:
   list        List available built-in palettes
+  override    Manage token color and style overrides
   preview     Preview a theme with ANSI colors
   regenerate  Re-derive stale downstream files
   select      Select a theme or launch style viewer
@@ -55,6 +56,8 @@ func run(args []string, stderr io.Writer) int {
 		return runValidate(args, os.Stdout, stderr)
 	case "regenerate":
 		return runRegenerate(args, os.Stdout, stderr)
+	case "override":
+		return runOverride(args, os.Stdout, stderr)
 	default:
 		writeStr(stderr, "unknown command: %s\n\n", cmd)
 		printUsage(stderr)
