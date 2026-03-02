@@ -82,6 +82,16 @@ func (v *Vim) Generate(w io.Writer, mapped ports.MappedTheme) error {
 		}
 	}
 
+	if theme.Bufferline != nil {
+		if err := writeBufferlineTheme(w, theme.Bufferline); err != nil {
+			return &domain.GenerateError{
+				Target:  "vim",
+				Message: "failed to write bufferline theme",
+				Cause:   err,
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -271,6 +281,94 @@ func writeLualineSection(w io.Writer, name string, colors ports.LualineModeColor
 	}
 
 	if _, err := fmt.Fprintf(w, "    %s = { %s },\n", name, strings.Join(parts, ", ")); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// writeBufferlineTheme writes the bufferline theme setup to the Lua file.
+// It defines a local bufferline_theme table and applies it via pcall to
+// protect against missing bufferline plugin.
+func writeBufferlineTheme(w io.Writer, theme *ports.BufferlineTheme) error {
+	if _, err := fmt.Fprint(w, "\n-- Bufferline theme\n"); err != nil {
+		return err
+	}
+
+	if _, err := fmt.Fprint(w, "local bufferline_theme = {\n"); err != nil {
+		return err
+	}
+
+	// Define groups in a fixed order for deterministic output.
+	groups := []struct {
+		name   string
+		colors ports.BufferlineColors
+	}{
+		{"fill", theme.Fill},
+		{"background", theme.Background},
+		{"buffer_visible", theme.BufferVisible},
+		{"buffer_selected", theme.BufferSelected},
+		{"separator", theme.Separator},
+		{"separator_visible", theme.SeparatorVisible},
+		{"separator_selected", theme.SeparatorSelected},
+		{"indicator_selected", theme.IndicatorSelected},
+		{"modified", theme.Modified},
+		{"modified_visible", theme.ModifiedVisible},
+		{"modified_selected", theme.ModifiedSelected},
+		{"error", theme.Error},
+		{"warning", theme.Warning},
+		{"info", theme.Info},
+		{"hint", theme.Hint},
+	}
+
+	for _, g := range groups {
+		if err := writeBufferlineGroup(w, g.name, g.colors); err != nil {
+			return err
+		}
+	}
+
+	if _, err := fmt.Fprint(w, "}\n\n"); err != nil {
+		return err
+	}
+
+	// Write pcall wrapper to apply bufferline theme if plugin is available.
+	if _, err := fmt.Fprint(w, "-- Apply bufferline theme if bufferline is available\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "local bl_ok, bufferline = pcall(require, 'bufferline')\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "if bl_ok then\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  bufferline.setup({ highlights = bufferline_theme })\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "end\n"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// writeBufferlineGroup writes a single bufferline highlight group to the output.
+func writeBufferlineGroup(w io.Writer, name string, colors ports.BufferlineColors) error {
+	var parts []string
+
+	if colors.Fg != nil {
+		parts = append(parts, fmt.Sprintf("fg = '%s'", colors.Fg.Hex()))
+	}
+	if colors.Bg != nil {
+		parts = append(parts, fmt.Sprintf("bg = '%s'", colors.Bg.Hex()))
+	}
+	if colors.Bold {
+		parts = append(parts, "bold = true")
+	}
+	if colors.Italic {
+		parts = append(parts, "italic = true")
+	}
+
+	if _, err := fmt.Fprintf(w, "  %s = { %s },\n", name, strings.Join(parts, ", ")); err != nil {
 		return err
 	}
 

@@ -788,3 +788,28 @@ local ok, lualine = pcall(require, 'lualine')
 if ok then
   lualine.setup({ options = { theme = lualine_theme } })
 end
+
+-- Bufferline theme
+local bufferline_theme = {
+  fill = { fg = '#c0caf5', bg = '#16161e' },
+  background = { fg = '#c0caf5', bg = '#1f2335' },
+  buffer_visible = { fg = '#c0caf5', bg = '#16161e' },
+  buffer_selected = { fg = '#1a1b26', bg = '#a9b1d6', bold = true },
+  separator = { fg = '#32364e', bg = '#1f2335' },
+  separator_visible = { fg = '#32364e', bg = '#16161e' },
+  separator_selected = { fg = '#32364e', bg = '#a9b1d6' },
+  indicator_selected = { fg = '#7aa2f7', bg = '#a9b1d6' },
+  modified = { fg = '#e9c582', bg = '#1f2335' },
+  modified_visible = { fg = '#e9c582', bg = '#16161e' },
+  modified_selected = { fg = '#e9c582', bg = '#a9b1d6' },
+  error = { fg = '#ff899d' },
+  warning = { fg = '#e9c582' },
+  info = { fg = '#afd67a' },
+  hint = { fg = '#ff9e64' },
+}
+
+-- Apply bufferline theme if bufferline is available
+local bl_ok, bufferline = pcall(require, 'bufferline')
+if bl_ok then
+  bufferline.setup({ highlights = bufferline_theme })
+end

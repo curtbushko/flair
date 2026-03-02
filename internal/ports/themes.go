@@ -41,12 +41,40 @@ type LualineTheme struct {
 	Inactive LualineMode
 }
 
+// BufferlineColors holds the fg/bg colors and style for a bufferline highlight group.
+type BufferlineColors struct {
+	Fg     *domain.Color
+	Bg     *domain.Color
+	Bold   bool
+	Italic bool
+}
+
+// BufferlineTheme holds the complete bufferline theme with all highlight groups.
+type BufferlineTheme struct {
+	Fill              BufferlineColors
+	Background        BufferlineColors
+	BufferVisible     BufferlineColors
+	BufferSelected    BufferlineColors
+	Separator         BufferlineColors
+	SeparatorVisible  BufferlineColors
+	SeparatorSelected BufferlineColors
+	IndicatorSelected BufferlineColors
+	Modified          BufferlineColors
+	ModifiedVisible   BufferlineColors
+	ModifiedSelected  BufferlineColors
+	Error             BufferlineColors
+	Warning           BufferlineColors
+	Info              BufferlineColors
+	Hint              BufferlineColors
+}
+
 // VimTheme is the mapped theme DTO for the Vim/Neovim target.
 type VimTheme struct {
 	Name           string
 	Highlights     map[string]VimHighlight
 	TerminalColors [16]domain.Color
 	Lualine        *LualineTheme
+	Bufferline     *BufferlineTheme
 }
 
 // StylixTheme is the mapped theme DTO for the Stylix target.

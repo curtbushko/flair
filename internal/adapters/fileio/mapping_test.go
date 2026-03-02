@@ -941,3 +941,193 @@ func TestWriteQssMapping_Empty(t *testing.T) {
 		t.Errorf("expected empty rules, got %d entries", len(parsed.Rules))
 	}
 }
+
+// --------------------------------------------------------------------------
+// VimMappingFile bufferline tests
+// --------------------------------------------------------------------------
+
+// TestVimMappingFile_BufferlineRoundTrip verifies that writing a VimMappingFile
+// with Bufferline populated via WriteVimMapping and reading it back via
+// ReadVimMapping produces an identical VimMappingFile with all bufferline
+// highlight groups preserved.
+func TestVimMappingFile_BufferlineRoundTrip(t *testing.T) {
+	original := ports.VimMappingFile{
+		Highlights: map[string]ports.VimMappingHighlight{
+			"Normal":  {Fg: "#c0caf5", Bg: "#1a1b26"},
+			"Comment": {Fg: "#565f89", Italic: true},
+		},
+		TerminalColors: [16]string{
+			"#1a1b26", "#f7768e", "#9ece6a", "#e0af68",
+			"#7aa2f7", "#bb9af7", "#7dcfff", "#a9b1d6",
+			"#414868", "#f7768e", "#9ece6a", "#e0af68",
+			"#7aa2f7", "#bb9af7", "#7dcfff", "#c0caf5",
+		},
+		Bufferline: &ports.BufferlineMappingTheme{
+			Fill:              ports.BufferlineMappingColors{Fg: "#c0caf5", Bg: "#16161e"},
+			Background:        ports.BufferlineMappingColors{Fg: "#565f89", Bg: "#16161e"},
+			BufferVisible:     ports.BufferlineMappingColors{Fg: "#565f89", Bg: "#16161e"},
+			BufferSelected:    ports.BufferlineMappingColors{Fg: "#c0caf5", Bg: "#1a1b26", Bold: true},
+			Separator:         ports.BufferlineMappingColors{Fg: "#16161e", Bg: "#16161e"},
+			SeparatorVisible:  ports.BufferlineMappingColors{Fg: "#16161e", Bg: "#16161e"},
+			SeparatorSelected: ports.BufferlineMappingColors{Fg: "#16161e", Bg: "#1a1b26"},
+			IndicatorSelected: ports.BufferlineMappingColors{Fg: "#7aa2f7", Bg: "#1a1b26"},
+			Modified:          ports.BufferlineMappingColors{Fg: "#e0af68", Bg: "#16161e"},
+			ModifiedVisible:   ports.BufferlineMappingColors{Fg: "#e0af68", Bg: "#16161e"},
+			ModifiedSelected:  ports.BufferlineMappingColors{Fg: "#e0af68", Bg: "#1a1b26"},
+			Error:             ports.BufferlineMappingColors{Fg: "#f7768e", Bg: "#16161e"},
+			Warning:           ports.BufferlineMappingColors{Fg: "#e0af68", Bg: "#16161e"},
+			Info:              ports.BufferlineMappingColors{Fg: "#7aa2f7", Bg: "#16161e"},
+			Hint:              ports.BufferlineMappingColors{Fg: "#1abc9c", Bg: "#16161e"},
+		},
+	}
+
+	// Write.
+	var buf bytes.Buffer
+	if err := fileio.WriteVimMapping(&buf, original); err != nil {
+		t.Fatalf("WriteVimMapping error: %v", err)
+	}
+
+	// Read back.
+	restored, err := fileio.ReadVimMapping(bytes.NewReader(buf.Bytes()))
+	if err != nil {
+		t.Fatalf("ReadVimMapping error: %v\nwritten:\n%s", err, buf.String())
+	}
+
+	// Verify bufferline is not nil.
+	if restored.Bufferline == nil {
+		t.Fatal("restored.Bufferline is nil, expected non-nil")
+	}
+
+	// Compare all bufferline groups.
+	bl := original.Bufferline
+	rbl := restored.Bufferline
+
+	assertBufferlineColors := func(name string, orig, rest ports.BufferlineMappingColors) {
+		t.Helper()
+		if orig.Fg != rest.Fg {
+			t.Errorf("%s.Fg: got %q, want %q", name, rest.Fg, orig.Fg)
+		}
+		if orig.Bg != rest.Bg {
+			t.Errorf("%s.Bg: got %q, want %q", name, rest.Bg, orig.Bg)
+		}
+		if orig.Bold != rest.Bold {
+			t.Errorf("%s.Bold: got %v, want %v", name, rest.Bold, orig.Bold)
+		}
+		if orig.Italic != rest.Italic {
+			t.Errorf("%s.Italic: got %v, want %v", name, rest.Italic, orig.Italic)
+		}
+	}
+
+	assertBufferlineColors("Fill", bl.Fill, rbl.Fill)
+	assertBufferlineColors("Background", bl.Background, rbl.Background)
+	assertBufferlineColors("BufferVisible", bl.BufferVisible, rbl.BufferVisible)
+	assertBufferlineColors("BufferSelected", bl.BufferSelected, rbl.BufferSelected)
+	assertBufferlineColors("Separator", bl.Separator, rbl.Separator)
+	assertBufferlineColors("SeparatorVisible", bl.SeparatorVisible, rbl.SeparatorVisible)
+	assertBufferlineColors("SeparatorSelected", bl.SeparatorSelected, rbl.SeparatorSelected)
+	assertBufferlineColors("IndicatorSelected", bl.IndicatorSelected, rbl.IndicatorSelected)
+	assertBufferlineColors("Modified", bl.Modified, rbl.Modified)
+	assertBufferlineColors("ModifiedVisible", bl.ModifiedVisible, rbl.ModifiedVisible)
+	assertBufferlineColors("ModifiedSelected", bl.ModifiedSelected, rbl.ModifiedSelected)
+	assertBufferlineColors("Error", bl.Error, rbl.Error)
+	assertBufferlineColors("Warning", bl.Warning, rbl.Warning)
+	assertBufferlineColors("Info", bl.Info, rbl.Info)
+	assertBufferlineColors("Hint", bl.Hint, rbl.Hint)
+}
+
+// TestVimMappingFile_NilBufferline verifies that a VimMappingFile with nil
+// Bufferline still works correctly (no bufferline section in YAML output).
+func TestVimMappingFile_NilBufferline(t *testing.T) {
+	original := ports.VimMappingFile{
+		Highlights: map[string]ports.VimMappingHighlight{
+			"Normal": {Fg: "#c0caf5", Bg: "#1a1b26"},
+		},
+		TerminalColors: [16]string{
+			"#1a1b26", "#f7768e", "#9ece6a", "#e0af68",
+			"#7aa2f7", "#bb9af7", "#7dcfff", "#a9b1d6",
+			"#414868", "#f7768e", "#9ece6a", "#e0af68",
+			"#7aa2f7", "#bb9af7", "#7dcfff", "#c0caf5",
+		},
+		Bufferline: nil,
+	}
+
+	// Write.
+	var buf bytes.Buffer
+	if err := fileio.WriteVimMapping(&buf, original); err != nil {
+		t.Fatalf("WriteVimMapping error: %v", err)
+	}
+
+	output := buf.String()
+
+	// Verify no bufferline section in output.
+	if strings.Contains(output, "bufferline:") {
+		t.Errorf("YAML output should not contain bufferline section when nil:\n%s", output)
+	}
+
+	// Read back.
+	restored, err := fileio.ReadVimMapping(bytes.NewReader(buf.Bytes()))
+	if err != nil {
+		t.Fatalf("ReadVimMapping error: %v", err)
+	}
+
+	// Verify bufferline remains nil.
+	if restored.Bufferline != nil {
+		t.Errorf("restored.Bufferline should be nil, got %+v", restored.Bufferline)
+	}
+}
+
+// TestVimMappingFile_BufferlineSorted verifies that bufferline keys are
+// serialized in a deterministic order.
+func TestVimMappingFile_BufferlineSorted(t *testing.T) {
+	mf := ports.VimMappingFile{
+		Highlights: map[string]ports.VimMappingHighlight{
+			"Normal": {Fg: "#c0caf5", Bg: "#1a1b26"},
+		},
+		TerminalColors: [16]string{},
+		Bufferline: &ports.BufferlineMappingTheme{
+			Fill:              ports.BufferlineMappingColors{Fg: "#c0caf5", Bg: "#16161e"},
+			Background:        ports.BufferlineMappingColors{Fg: "#565f89", Bg: "#16161e"},
+			BufferVisible:     ports.BufferlineMappingColors{Fg: "#565f89", Bg: "#16161e"},
+			BufferSelected:    ports.BufferlineMappingColors{Fg: "#c0caf5", Bg: "#1a1b26", Bold: true},
+			Separator:         ports.BufferlineMappingColors{Fg: "#16161e", Bg: "#16161e"},
+			SeparatorVisible:  ports.BufferlineMappingColors{Fg: "#16161e", Bg: "#16161e"},
+			SeparatorSelected: ports.BufferlineMappingColors{Fg: "#16161e", Bg: "#1a1b26"},
+			IndicatorSelected: ports.BufferlineMappingColors{Fg: "#7aa2f7", Bg: "#1a1b26"},
+			Modified:          ports.BufferlineMappingColors{Fg: "#e0af68", Bg: "#16161e"},
+			ModifiedVisible:   ports.BufferlineMappingColors{Fg: "#e0af68", Bg: "#16161e"},
+			ModifiedSelected:  ports.BufferlineMappingColors{Fg: "#e0af68", Bg: "#1a1b26"},
+			Error:             ports.BufferlineMappingColors{Fg: "#f7768e", Bg: "#16161e"},
+			Warning:           ports.BufferlineMappingColors{Fg: "#e0af68", Bg: "#16161e"},
+			Info:              ports.BufferlineMappingColors{Fg: "#7aa2f7", Bg: "#16161e"},
+			Hint:              ports.BufferlineMappingColors{Fg: "#1abc9c", Bg: "#16161e"},
+		},
+	}
+
+	// Write twice and verify output is identical (deterministic).
+	var buf1, buf2 bytes.Buffer
+	if err := fileio.WriteVimMapping(&buf1, mf); err != nil {
+		t.Fatalf("WriteVimMapping (1) error: %v", err)
+	}
+	if err := fileio.WriteVimMapping(&buf2, mf); err != nil {
+		t.Fatalf("WriteVimMapping (2) error: %v", err)
+	}
+
+	if buf1.String() != buf2.String() {
+		t.Errorf("output is not deterministic:\nfirst:\n%s\nsecond:\n%s", buf1.String(), buf2.String())
+	}
+
+	// Verify bufferline section appears after terminal_colors.
+	output := buf1.String()
+	tcIdx := strings.Index(output, "terminal_colors:")
+	blIdx := strings.Index(output, "bufferline:")
+
+	if tcIdx == -1 {
+		t.Error("terminal_colors section not found")
+	}
+	if blIdx == -1 {
+		t.Error("bufferline section not found")
+	}
+	if tcIdx != -1 && blIdx != -1 && blIdx < tcIdx {
+		t.Error("bufferline should appear after terminal_colors")
+	}
+}

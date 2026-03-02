@@ -208,6 +208,61 @@ palette.yaml --> universal.yaml --> *-mapping.yaml --> style.*
 | QSS           | `qss-mapping.yaml`     | `style.qss`   | Qt Style Sheets              |
 | Stylix / NixOS| `stylix-mapping.yaml`  | `style.json`  | Key-value pairs for Stylix   |
 
+## Bufferline Integration
+
+Flair generates a `bufferline_theme` table in `style.lua` that can be used
+with [bufferline.nvim](https://github.com/akinsho/bufferline.nvim).
+
+The theme uses the same `statusline.*` tokens as lualine:
+- Selected buffer: `statusline.a.*` (brightest)
+- Visible buffers: `statusline.b.*`
+- Background/hidden: `statusline.c.*`
+
+### Usage
+
+The generated theme is automatically applied if bufferline is installed:
+
+```lua
+-- In your Neovim config, load the colorscheme:
+require('flair.style')  -- or vim.cmd('colorscheme flair')
+
+-- The bufferline theme is applied automatically via pcall
+```
+
+### Manual Setup
+
+If you prefer manual control:
+
+```lua
+-- style.lua exposes bufferline_theme as a local
+-- You can copy the generated theme or customize it:
+require('bufferline').setup({
+  highlights = require('flair.bufferline_theme'),  -- if exported
+  options = {
+    -- your options
+  },
+})
+```
+
+### Customizing Statusline Tokens
+
+Override `statusline.*` tokens in your palette to customize both
+lualine and bufferline:
+
+```yaml
+tokens:
+  statusline:
+    a:
+      fg: "#000000"
+      bg: "#ffffff"
+    b:
+      fg: "#888888"
+      bg: "#333333"
+    c:
+      fg: "#666666"
+      bg: "#1a1a1a"
+```
+
 ## Built-in Palettes
 
 Flair ships with three built-in palettes:

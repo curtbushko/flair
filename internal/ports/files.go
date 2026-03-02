@@ -49,11 +49,39 @@ type VimMappingHighlight struct {
 	Link          string `yaml:"link,omitempty"`
 }
 
+// BufferlineMappingColors is a single bufferline highlight group in the mapping file.
+type BufferlineMappingColors struct {
+	Fg     string `yaml:"fg,omitempty"`
+	Bg     string `yaml:"bg,omitempty"`
+	Bold   bool   `yaml:"bold,omitempty"`
+	Italic bool   `yaml:"italic,omitempty"`
+}
+
+// BufferlineMappingTheme holds all bufferline highlight groups for the mapping file.
+type BufferlineMappingTheme struct {
+	Fill              BufferlineMappingColors `yaml:"fill"`
+	Background        BufferlineMappingColors `yaml:"background"`
+	BufferVisible     BufferlineMappingColors `yaml:"buffer_visible"`
+	BufferSelected    BufferlineMappingColors `yaml:"buffer_selected"`
+	Separator         BufferlineMappingColors `yaml:"separator"`
+	SeparatorVisible  BufferlineMappingColors `yaml:"separator_visible"`
+	SeparatorSelected BufferlineMappingColors `yaml:"separator_selected"`
+	IndicatorSelected BufferlineMappingColors `yaml:"indicator_selected"`
+	Modified          BufferlineMappingColors `yaml:"modified"`
+	ModifiedVisible   BufferlineMappingColors `yaml:"modified_visible"`
+	ModifiedSelected  BufferlineMappingColors `yaml:"modified_selected"`
+	Error             BufferlineMappingColors `yaml:"error"`
+	Warning           BufferlineMappingColors `yaml:"warning"`
+	Info              BufferlineMappingColors `yaml:"info"`
+	Hint              BufferlineMappingColors `yaml:"hint"`
+}
+
 // VimMappingFile is the Vim-specific mapping.
 type VimMappingFile struct {
 	FileHeader     `yaml:",inline"`
 	Highlights     map[string]VimMappingHighlight `yaml:"highlights"`
 	TerminalColors [16]string                     `yaml:"terminal_colors"`
+	Bufferline     *BufferlineMappingTheme        `yaml:"bufferline,omitempty"`
 }
 
 // CSSRuleEntry is a CSS selector with its properties.

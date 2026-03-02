@@ -355,6 +355,109 @@ func TestFileStructsHaveYamlTags(t *testing.T) {
 	}
 }
 
+// TestBufferlineColors_Fields verifies BufferlineColors has required fields.
+func TestBufferlineColors_Fields(t *testing.T) {
+	red := domain.Color{R: 255, G: 0, B: 0}
+	blue := domain.Color{R: 0, G: 0, B: 255}
+
+	bc := ports.BufferlineColors{
+		Fg:     &red,
+		Bg:     &blue,
+		Bold:   true,
+		Italic: true,
+	}
+
+	// Verify field types and values
+	if bc.Fg.R != 255 {
+		t.Errorf("BufferlineColors.Fg.R = %d, want 255", bc.Fg.R)
+	}
+	if bc.Bg.B != 255 {
+		t.Errorf("BufferlineColors.Bg.B = %d, want 255", bc.Bg.B)
+	}
+	if !bc.Bold {
+		t.Error("BufferlineColors.Bold = false, want true")
+	}
+	if !bc.Italic {
+		t.Error("BufferlineColors.Italic = false, want true")
+	}
+	assertAllFieldsReadable(t, "BufferlineColors", bc)
+}
+
+// TestBufferlineTheme_Fields verifies BufferlineTheme has all 15 highlight groups.
+func TestBufferlineTheme_Fields(t *testing.T) {
+	red := domain.Color{R: 255, G: 0, B: 0}
+	bc := ports.BufferlineColors{Fg: &red, Bg: &red, Bold: false, Italic: false}
+
+	bt := ports.BufferlineTheme{
+		Fill:              bc,
+		Background:        bc,
+		BufferVisible:     bc,
+		BufferSelected:    bc,
+		Separator:         bc,
+		SeparatorVisible:  bc,
+		SeparatorSelected: bc,
+		IndicatorSelected: bc,
+		Modified:          bc,
+		ModifiedVisible:   bc,
+		ModifiedSelected:  bc,
+		Error:             bc,
+		Warning:           bc,
+		Info:              bc,
+		Hint:              bc,
+	}
+
+	// Verify all fields are accessible
+	assertAllFieldsReadable(t, "BufferlineTheme", bt)
+
+	// Verify specific field access
+	if bt.Fill.Fg.R != 255 {
+		t.Errorf("BufferlineTheme.Fill.Fg.R = %d, want 255", bt.Fill.Fg.R)
+	}
+	if bt.BufferSelected.Fg.R != 255 {
+		t.Errorf("BufferlineTheme.BufferSelected.Fg.R = %d, want 255", bt.BufferSelected.Fg.R)
+	}
+}
+
+// TestVimTheme_BufferlineField verifies VimTheme includes Bufferline field.
+func TestVimTheme_BufferlineField(t *testing.T) {
+	red := domain.Color{R: 255, G: 0, B: 0}
+	bc := ports.BufferlineColors{Fg: &red, Bg: &red, Bold: false, Italic: false}
+	bt := &ports.BufferlineTheme{
+		Fill:              bc,
+		Background:        bc,
+		BufferVisible:     bc,
+		BufferSelected:    bc,
+		Separator:         bc,
+		SeparatorVisible:  bc,
+		SeparatorSelected: bc,
+		IndicatorSelected: bc,
+		Modified:          bc,
+		ModifiedVisible:   bc,
+		ModifiedSelected:  bc,
+		Error:             bc,
+		Warning:           bc,
+		Info:              bc,
+		Hint:              bc,
+	}
+
+	vh := ports.VimHighlight{Fg: &red, Bg: &red}
+	vt := ports.VimTheme{
+		Name:           "test",
+		Highlights:     map[string]ports.VimHighlight{"Normal": vh},
+		TerminalColors: [16]domain.Color{red},
+		Bufferline:     bt,
+	}
+
+	// Verify Bufferline field is accessible and typed correctly
+	if vt.Bufferline == nil {
+		t.Fatal("VimTheme.Bufferline is nil, want non-nil")
+	}
+	if vt.Bufferline.Fill.Fg.R != 255 {
+		t.Errorf("VimTheme.Bufferline.Fill.Fg.R = %d, want 255", vt.Bufferline.Fill.Fg.R)
+	}
+	assertAllFieldsReadable(t, "VimTheme", vt)
+}
+
 // TestMappedThemeIsAny verifies MappedTheme is an alias for any.
 func TestMappedThemeIsAny(t *testing.T) {
 	var m ports.MappedTheme

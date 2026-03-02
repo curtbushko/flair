@@ -411,12 +411,93 @@ func marshalSortedVimMapping(mf ports.VimMappingFile) ([]byte, error) {
 		tcNode,
 	)
 
+	// Build bufferline section if present.
+	if mf.Bufferline != nil {
+		blNode := marshalBufferlineTheme(mf.Bufferline)
+		root.Content = append(root.Content,
+			&yaml.Node{Kind: yaml.ScalarNode, Value: "bufferline", Tag: "!!str"},
+			blNode,
+		)
+	}
+
 	doc := &yaml.Node{
 		Kind:    yaml.DocumentNode,
 		Content: []*yaml.Node{root},
 	}
 
 	return yaml.Marshal(doc)
+}
+
+// marshalBufferlineTheme builds a YAML mapping node for a BufferlineMappingTheme.
+// Groups are serialized in a deterministic order matching the struct field order.
+func marshalBufferlineTheme(bl *ports.BufferlineMappingTheme) *yaml.Node {
+	node := &yaml.Node{
+		Kind: yaml.MappingNode,
+		Tag:  "!!map",
+	}
+
+	addGroup := func(name string, colors ports.BufferlineMappingColors) {
+		groupNode := marshalBufferlineColors(colors)
+		node.Content = append(node.Content,
+			&yaml.Node{Kind: yaml.ScalarNode, Value: name, Tag: "!!str"},
+			groupNode,
+		)
+	}
+
+	// Add groups in deterministic order.
+	addGroup("fill", bl.Fill)
+	addGroup("background", bl.Background)
+	addGroup("buffer_visible", bl.BufferVisible)
+	addGroup("buffer_selected", bl.BufferSelected)
+	addGroup("separator", bl.Separator)
+	addGroup("separator_visible", bl.SeparatorVisible)
+	addGroup("separator_selected", bl.SeparatorSelected)
+	addGroup("indicator_selected", bl.IndicatorSelected)
+	addGroup("modified", bl.Modified)
+	addGroup("modified_visible", bl.ModifiedVisible)
+	addGroup("modified_selected", bl.ModifiedSelected)
+	addGroup("error", bl.Error)
+	addGroup("warning", bl.Warning)
+	addGroup("info", bl.Info)
+	addGroup("hint", bl.Hint)
+
+	return node
+}
+
+// marshalBufferlineColors builds a YAML mapping node for BufferlineMappingColors.
+// Only non-zero fields are included (matching the omitempty YAML tags).
+func marshalBufferlineColors(c ports.BufferlineMappingColors) *yaml.Node {
+	node := &yaml.Node{
+		Kind: yaml.MappingNode,
+		Tag:  "!!map",
+	}
+
+	if c.Fg != "" {
+		node.Content = append(node.Content,
+			&yaml.Node{Kind: yaml.ScalarNode, Value: "fg", Tag: "!!str"},
+			&yaml.Node{Kind: yaml.ScalarNode, Value: c.Fg, Tag: "!!str"},
+		)
+	}
+	if c.Bg != "" {
+		node.Content = append(node.Content,
+			&yaml.Node{Kind: yaml.ScalarNode, Value: "bg", Tag: "!!str"},
+			&yaml.Node{Kind: yaml.ScalarNode, Value: c.Bg, Tag: "!!str"},
+		)
+	}
+	if c.Bold {
+		node.Content = append(node.Content,
+			&yaml.Node{Kind: yaml.ScalarNode, Value: "bold", Tag: "!!str"},
+			&yaml.Node{Kind: yaml.ScalarNode, Value: "true", Tag: "!!bool"},
+		)
+	}
+	if c.Italic {
+		node.Content = append(node.Content,
+			&yaml.Node{Kind: yaml.ScalarNode, Value: "italic", Tag: "!!str"},
+			&yaml.Node{Kind: yaml.ScalarNode, Value: "true", Tag: "!!bool"},
+		)
+	}
+
+	return node
 }
 
 // marshalVimHighlight builds a YAML mapping node for a single VimMappingHighlight.

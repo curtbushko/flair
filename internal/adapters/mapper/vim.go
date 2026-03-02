@@ -47,12 +47,14 @@ func (v *Vim) Map(theme *domain.ResolvedTheme) (ports.MappedTheme, error) {
 
 	termColors := mapTerminal(theme)
 	lualineTheme := mapLualine(theme)
+	bufferlineTheme := mapBufferline(theme)
 
 	return &ports.VimTheme{
 		Name:           theme.Name,
 		Highlights:     highlights,
 		TerminalColors: termColors,
 		Lualine:        lualineTheme,
+		Bufferline:     bufferlineTheme,
 	}, nil
 }
 
@@ -567,5 +569,83 @@ func mapLualine(theme *domain.ResolvedTheme) *ports.LualineTheme {
 		Replace:  baseMode,
 		Command:  baseMode,
 		Inactive: baseMode,
+	}
+}
+
+// mapBufferline builds a bufferline theme from semantic tokens.
+// It maps buffer states to statusline tokens:
+//   - Selected (active buffer): statusline.a.* (brightest)
+//   - Visible (visible but not active): statusline.b.*
+//   - Background/hidden: statusline.c.*
+//   - Separators: border.default fg with state-specific bg
+//   - Indicator: accent.primary fg
+//   - Modified: status.warning fg
+//   - Diagnostics: status.error/warning/info/hint fg
+func mapBufferline(theme *domain.ResolvedTheme) *ports.BufferlineTheme {
+	fg := func(path string) *domain.Color { return colorOf(theme, path) }
+	bg := func(path string) *domain.Color { return colorOf(theme, path) }
+
+	return &ports.BufferlineTheme{
+		// Fill: the empty space in the bufferline
+		Fill: ports.BufferlineColors{
+			Fg: fg("statusline.c.fg"),
+			Bg: bg("surface.background.statusbar"),
+		},
+		// Background: inactive/hidden buffers
+		Background: ports.BufferlineColors{
+			Fg: fg("statusline.c.fg"),
+			Bg: bg("statusline.c.bg"),
+		},
+		// BufferVisible: visible but not selected buffers
+		BufferVisible: ports.BufferlineColors{
+			Fg: fg("statusline.b.fg"),
+			Bg: bg("statusline.b.bg"),
+		},
+		// BufferSelected: currently active buffer (brightest)
+		BufferSelected: ports.BufferlineColors{
+			Fg:   fg("statusline.a.fg"),
+			Bg:   bg("statusline.a.bg"),
+			Bold: true,
+		},
+		// Separator: between background buffers
+		Separator: ports.BufferlineColors{
+			Fg: fg("border.default"),
+			Bg: bg("statusline.c.bg"),
+		},
+		// SeparatorVisible: between visible buffers
+		SeparatorVisible: ports.BufferlineColors{
+			Fg: fg("border.default"),
+			Bg: bg("statusline.b.bg"),
+		},
+		// SeparatorSelected: adjacent to selected buffer
+		SeparatorSelected: ports.BufferlineColors{
+			Fg: fg("border.default"),
+			Bg: bg("statusline.a.bg"),
+		},
+		// IndicatorSelected: active buffer indicator
+		IndicatorSelected: ports.BufferlineColors{
+			Fg: fg("accent.primary"),
+			Bg: bg("statusline.a.bg"),
+		},
+		// Modified: modified background buffer
+		Modified: ports.BufferlineColors{
+			Fg: fg("status.warning"),
+			Bg: bg("statusline.c.bg"),
+		},
+		// ModifiedVisible: modified visible buffer
+		ModifiedVisible: ports.BufferlineColors{
+			Fg: fg("status.warning"),
+			Bg: bg("statusline.b.bg"),
+		},
+		// ModifiedSelected: modified selected buffer
+		ModifiedSelected: ports.BufferlineColors{
+			Fg: fg("status.warning"),
+			Bg: bg("statusline.a.bg"),
+		},
+		// Diagnostic colors
+		Error:   ports.BufferlineColors{Fg: fg("status.error")},
+		Warning: ports.BufferlineColors{Fg: fg("status.warning")},
+		Info:    ports.BufferlineColors{Fg: fg("status.info")},
+		Hint:    ports.BufferlineColors{Fg: fg("status.hint")},
 	}
 }

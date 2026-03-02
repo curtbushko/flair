@@ -677,3 +677,325 @@ func isStandardVimGroup(name string) bool {
 	}
 	return name[0] >= 'A' && name[0] <= 'Z'
 }
+
+// TestVimMapper_BufferlineTheme verifies that the Vim mapper produces a
+// BufferlineTheme with all 15 highlight groups mapped to correct statusline tokens.
+func TestVimMapper_BufferlineTheme(t *testing.T) {
+	theme := buildResolvedTheme(t)
+	m := mapper.NewVim()
+
+	result, err := m.Map(theme)
+	if err != nil {
+		t.Fatalf("Map() error: %v", err)
+	}
+
+	vt, ok := result.(*ports.VimTheme)
+	if !ok {
+		t.Fatalf("Map() returned %T, want *ports.VimTheme", result)
+	}
+
+	if vt.Bufferline == nil {
+		t.Fatal("VimTheme.Bufferline is nil")
+	}
+
+	bl := vt.Bufferline
+
+	colorPtr := func(hex string) *domain.Color {
+		t.Helper()
+		c := mustParseHex(t, hex)
+		return &c
+	}
+
+	// Verify BufferSelected uses statusline.a.* tokens with bold
+	t.Run("BufferSelected", func(t *testing.T) {
+		// From tokenizer: statusline.a.fg = base00 (#1a1b26), statusline.a.bg = base04 (#a9b1d6)
+		wantFg := colorPtr("#1a1b26")
+		wantBg := colorPtr("#a9b1d6")
+
+		if bl.BufferSelected.Fg == nil {
+			t.Errorf("BufferSelected.Fg is nil, want %s", wantFg.Hex())
+		} else if !bl.BufferSelected.Fg.Equal(*wantFg) {
+			t.Errorf("BufferSelected.Fg = %s, want %s", bl.BufferSelected.Fg.Hex(), wantFg.Hex())
+		}
+
+		if bl.BufferSelected.Bg == nil {
+			t.Errorf("BufferSelected.Bg is nil, want %s", wantBg.Hex())
+		} else if !bl.BufferSelected.Bg.Equal(*wantBg) {
+			t.Errorf("BufferSelected.Bg = %s, want %s", bl.BufferSelected.Bg.Hex(), wantBg.Hex())
+		}
+
+		if !bl.BufferSelected.Bold {
+			t.Error("BufferSelected.Bold = false, want true")
+		}
+	})
+
+	// Verify BufferVisible uses statusline.b.* tokens
+	t.Run("BufferVisible", func(t *testing.T) {
+		// From tokenizer: statusline.b.fg = base05 (#c0caf5), statusline.b.bg = base10 (#16161e)
+		wantFg := colorPtr("#c0caf5")
+		wantBg := colorPtr("#16161e")
+
+		if bl.BufferVisible.Fg == nil {
+			t.Errorf("BufferVisible.Fg is nil, want %s", wantFg.Hex())
+		} else if !bl.BufferVisible.Fg.Equal(*wantFg) {
+			t.Errorf("BufferVisible.Fg = %s, want %s", bl.BufferVisible.Fg.Hex(), wantFg.Hex())
+		}
+
+		if bl.BufferVisible.Bg == nil {
+			t.Errorf("BufferVisible.Bg is nil, want %s", wantBg.Hex())
+		} else if !bl.BufferVisible.Bg.Equal(*wantBg) {
+			t.Errorf("BufferVisible.Bg = %s, want %s", bl.BufferVisible.Bg.Hex(), wantBg.Hex())
+		}
+	})
+
+	// Verify Background uses statusline.c.* tokens
+	t.Run("Background", func(t *testing.T) {
+		// From tokenizer: statusline.c.fg = base05 (#c0caf5), statusline.c.bg = base01 (#1f2335)
+		wantFg := colorPtr("#c0caf5")
+		wantBg := colorPtr("#1f2335")
+
+		if bl.Background.Fg == nil {
+			t.Errorf("Background.Fg is nil, want %s", wantFg.Hex())
+		} else if !bl.Background.Fg.Equal(*wantFg) {
+			t.Errorf("Background.Fg = %s, want %s", bl.Background.Fg.Hex(), wantFg.Hex())
+		}
+
+		if bl.Background.Bg == nil {
+			t.Errorf("Background.Bg is nil, want %s", wantBg.Hex())
+		} else if !bl.Background.Bg.Equal(*wantBg) {
+			t.Errorf("Background.Bg = %s, want %s", bl.Background.Bg.Hex(), wantBg.Hex())
+		}
+	})
+
+	// Verify Error uses status.error token
+	t.Run("Error", func(t *testing.T) {
+		// status.error = base12 (#ff899d)
+		wantFg := colorPtr("#ff899d")
+
+		if bl.Error.Fg == nil {
+			t.Errorf("Error.Fg is nil, want %s", wantFg.Hex())
+		} else if !bl.Error.Fg.Equal(*wantFg) {
+			t.Errorf("Error.Fg = %s, want %s", bl.Error.Fg.Hex(), wantFg.Hex())
+		}
+	})
+}
+
+// TestVimMapper_BufferlineSeparators verifies that separator groups use
+// border.default for fg and state-specific statusline.*.bg for bg.
+func TestVimMapper_BufferlineSeparators(t *testing.T) {
+	theme := buildResolvedTheme(t)
+	m := mapper.NewVim()
+
+	result, err := m.Map(theme)
+	if err != nil {
+		t.Fatalf("Map() error: %v", err)
+	}
+
+	vt := result.(*ports.VimTheme)
+	if vt.Bufferline == nil {
+		t.Fatal("VimTheme.Bufferline is nil")
+	}
+
+	bl := vt.Bufferline
+
+	colorPtr := func(hex string) *domain.Color {
+		t.Helper()
+		c := mustParseHex(t, hex)
+		return &c
+	}
+
+	// border.default = blend(base03, base00, 0.40) = #32364e (blended)
+	wantBorderFg := colorPtr("#32364e")
+
+	// Separator: fg = border.default, bg = statusline.c.bg
+	t.Run("Separator", func(t *testing.T) {
+		wantBg := colorPtr("#1f2335") // statusline.c.bg = base01
+
+		if bl.Separator.Fg == nil {
+			t.Errorf("Separator.Fg is nil, want %s", wantBorderFg.Hex())
+		} else if !bl.Separator.Fg.Equal(*wantBorderFg) {
+			t.Errorf("Separator.Fg = %s, want %s", bl.Separator.Fg.Hex(), wantBorderFg.Hex())
+		}
+
+		if bl.Separator.Bg == nil {
+			t.Errorf("Separator.Bg is nil, want %s", wantBg.Hex())
+		} else if !bl.Separator.Bg.Equal(*wantBg) {
+			t.Errorf("Separator.Bg = %s, want %s", bl.Separator.Bg.Hex(), wantBg.Hex())
+		}
+	})
+
+	// SeparatorVisible: fg = border.default, bg = statusline.b.bg
+	t.Run("SeparatorVisible", func(t *testing.T) {
+		wantBg := colorPtr("#16161e") // statusline.b.bg = base10
+
+		if bl.SeparatorVisible.Fg == nil {
+			t.Errorf("SeparatorVisible.Fg is nil, want %s", wantBorderFg.Hex())
+		} else if !bl.SeparatorVisible.Fg.Equal(*wantBorderFg) {
+			t.Errorf("SeparatorVisible.Fg = %s, want %s", bl.SeparatorVisible.Fg.Hex(), wantBorderFg.Hex())
+		}
+
+		if bl.SeparatorVisible.Bg == nil {
+			t.Errorf("SeparatorVisible.Bg is nil, want %s", wantBg.Hex())
+		} else if !bl.SeparatorVisible.Bg.Equal(*wantBg) {
+			t.Errorf("SeparatorVisible.Bg = %s, want %s", bl.SeparatorVisible.Bg.Hex(), wantBg.Hex())
+		}
+	})
+
+	// SeparatorSelected: fg = border.default, bg = statusline.a.bg
+	t.Run("SeparatorSelected", func(t *testing.T) {
+		wantBg := colorPtr("#a9b1d6") // statusline.a.bg = base04
+
+		if bl.SeparatorSelected.Fg == nil {
+			t.Errorf("SeparatorSelected.Fg is nil, want %s", wantBorderFg.Hex())
+		} else if !bl.SeparatorSelected.Fg.Equal(*wantBorderFg) {
+			t.Errorf("SeparatorSelected.Fg = %s, want %s", bl.SeparatorSelected.Fg.Hex(), wantBorderFg.Hex())
+		}
+
+		if bl.SeparatorSelected.Bg == nil {
+			t.Errorf("SeparatorSelected.Bg is nil, want %s", wantBg.Hex())
+		} else if !bl.SeparatorSelected.Bg.Equal(*wantBg) {
+			t.Errorf("SeparatorSelected.Bg = %s, want %s", bl.SeparatorSelected.Bg.Hex(), wantBg.Hex())
+		}
+	})
+}
+
+// TestVimMapper_BufferlineIndicator verifies that IndicatorSelected uses
+// accent.primary for fg and statusline.a.bg for bg.
+func TestVimMapper_BufferlineIndicator(t *testing.T) {
+	theme := buildResolvedTheme(t)
+	m := mapper.NewVim()
+
+	result, err := m.Map(theme)
+	if err != nil {
+		t.Fatalf("Map() error: %v", err)
+	}
+
+	vt := result.(*ports.VimTheme)
+	if vt.Bufferline == nil {
+		t.Fatal("VimTheme.Bufferline is nil")
+	}
+
+	bl := vt.Bufferline
+
+	colorPtr := func(hex string) *domain.Color {
+		t.Helper()
+		c := mustParseHex(t, hex)
+		return &c
+	}
+
+	// accent.primary = base0D (#7aa2f7), statusline.a.bg = base04 (#a9b1d6)
+	wantFg := colorPtr("#7aa2f7")
+	wantBg := colorPtr("#a9b1d6")
+
+	if bl.IndicatorSelected.Fg == nil {
+		t.Errorf("IndicatorSelected.Fg is nil, want %s", wantFg.Hex())
+	} else if !bl.IndicatorSelected.Fg.Equal(*wantFg) {
+		t.Errorf("IndicatorSelected.Fg = %s, want %s", bl.IndicatorSelected.Fg.Hex(), wantFg.Hex())
+	}
+
+	if bl.IndicatorSelected.Bg == nil {
+		t.Errorf("IndicatorSelected.Bg is nil, want %s", wantBg.Hex())
+	} else if !bl.IndicatorSelected.Bg.Equal(*wantBg) {
+		t.Errorf("IndicatorSelected.Bg = %s, want %s", bl.IndicatorSelected.Bg.Hex(), wantBg.Hex())
+	}
+}
+
+// TestVimMapper_BufferlineModified verifies that all Modified states use
+// status.warning for fg and their respective statusline.*.bg for bg.
+func TestVimMapper_BufferlineModified(t *testing.T) {
+	theme := buildResolvedTheme(t)
+	m := mapper.NewVim()
+
+	result, err := m.Map(theme)
+	if err != nil {
+		t.Fatalf("Map() error: %v", err)
+	}
+
+	vt := result.(*ports.VimTheme)
+	if vt.Bufferline == nil {
+		t.Fatal("VimTheme.Bufferline is nil")
+	}
+
+	bl := vt.Bufferline
+
+	colorPtr := func(hex string) *domain.Color {
+		t.Helper()
+		c := mustParseHex(t, hex)
+		return &c
+	}
+
+	// status.warning = base13 (#e9c582)
+	wantWarningFg := colorPtr("#e9c582")
+
+	tests := []struct {
+		name   string
+		colors ports.BufferlineColors
+		wantBg *domain.Color
+	}{
+		{"Modified", bl.Modified, colorPtr("#1f2335")},                 // statusline.c.bg = base01
+		{"ModifiedVisible", bl.ModifiedVisible, colorPtr("#16161e")},   // statusline.b.bg = base10
+		{"ModifiedSelected", bl.ModifiedSelected, colorPtr("#a9b1d6")}, // statusline.a.bg = base04
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.colors.Fg == nil {
+				t.Errorf("%s.Fg is nil, want %s", tc.name, wantWarningFg.Hex())
+			} else if !tc.colors.Fg.Equal(*wantWarningFg) {
+				t.Errorf("%s.Fg = %s, want %s", tc.name, tc.colors.Fg.Hex(), wantWarningFg.Hex())
+			}
+
+			if tc.colors.Bg == nil {
+				t.Errorf("%s.Bg is nil, want %s", tc.name, tc.wantBg.Hex())
+			} else if !tc.colors.Bg.Equal(*tc.wantBg) {
+				t.Errorf("%s.Bg = %s, want %s", tc.name, tc.colors.Bg.Hex(), tc.wantBg.Hex())
+			}
+		})
+	}
+}
+
+// TestVimMapper_BufferlineDiagnostics verifies that diagnostic colors map to
+// status.error/warning/info/hint tokens.
+func TestVimMapper_BufferlineDiagnostics(t *testing.T) {
+	theme := buildResolvedTheme(t)
+	m := mapper.NewVim()
+
+	result, err := m.Map(theme)
+	if err != nil {
+		t.Fatalf("Map() error: %v", err)
+	}
+
+	vt := result.(*ports.VimTheme)
+	if vt.Bufferline == nil {
+		t.Fatal("VimTheme.Bufferline is nil")
+	}
+
+	bl := vt.Bufferline
+
+	colorPtr := func(hex string) *domain.Color {
+		t.Helper()
+		c := mustParseHex(t, hex)
+		return &c
+	}
+
+	tests := []struct {
+		name   string
+		colors ports.BufferlineColors
+		wantFg *domain.Color
+	}{
+		{"Error", bl.Error, colorPtr("#ff899d")},     // status.error = base12
+		{"Warning", bl.Warning, colorPtr("#e9c582")}, // status.warning = base13
+		{"Info", bl.Info, colorPtr("#afd67a")},       // status.info = base14
+		{"Hint", bl.Hint, colorPtr("#ff9e64")},       // status.hint = base09
+	}
+
+	for _, tc := range tests {
+		t.Run(tc.name, func(t *testing.T) {
+			if tc.colors.Fg == nil {
+				t.Errorf("%s.Fg is nil, want %s", tc.name, tc.wantFg.Hex())
+			} else if !tc.colors.Fg.Equal(*tc.wantFg) {
+				t.Errorf("%s.Fg = %s, want %s", tc.name, tc.colors.Fg.Hex(), tc.wantFg.Hex())
+			}
+		})
+	}
+}
