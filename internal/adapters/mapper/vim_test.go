@@ -729,11 +729,11 @@ func TestVimMapper_BufferlineTheme(t *testing.T) {
 		}
 	})
 
-	// Verify BufferVisible uses statusline.b.* tokens
+	// Verify BufferVisible uses statusline.b.fg token with surface.background bg
 	t.Run("BufferVisible", func(t *testing.T) {
-		// From tokenizer: statusline.b.fg = base05 (#c0caf5), statusline.b.bg = base10 (#16161e)
+		// From tokenizer: statusline.b.fg = base05 (#c0caf5), surface.background = base00 (#1a1b26)
 		wantFg := colorPtr("#c0caf5")
-		wantBg := colorPtr("#16161e")
+		wantBg := colorPtr("#1a1b26")
 
 		if bl.BufferVisible.Fg == nil {
 			t.Errorf("BufferVisible.Fg is nil, want %s", wantFg.Hex())
@@ -748,11 +748,11 @@ func TestVimMapper_BufferlineTheme(t *testing.T) {
 		}
 	})
 
-	// Verify Background uses statusline.c.* tokens
+	// Verify Background uses statusline.c.fg token with surface.background bg
 	t.Run("Background", func(t *testing.T) {
-		// From tokenizer: statusline.c.fg = base05 (#c0caf5), statusline.c.bg = base01 (#1f2335)
+		// From tokenizer: statusline.c.fg = base05 (#c0caf5), surface.background = base00 (#1a1b26)
 		wantFg := colorPtr("#c0caf5")
-		wantBg := colorPtr("#1f2335")
+		wantBg := colorPtr("#1a1b26")
 
 		if bl.Background.Fg == nil {
 			t.Errorf("Background.Fg is nil, want %s", wantFg.Hex())
@@ -781,7 +781,7 @@ func TestVimMapper_BufferlineTheme(t *testing.T) {
 }
 
 // TestVimMapper_BufferlineSeparators verifies that separator groups use
-// border.default for fg and state-specific statusline.*.bg for bg.
+// surface.background for both fg and bg (invisible separators).
 func TestVimMapper_BufferlineSeparators(t *testing.T) {
 	theme := buildResolvedTheme(t)
 	m := mapper.NewVim()
@@ -804,63 +804,59 @@ func TestVimMapper_BufferlineSeparators(t *testing.T) {
 		return &c
 	}
 
-	// border.default = blend(base03, base00, 0.40) = #32364e (blended)
-	wantBorderFg := colorPtr("#32364e")
+	// surface.background = base00 (#1a1b26)
+	wantSurfaceBg := colorPtr("#1a1b26")
+	// statusline.a.bg = base04 (#a9b1d6)
+	wantStatuslineABg := colorPtr("#a9b1d6")
 
-	// Separator: fg = border.default, bg = statusline.c.bg
+	// Separator: fg = surface.background, bg = surface.background (invisible)
 	t.Run("Separator", func(t *testing.T) {
-		wantBg := colorPtr("#1f2335") // statusline.c.bg = base01
-
 		if bl.Separator.Fg == nil {
-			t.Errorf("Separator.Fg is nil, want %s", wantBorderFg.Hex())
-		} else if !bl.Separator.Fg.Equal(*wantBorderFg) {
-			t.Errorf("Separator.Fg = %s, want %s", bl.Separator.Fg.Hex(), wantBorderFg.Hex())
+			t.Errorf("Separator.Fg is nil, want %s", wantSurfaceBg.Hex())
+		} else if !bl.Separator.Fg.Equal(*wantSurfaceBg) {
+			t.Errorf("Separator.Fg = %s, want %s", bl.Separator.Fg.Hex(), wantSurfaceBg.Hex())
 		}
 
 		if bl.Separator.Bg == nil {
-			t.Errorf("Separator.Bg is nil, want %s", wantBg.Hex())
-		} else if !bl.Separator.Bg.Equal(*wantBg) {
-			t.Errorf("Separator.Bg = %s, want %s", bl.Separator.Bg.Hex(), wantBg.Hex())
+			t.Errorf("Separator.Bg is nil, want %s", wantSurfaceBg.Hex())
+		} else if !bl.Separator.Bg.Equal(*wantSurfaceBg) {
+			t.Errorf("Separator.Bg = %s, want %s", bl.Separator.Bg.Hex(), wantSurfaceBg.Hex())
 		}
 	})
 
-	// SeparatorVisible: fg = border.default, bg = statusline.b.bg
+	// SeparatorVisible: fg = surface.background, bg = surface.background (invisible)
 	t.Run("SeparatorVisible", func(t *testing.T) {
-		wantBg := colorPtr("#16161e") // statusline.b.bg = base10
-
 		if bl.SeparatorVisible.Fg == nil {
-			t.Errorf("SeparatorVisible.Fg is nil, want %s", wantBorderFg.Hex())
-		} else if !bl.SeparatorVisible.Fg.Equal(*wantBorderFg) {
-			t.Errorf("SeparatorVisible.Fg = %s, want %s", bl.SeparatorVisible.Fg.Hex(), wantBorderFg.Hex())
+			t.Errorf("SeparatorVisible.Fg is nil, want %s", wantSurfaceBg.Hex())
+		} else if !bl.SeparatorVisible.Fg.Equal(*wantSurfaceBg) {
+			t.Errorf("SeparatorVisible.Fg = %s, want %s", bl.SeparatorVisible.Fg.Hex(), wantSurfaceBg.Hex())
 		}
 
 		if bl.SeparatorVisible.Bg == nil {
-			t.Errorf("SeparatorVisible.Bg is nil, want %s", wantBg.Hex())
-		} else if !bl.SeparatorVisible.Bg.Equal(*wantBg) {
-			t.Errorf("SeparatorVisible.Bg = %s, want %s", bl.SeparatorVisible.Bg.Hex(), wantBg.Hex())
+			t.Errorf("SeparatorVisible.Bg is nil, want %s", wantSurfaceBg.Hex())
+		} else if !bl.SeparatorVisible.Bg.Equal(*wantSurfaceBg) {
+			t.Errorf("SeparatorVisible.Bg = %s, want %s", bl.SeparatorVisible.Bg.Hex(), wantSurfaceBg.Hex())
 		}
 	})
 
-	// SeparatorSelected: fg = border.default, bg = statusline.a.bg
+	// SeparatorSelected: fg = surface.background, bg = statusline.a.bg
 	t.Run("SeparatorSelected", func(t *testing.T) {
-		wantBg := colorPtr("#a9b1d6") // statusline.a.bg = base04
-
 		if bl.SeparatorSelected.Fg == nil {
-			t.Errorf("SeparatorSelected.Fg is nil, want %s", wantBorderFg.Hex())
-		} else if !bl.SeparatorSelected.Fg.Equal(*wantBorderFg) {
-			t.Errorf("SeparatorSelected.Fg = %s, want %s", bl.SeparatorSelected.Fg.Hex(), wantBorderFg.Hex())
+			t.Errorf("SeparatorSelected.Fg is nil, want %s", wantSurfaceBg.Hex())
+		} else if !bl.SeparatorSelected.Fg.Equal(*wantSurfaceBg) {
+			t.Errorf("SeparatorSelected.Fg = %s, want %s", bl.SeparatorSelected.Fg.Hex(), wantSurfaceBg.Hex())
 		}
 
 		if bl.SeparatorSelected.Bg == nil {
-			t.Errorf("SeparatorSelected.Bg is nil, want %s", wantBg.Hex())
-		} else if !bl.SeparatorSelected.Bg.Equal(*wantBg) {
-			t.Errorf("SeparatorSelected.Bg = %s, want %s", bl.SeparatorSelected.Bg.Hex(), wantBg.Hex())
+			t.Errorf("SeparatorSelected.Bg is nil, want %s", wantStatuslineABg.Hex())
+		} else if !bl.SeparatorSelected.Bg.Equal(*wantStatuslineABg) {
+			t.Errorf("SeparatorSelected.Bg = %s, want %s", bl.SeparatorSelected.Bg.Hex(), wantStatuslineABg.Hex())
 		}
 	})
 }
 
 // TestVimMapper_BufferlineIndicator verifies that IndicatorSelected uses
-// accent.primary for fg and statusline.a.bg for bg.
+// accent.primary for fg with statusline.a.bg for bg.
 func TestVimMapper_BufferlineIndicator(t *testing.T) {
 	theme := buildResolvedTheme(t)
 	m := mapper.NewVim()
@@ -901,7 +897,7 @@ func TestVimMapper_BufferlineIndicator(t *testing.T) {
 }
 
 // TestVimMapper_BufferlineModified verifies that all Modified states use
-// status.warning for fg and their respective statusline.*.bg for bg.
+// status.warning for fg, with surface.background or statusline.a.bg for bg.
 func TestVimMapper_BufferlineModified(t *testing.T) {
 	theme := buildResolvedTheme(t)
 	m := mapper.NewVim()
@@ -932,8 +928,8 @@ func TestVimMapper_BufferlineModified(t *testing.T) {
 		colors ports.BufferlineColors
 		wantBg *domain.Color
 	}{
-		{"Modified", bl.Modified, colorPtr("#1f2335")},                 // statusline.c.bg = base01
-		{"ModifiedVisible", bl.ModifiedVisible, colorPtr("#16161e")},   // statusline.b.bg = base10
+		{"Modified", bl.Modified, colorPtr("#1a1b26")},             // surface.background = base00
+		{"ModifiedVisible", bl.ModifiedVisible, colorPtr("#1a1b26")}, // surface.background = base00
 		{"ModifiedSelected", bl.ModifiedSelected, colorPtr("#a9b1d6")}, // statusline.a.bg = base04
 	}
 

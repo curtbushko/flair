@@ -1,0 +1,42 @@
+system: "base24"
+name: "Neofusion"
+author: "Curt Bushko"
+variant: "dark"
+palette:
+  base00: "031B26"  # dark1 - bg_dark
+  base01: "06101e"  # dark0 - bg
+  base02: "06364B"  # dark3 - highlight
+  base03: "22536f"  # gray - fg_gutter (muted text)
+  base04: "08435E"  # dark4 - bg_highlight
+  base05: "e8e5b5"  # light_aqua - fg
+  base06: "e2d9c5"  # bright_blue - fg_dark
+  base07: "fff8e3"  # fg_sidebar
+  base08: "fd5e3a"  # bright_red - red
+  base09: "fd5e3a"  # bright_orange - orange
+  base0A: "fd5e3a"  # bright_yellow - yellow
+  base0B: "66def9"  # light0 - cyan (strings)
+  base0C: "66def9"  # neutral_aqua - cyan
+  base0D: "35b5ff"  # bright_green - blue
+  base0E: "ec30ac"  # neutral_purple - purple
+  base0F: "35b5ff"  # neutral_green - green
+  base10: "052839"  # dark2 - bg_float
+  base11: "06101e"  # dark0 - darkest
+  base12: "fc9487"  # light_red - bright red
+  base13: "fa7a61"  # faded_yellow - bright yellow
+  base14: "35b5ff"  # bright_green - bright green
+  base15: "66def9"  # light0 - bright cyan
+  base16: "008DA3"  # light2 - bright blue
+  base17: "fa7a61"  # bright_purple - magenta
+overrides:
+  statusline_a_bg:
+    color: "35b5ff"
+  statusline_a_fg:
+    color: "06101e"
+  statusline_b_bg:
+    color: "fd5e3a"
+  statusline_b_fg:
+    color: "031B26"
+  statusline_c_bg:
+    color: "06101e"
+  statusline_c_fg:
+    color: "66def9"

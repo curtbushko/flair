@@ -20,10 +20,10 @@ func mapPlugins(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["DashboardShortCut"] = ports.VimHighlight{Fg: fg("accent.primary")}
 
 	// --- bufferline.nvim ---
-	hl["BufferLineFill"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineBackground"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineBufferSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
-	hl["BufferLineBufferVisible"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineFill"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("surface.background")}
+	hl["BufferLineBackground"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("surface.background")}
+	hl["BufferLineBufferSelected"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg"), Bold: true}
+	hl["BufferLineBufferVisible"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("surface.background")}
 
 	// --- nvim-cmp ---
 	hl["CmpItemAbbr"] = ports.VimHighlight{Fg: fg("text.primary")}
@@ -499,17 +499,19 @@ func mapPlugins(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["NeoTreeTabSeparatorInactive"] = ports.VimHighlight{Fg: fg("text.muted")}
 
 	// --- BufferLine additional ---
-	hl["BufferLineTab"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineTabSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
-	hl["BufferLineSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineSeparatorSelected"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.b.bg")}
-	hl["BufferLineSeparatorVisible"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineIndicatorSelected"] = ports.VimHighlight{Fg: fg("statusline.b.bg"), Bg: bg("statusline.b.bg")}
-	hl["BufferLineModifiedSelected"] = ports.VimHighlight{Fg: fg("statusline.b.bg"), Bg: bg("statusline.b.bg")}
-	hl["BufferLineOffsetSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineDuplicate"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineDuplicateSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
-	hl["BufferLineDuplicateVisible"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineTabSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineTabSeparatorSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["BufferLineTab"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("surface.background")}
+	hl["BufferLineTabSelected"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg"), Bold: true}
+	hl["BufferLineSeparator"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
+	hl["BufferLineSeparatorSelected"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("statusline.a.bg")}
+	hl["BufferLineSeparatorVisible"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
+	hl["BufferLineIndicatorSelected"] = ports.VimHighlight{Fg: fg("accent.primary"), Bg: bg("statusline.a.bg")}
+	hl["BufferLineModified"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("surface.background")}
+	hl["BufferLineModifiedSelected"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("statusline.a.bg")}
+	hl["BufferLineModifiedVisible"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("surface.background")}
+	hl["BufferLineOffsetSeparator"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
+	hl["BufferLineDuplicate"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background")}
+	hl["BufferLineDuplicateSelected"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("statusline.a.bg")}
+	hl["BufferLineDuplicateVisible"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background")}
+	hl["BufferLineTabSeparator"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
+	hl["BufferLineTabSeparatorSelected"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("statusline.a.bg")}
 }

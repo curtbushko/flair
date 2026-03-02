@@ -23,6 +23,7 @@ func TestSource_List(t *testing.T) {
 		"everforest",
 		"gruvbox-dark",
 		"gruvbox-material",
+		"neofusion",
 		"rebel-scum",
 		"tokyo-night-dark",
 		"tokyo-night-neon",

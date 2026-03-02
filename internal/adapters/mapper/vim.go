@@ -573,11 +573,12 @@ func mapLualine(theme *domain.ResolvedTheme) *ports.LualineTheme {
 }
 
 // mapBufferline builds a bufferline theme from semantic tokens.
-// It maps buffer states to statusline tokens:
-//   - Selected (active buffer): statusline.a.* (brightest)
-//   - Visible (visible but not active): statusline.b.*
-//   - Background/hidden: statusline.c.*
-//   - Separators: border.default fg with state-specific bg
+// It maps buffer states to statusline tokens with surface.background for
+// most elements to match the editor background:
+//   - Selected (active buffer): statusline.a.* with background highlight
+//   - Visible (visible but not active): statusline.b.fg with surface.background
+//   - Background/hidden: statusline.c.fg with surface.background
+//   - Separators: surface.background fg/bg (invisible)
 //   - Indicator: accent.primary fg
 //   - Modified: status.warning fg
 //   - Diagnostics: status.error/warning/info/hint fg
@@ -589,37 +590,37 @@ func mapBufferline(theme *domain.ResolvedTheme) *ports.BufferlineTheme {
 		// Fill: the empty space in the bufferline
 		Fill: ports.BufferlineColors{
 			Fg: fg("statusline.c.fg"),
-			Bg: bg("surface.background.statusbar"),
+			Bg: bg("surface.background"),
 		},
 		// Background: inactive/hidden buffers
 		Background: ports.BufferlineColors{
 			Fg: fg("statusline.c.fg"),
-			Bg: bg("statusline.c.bg"),
+			Bg: bg("surface.background"),
 		},
 		// BufferVisible: visible but not selected buffers
 		BufferVisible: ports.BufferlineColors{
 			Fg: fg("statusline.b.fg"),
-			Bg: bg("statusline.b.bg"),
+			Bg: bg("surface.background"),
 		},
-		// BufferSelected: currently active buffer (brightest)
+		// BufferSelected: currently active buffer (highlighted)
 		BufferSelected: ports.BufferlineColors{
 			Fg:   fg("statusline.a.fg"),
 			Bg:   bg("statusline.a.bg"),
 			Bold: true,
 		},
-		// Separator: between background buffers
+		// Separator: between background buffers (same as background)
 		Separator: ports.BufferlineColors{
-			Fg: fg("border.default"),
-			Bg: bg("statusline.c.bg"),
+			Fg: fg("surface.background"),
+			Bg: bg("surface.background"),
 		},
-		// SeparatorVisible: between visible buffers
+		// SeparatorVisible: between visible buffers (same as background)
 		SeparatorVisible: ports.BufferlineColors{
-			Fg: fg("border.default"),
-			Bg: bg("statusline.b.bg"),
+			Fg: fg("surface.background"),
+			Bg: bg("surface.background"),
 		},
 		// SeparatorSelected: adjacent to selected buffer
 		SeparatorSelected: ports.BufferlineColors{
-			Fg: fg("border.default"),
+			Fg: fg("surface.background"),
 			Bg: bg("statusline.a.bg"),
 		},
 		// IndicatorSelected: active buffer indicator
@@ -630,22 +631,22 @@ func mapBufferline(theme *domain.ResolvedTheme) *ports.BufferlineTheme {
 		// Modified: modified background buffer
 		Modified: ports.BufferlineColors{
 			Fg: fg("status.warning"),
-			Bg: bg("statusline.c.bg"),
+			Bg: bg("surface.background"),
 		},
 		// ModifiedVisible: modified visible buffer
 		ModifiedVisible: ports.BufferlineColors{
 			Fg: fg("status.warning"),
-			Bg: bg("statusline.b.bg"),
+			Bg: bg("surface.background"),
 		},
-		// ModifiedSelected: modified selected buffer
+		// ModifiedSelected: modified selected buffer (highlighted)
 		ModifiedSelected: ports.BufferlineColors{
 			Fg: fg("status.warning"),
 			Bg: bg("statusline.a.bg"),
 		},
 		// Diagnostic colors
-		Error:   ports.BufferlineColors{Fg: fg("status.error")},
-		Warning: ports.BufferlineColors{Fg: fg("status.warning")},
-		Info:    ports.BufferlineColors{Fg: fg("status.info")},
-		Hint:    ports.BufferlineColors{Fg: fg("status.hint")},
+		Error:   ports.BufferlineColors{Fg: fg("status.error"), Bg: bg("surface.background")},
+		Warning: ports.BufferlineColors{Fg: fg("status.warning"), Bg: bg("surface.background")},
+		Info:    ports.BufferlineColors{Fg: fg("status.info"), Bg: bg("surface.background")},
+		Hint:    ports.BufferlineColors{Fg: fg("status.hint"), Bg: bg("surface.background")},
 	}
 }
