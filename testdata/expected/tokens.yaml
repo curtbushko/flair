@@ -6,7 +6,7 @@ tokens:
     accent.secondary:
         color: '#bb9af7'
     border.default:
-        color: '#32364e'
+        color: '#ff9e64'
     border.focus:
         color: '#5d7ab8'
     border.muted:
@@ -148,6 +148,8 @@ tokens:
         color: '#16161e'
     surface.background.sunken:
         color: '#16161e'
+    syntax.boolean:
+        color: '#ff9e64'
     syntax.comment:
         color: '#565f89'
         italic: true
@@ -155,12 +157,25 @@ tokens:
         color: '#ff9e64'
     syntax.constructor:
         color: '#c8acf8'
+    syntax.deprecated:
+        color: '#db4b4b'
+        strikethrough: true
     syntax.escape:
-        color: '#bb9af7'
+        color: '#c8acf8'
     syntax.function:
         color: '#7aa2f7'
+    syntax.function.builtin:
+        color: '#7dcfff'
     syntax.keyword:
         color: '#bb9af7'
+    syntax.label:
+        color: '#7aa2f7'
+    syntax.macro:
+        color: '#e9c582'
+    syntax.module:
+        color: '#e0af68'
+    syntax.module.builtin:
+        color: '#c0caf5'
     syntax.number:
         color: '#ff9e64'
     syntax.operator:
@@ -168,15 +183,21 @@ tokens:
     syntax.parameter:
         color: '#e0af68'
     syntax.property:
-        color: '#9ece6a'
+        color: '#97d8f8'
+    syntax.punctuation:
+        color: '#8db6fa'
     syntax.regexp:
         color: '#7dcfff'
     syntax.string:
         color: '#9ece6a'
+    syntax.string.documentation:
+        color: '#e0af68'
     syntax.tag:
         color: '#f7768e'
     syntax.type:
         color: '#e0af68'
+    syntax.type.builtin:
+        color: '#7dcfff'
     syntax.variable:
         color: '#c0caf5'
     terminal.black:

@@ -10,27 +10,27 @@ rules:
     - selector: QPushButton
       properties:
         background-color: '#1f2335'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QLineEdit
       properties:
         background-color: '#16161e'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QTextEdit
       properties:
         background-color: '#16161e'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QPlainTextEdit
       properties:
         background-color: '#16161e'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QComboBox
       properties:
         background-color: '#1f2335'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QMenuBar
       properties:
@@ -39,7 +39,7 @@ rules:
     - selector: QMenu
       properties:
         background-color: '#16161e'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QMenu::item:selected
       properties:
@@ -57,11 +57,11 @@ rules:
     - selector: QTabWidget::pane
       properties:
         background-color: '#1a1b26'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
     - selector: QTabBar::tab
       properties:
         background-color: '#1f2335'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#a9b1d6'
     - selector: QTabBar::tab:selected
       properties:
@@ -76,7 +76,7 @@ rules:
         color: '#c0caf5'
     - selector: QGroupBox
       properties:
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QScrollBar
       properties:
@@ -87,12 +87,12 @@ rules:
     - selector: QToolTip
       properties:
         background-color: '#16161e'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QProgressBar
       properties:
         background-color: '#1f2335'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QProgressBar::chunk
       properties:
@@ -104,7 +104,7 @@ rules:
     - selector: QHeaderView::section
       properties:
         background-color: '#1f2335'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QTreeView
       properties:
@@ -125,7 +125,7 @@ rules:
     - selector: QSpinBox
       properties:
         background-color: '#16161e'
-        border: '1px solid #32364e'
+        border: '1px solid #ff9e64'
         color: '#c0caf5'
     - selector: QSlider::groove
       properties:

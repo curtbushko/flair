@@ -125,10 +125,11 @@ func deriveDiff(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("diff.ignored", domain.Token{Color: p.Base(0x03)})
 }
 
-// deriveSyntax derives the 15 syntax tokens from the palette.
-// The PLAN.md table lists 14 rows plus constructor for a total of 15.
+// deriveSyntax derives the 25 syntax tokens from the palette.
 // syntax.comment includes the Italic style flag.
+// syntax.deprecated includes the Strikethrough style flag.
 func deriveSyntax(p *domain.Palette, ts *domain.TokenSet) {
+	// Core syntax tokens
 	ts.Set("syntax.keyword", domain.Token{Color: p.Base(0x0E)})
 	ts.Set("syntax.string", domain.Token{Color: p.Base(0x0B)})
 	ts.Set("syntax.function", domain.Token{Color: p.Base(0x0D)})
@@ -139,11 +140,23 @@ func deriveSyntax(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("syntax.type", domain.Token{Color: p.Base(0x0A)})
 	ts.Set("syntax.number", domain.Token{Color: p.Base(0x09)})
 	ts.Set("syntax.tag", domain.Token{Color: p.Base(0x08)})
-	ts.Set("syntax.property", domain.Token{Color: p.Base(0x0B)})
+	ts.Set("syntax.property", domain.Token{Color: p.Base(0x15)})    // bright cyan (was 0x0B)
 	ts.Set("syntax.parameter", domain.Token{Color: p.Base(0x0A)})
 	ts.Set("syntax.regexp", domain.Token{Color: p.Base(0x0C)})
-	ts.Set("syntax.escape", domain.Token{Color: p.Base(0x0E)})
+	ts.Set("syntax.escape", domain.Token{Color: p.Base(0x17)})      // bright purple (was 0x0E)
 	ts.Set("syntax.constructor", domain.Token{Color: p.Base(0x17)})
+
+	// New tokens for color variety
+	ts.Set("syntax.boolean", domain.Token{Color: p.Base(0x09)})
+	ts.Set("syntax.function.builtin", domain.Token{Color: p.Base(0x0C)})
+	ts.Set("syntax.type.builtin", domain.Token{Color: p.Base(0x0C)})
+	ts.Set("syntax.module", domain.Token{Color: p.Base(0x0A)})
+	ts.Set("syntax.module.builtin", domain.Token{Color: p.Base(0x05)})
+	ts.Set("syntax.string.documentation", domain.Token{Color: p.Base(0x0A)})
+	ts.Set("syntax.label", domain.Token{Color: p.Base(0x0D)})
+	ts.Set("syntax.punctuation", domain.Token{Color: p.Base(0x16)})
+	ts.Set("syntax.deprecated", domain.Token{Color: p.Base(0x0F), Strikethrough: true})
+	ts.Set("syntax.macro", domain.Token{Color: p.Base(0x13)})
 }
 
 // deriveMarkup derives the markup semantic tokens from the palette.
@@ -188,9 +201,7 @@ func deriveAccentBorderState(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("accent.foreground", domain.Token{Color: p.Base(0x00)})
 
 	// Border (3 tokens)
-	ts.Set("border.default", domain.Token{
-		Color: domain.BlendBg(p.Base(0x03), p.Base(0x00), 0.40),
-	})
+	ts.Set("border.default", domain.Token{Color: p.Base(0x09)}) // orange
 	ts.Set("border.focus", domain.Token{
 		Color: domain.BlendBg(p.Base(0x0D), p.Base(0x00), 0.70),
 	})

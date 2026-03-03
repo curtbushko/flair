@@ -13,7 +13,7 @@
   --flair-bg-sidebar: #16161e;
   --flair-bg-statusbar: #16161e;
   --flair-bg-sunken: #16161e;
-  --flair-border-default: #32364e;
+  --flair-border-default: #ff9e64;
   --flair-border-focus: #5d7ab8;
   --flair-border-muted: #1f2335;
   --flair-diff-added-bg: #3b4837;
@@ -51,13 +51,13 @@
   --flair-syntax-comment: #565f89;
   --flair-syntax-constant: #ff9e64;
   --flair-syntax-constructor: #c8acf8;
-  --flair-syntax-escape: #bb9af7;
+  --flair-syntax-escape: #c8acf8;
   --flair-syntax-function: #7aa2f7;
   --flair-syntax-keyword: #bb9af7;
   --flair-syntax-number: #ff9e64;
   --flair-syntax-operator: #8db6fa;
   --flair-syntax-parameter: #e0af68;
-  --flair-syntax-property: #9ece6a;
+  --flair-syntax-property: #97d8f8;
   --flair-syntax-regexp: #7dcfff;
   --flair-syntax-string: #9ece6a;
   --flair-syntax-tag: #f7768e;

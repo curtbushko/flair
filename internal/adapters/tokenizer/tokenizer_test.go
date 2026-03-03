@@ -859,7 +859,7 @@ func TestTokenizeSyntax_Property(t *testing.T) {
 		t.Fatal("syntax.property not found in token set")
 	}
 
-	want := mustParseHex(t, "#9ece6a") // base0B
+	want := mustParseHex(t, "#97d8f8") // base15 (bright cyan)
 	if !tok.Color.Equal(want) {
 		t.Errorf("syntax.property = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -907,7 +907,7 @@ func TestTokenizeSyntax_Escape(t *testing.T) {
 		t.Fatal("syntax.escape not found in token set")
 	}
 
-	want := mustParseHex(t, "#bb9af7") // base0E
+	want := mustParseHex(t, "#c8acf8") // base17 (bright purple)
 	if !tok.Color.Equal(want) {
 		t.Errorf("syntax.escape = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -929,27 +929,200 @@ func TestTokenizeSyntax_Constructor(t *testing.T) {
 	}
 }
 
+func TestTokenizeSyntax_Boolean(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.boolean")
+	if !ok {
+		t.Fatal("syntax.boolean not found in token set")
+	}
+
+	want := mustParseHex(t, "#ff9e64") // base09
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.boolean = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
+func TestTokenizeSyntax_FunctionBuiltin(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.function.builtin")
+	if !ok {
+		t.Fatal("syntax.function.builtin not found in token set")
+	}
+
+	want := mustParseHex(t, "#7dcfff") // base0C
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.function.builtin = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
+func TestTokenizeSyntax_TypeBuiltin(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.type.builtin")
+	if !ok {
+		t.Fatal("syntax.type.builtin not found in token set")
+	}
+
+	want := mustParseHex(t, "#7dcfff") // base0C
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.type.builtin = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
+func TestTokenizeSyntax_Module(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.module")
+	if !ok {
+		t.Fatal("syntax.module not found in token set")
+	}
+
+	want := mustParseHex(t, "#e0af68") // base0A
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.module = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
+func TestTokenizeSyntax_ModuleBuiltin(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.module.builtin")
+	if !ok {
+		t.Fatal("syntax.module.builtin not found in token set")
+	}
+
+	want := mustParseHex(t, "#c0caf5") // base05
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.module.builtin = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
+func TestTokenizeSyntax_StringDocumentation(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.string.documentation")
+	if !ok {
+		t.Fatal("syntax.string.documentation not found in token set")
+	}
+
+	want := mustParseHex(t, "#e0af68") // base0A
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.string.documentation = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
+func TestTokenizeSyntax_Label(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.label")
+	if !ok {
+		t.Fatal("syntax.label not found in token set")
+	}
+
+	want := mustParseHex(t, "#7aa2f7") // base0D
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.label = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
+func TestTokenizeSyntax_Punctuation(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.punctuation")
+	if !ok {
+		t.Fatal("syntax.punctuation not found in token set")
+	}
+
+	want := mustParseHex(t, "#8db6fa") // base16
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.punctuation = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
+func TestTokenizeSyntax_Deprecated(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.deprecated")
+	if !ok {
+		t.Fatal("syntax.deprecated not found in token set")
+	}
+
+	want := mustParseHex(t, "#db4b4b") // base0F
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.deprecated color = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+	if !tok.Strikethrough {
+		t.Error("syntax.deprecated should have Strikethrough=true")
+	}
+}
+
+func TestTokenizeSyntax_Macro(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("syntax.macro")
+	if !ok {
+		t.Fatal("syntax.macro not found in token set")
+	}
+
+	want := mustParseHex(t, "#e9c582") // base13
+	if !tok.Color.Equal(want) {
+		t.Errorf("syntax.macro = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
 func TestTokenizeSyntax_AllPresent(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
 	d := tokenizer.New()
 	ts := d.Tokenize(pal)
 
 	syntaxPaths := []string{
-		"syntax.keyword",
-		"syntax.string",
-		"syntax.function",
+		"syntax.boolean",
 		"syntax.comment",
-		"syntax.variable",
 		"syntax.constant",
-		"syntax.operator",
-		"syntax.type",
-		"syntax.number",
-		"syntax.tag",
-		"syntax.property",
-		"syntax.parameter",
-		"syntax.regexp",
-		"syntax.escape",
 		"syntax.constructor",
+		"syntax.deprecated",
+		"syntax.escape",
+		"syntax.function",
+		"syntax.function.builtin",
+		"syntax.keyword",
+		"syntax.label",
+		"syntax.macro",
+		"syntax.module",
+		"syntax.module.builtin",
+		"syntax.number",
+		"syntax.operator",
+		"syntax.parameter",
+		"syntax.property",
+		"syntax.punctuation",
+		"syntax.regexp",
+		"syntax.string",
+		"syntax.string.documentation",
+		"syntax.tag",
+		"syntax.type",
+		"syntax.type.builtin",
+		"syntax.variable",
 	}
 
 	for _, path := range syntaxPaths {
@@ -958,15 +1131,15 @@ func TestTokenizeSyntax_AllPresent(t *testing.T) {
 		}
 	}
 
-	// Verify exactly 15 syntax tokens (14 from PLAN + constructor)
+	// Verify exactly 25 syntax tokens
 	count := 0
 	for _, p := range ts.Paths() {
 		if len(p) >= 7 && p[:7] == "syntax." {
 			count++
 		}
 	}
-	if count != 15 {
-		t.Errorf("expected 15 syntax tokens, got %d", count)
+	if count != 25 {
+		t.Errorf("expected 25 syntax tokens, got %d", count)
 	}
 }
 
@@ -1245,8 +1418,7 @@ func TestTokenizeBorder_Default(t *testing.T) {
 		t.Fatal("border.default not found in token set")
 	}
 
-	// BlendBg(base03, base00, 0.40)
-	want := domain.BlendBg(pal.Base(0x03), pal.Base(0x00), 0.40)
+	want := mustParseHex(t, "#ff9e64") // base09 (orange)
 	if !tok.Color.Equal(want) {
 		t.Errorf("border.default = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -1566,14 +1738,14 @@ func TestTokenizeAccentGitTerminal_AllPresent(t *testing.T) {
 // =============================================================================
 
 // TestFullTokenization_TokenCount verifies that full tokenization produces at least
-// 87 tokens from the Tokyo Night Dark palette.
+// 97 tokens from the Tokyo Night Dark palette (87 original + 10 new syntax tokens).
 func TestFullTokenization_TokenCount(t *testing.T) {
 	pal := tokyoNightDarkPalette(t)
 	d := tokenizer.New()
 	ts := d.Tokenize(pal)
 
-	if ts.Len() < 87 {
-		t.Errorf("expected at least 87 tokens, got %d", ts.Len())
+	if ts.Len() < 97 {
+		t.Errorf("expected at least 97 tokens, got %d", ts.Len())
 	}
 }
 
@@ -1646,7 +1818,6 @@ func TestFullTokenization_BlendedValues(t *testing.T) {
 		{"surface.background.selection", 0x0D, 0x00, 0.30},
 		{"surface.background.search", 0x0A, 0x00, 0.30},
 		{"text.subtle", 0x03, 0x00, 0.50},
-		{"border.default", 0x03, 0x00, 0.40},
 		{"border.focus", 0x0D, 0x00, 0.70},
 		{"scrollbar.thumb", 0x03, 0x00, 0.40},
 		{"state.active", 0x0D, 0x00, 0.20},

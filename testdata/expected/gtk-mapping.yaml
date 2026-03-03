@@ -2,7 +2,7 @@ colors:
     accent_bg_color: '#7aa2f7'
     accent_color: '#7aa2f7'
     accent_fg_color: '#1a1b26'
-    borders: '#32364e'
+    borders: '#ff9e64'
     card_bg_color: '#1f2335'
     card_fg_color: '#c0caf5'
     dialog_bg_color: '#16161e'
