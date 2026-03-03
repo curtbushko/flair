@@ -72,21 +72,22 @@ func (v *Vim) Generate(w io.Writer, mapped ports.MappedTheme) error {
 		}
 	}
 
-	if theme.Lualine != nil {
-		if err := writeLualineTheme(w, theme.Lualine); err != nil {
-			return &domain.GenerateError{
-				Target:  "vim",
-				Message: "failed to write lualine theme",
-				Cause:   err,
-			}
+	// Write VimEnter autocmd to re-apply plugin highlights after plugins load.
+	// This ensures highlights aren't overwritten by plugins like bufferline.
+	if err := writePluginHighlightAutocmd(w, theme.Highlights); err != nil {
+		return &domain.GenerateError{
+			Target:  "vim",
+			Message: "failed to write plugin highlight autocmd",
+			Cause:   err,
 		}
 	}
 
-	if theme.Bufferline != nil {
-		if err := writeBufferlineTheme(w, theme.Bufferline); err != nil {
+	// Write lualine theme setup
+	if theme.Lualine != nil {
+		if err := writeLualineSetup(w, theme.Lualine); err != nil {
 			return &domain.GenerateError{
 				Target:  "vim",
-				Message: "failed to write bufferline theme",
+				Message: "failed to write lualine setup",
 				Cause:   err,
 			}
 		}
@@ -188,17 +189,155 @@ func writeTerminalColors(w io.Writer, colors [16]domain.Color) error {
 	return nil
 }
 
-// writeLualineTheme writes the lualine theme setup to the Lua file.
-// It defines a local theme table and calls require("lualine").setup().
-func writeLualineTheme(w io.Writer, theme *ports.LualineTheme) error {
-	if _, err := fmt.Fprint(w, "\n-- Lualine theme\n"); err != nil {
+// pluginHighlightPrefixes are highlight group prefixes that belong to plugins
+// which may overwrite our highlights when they load. These need to be re-applied
+// via VimEnter autocmd.
+var pluginHighlightPrefixes = []string{
+	"BufferLine",
+	"lualine",
+	"Lualine",
+}
+
+// isPluginHighlight returns true if the highlight group name belongs to a plugin.
+func isPluginHighlight(name string) bool {
+	for _, prefix := range pluginHighlightPrefixes {
+		if strings.HasPrefix(name, prefix) {
+			return true
+		}
+	}
+	return false
+}
+
+// writePluginHighlightAutocmd writes autocmds that re-apply plugin highlights
+// after plugins have loaded. Uses multiple events and delays to ensure highlights
+// are applied after plugins like bufferline initialize.
+func writePluginHighlightAutocmd(w io.Writer, highlights map[string]ports.VimHighlight) error {
+	// Collect plugin highlights
+	var pluginNames []string
+	for name := range highlights {
+		if isPluginHighlight(name) {
+			pluginNames = append(pluginNames, name)
+		}
+	}
+
+	if len(pluginNames) == 0 {
+		return nil
+	}
+
+	sort.Strings(pluginNames)
+
+	// Write a local function to apply plugin highlights
+	if _, err := fmt.Fprint(w, "\n-- Re-apply plugin highlights after plugins load\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "local function apply_plugin_highlights()\n"); err != nil {
 		return err
 	}
 
+	for _, name := range pluginNames {
+		hl := highlights[name]
+		line := formatSetHl(name, hl)
+		if _, err := fmt.Fprintf(w, "  %s\n", line); err != nil {
+			return err
+		}
+	}
+
+	if _, err := fmt.Fprint(w, "end\n\n"); err != nil {
+		return err
+	}
+
+	// Apply immediately (catches early loading)
+	if _, err := fmt.Fprint(w, "-- Apply immediately\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "apply_plugin_highlights()\n\n"); err != nil {
+		return err
+	}
+
+	// Apply on UIEnter with longer delay for lazy-loaded plugins
+	if _, err := fmt.Fprint(w, "-- Apply on UIEnter with delay for lazy-loaded plugins\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "vim.api.nvim_create_autocmd('UIEnter', {\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  once = true,\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  callback = function()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    apply_plugin_highlights()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    vim.defer_fn(apply_plugin_highlights, 100)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    vim.defer_fn(apply_plugin_highlights, 500)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  end,\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "})\n\n"); err != nil {
+		return err
+	}
+
+	// Re-apply on ColorScheme change
+	if _, err := fmt.Fprint(w, "-- Re-apply when colorscheme changes\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "vim.api.nvim_create_autocmd('ColorScheme', {\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  callback = function()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    apply_plugin_highlights()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    vim.defer_fn(apply_plugin_highlights, 50)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  end,\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "})\n\n"); err != nil {
+		return err
+	}
+
+	// Re-apply on User BufferlineRender event (bufferline fires this)
+	if _, err := fmt.Fprint(w, "-- Re-apply when bufferline renders\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "vim.api.nvim_create_autocmd('User', {\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  pattern = 'BufferlineRender',\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  callback = apply_plugin_highlights,\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "})\n"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// writeLualineSetup writes the lualine theme configuration.
+// This sets up lualine with the theme colors so it uses the colorscheme's
+// statusline tokens instead of its default colors.
+func writeLualineSetup(w io.Writer, theme *ports.LualineTheme) error {
+	if _, err := fmt.Fprint(w, "\n-- Lualine theme configuration\n"); err != nil {
+		return err
+	}
 	if _, err := fmt.Fprint(w, "local lualine_theme = {\n"); err != nil {
 		return err
 	}
 
+	// Write each mode
 	modes := []struct {
 		name string
 		mode ports.LualineMode
@@ -221,27 +360,84 @@ func writeLualineTheme(w io.Writer, theme *ports.LualineTheme) error {
 		return err
 	}
 
-	// Write the lualine setup call
-	if _, err := fmt.Fprint(w, "-- Apply lualine theme if lualine is available\n"); err != nil {
+	// Register the theme globally so user can reference it
+	if _, err := fmt.Fprint(w, "-- Register lualine theme globally\n"); err != nil {
 		return err
 	}
-	if _, err := fmt.Fprint(w, "local ok, lualine = pcall(require, 'lualine')\n"); err != nil {
+	if _, err := fmt.Fprint(w, "_G.flair_lualine_theme = lualine_theme\n\n"); err != nil {
 		return err
 	}
-	if _, err := fmt.Fprint(w, "if ok then\n"); err != nil {
+
+	// Write the setup call that applies the theme if lualine is available
+	if _, err := fmt.Fprint(w, "-- Apply lualine theme\n"); err != nil {
 		return err
 	}
-	if _, err := fmt.Fprint(w, "  lualine.setup({ options = { theme = lualine_theme } })\n"); err != nil {
+	if _, err := fmt.Fprint(w, "local function apply_lualine_theme()\n"); err != nil {
 		return err
 	}
-	if _, err := fmt.Fprint(w, "end\n"); err != nil {
+	if _, err := fmt.Fprint(w, "  local ok, lualine = pcall(require, 'lualine')\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  if ok then\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    local cfg = require('lualine').get_config()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    cfg.options.theme = lualine_theme\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    require('lualine').setup(cfg)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  end\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "end\n\n"); err != nil {
+		return err
+	}
+
+	// Apply immediately if lualine is already loaded
+	if _, err := fmt.Fprint(w, "-- Apply immediately if lualine is loaded\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "if package.loaded['lualine'] then\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  apply_lualine_theme()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "end\n\n"); err != nil {
+		return err
+	}
+
+	// Also apply after UIEnter with delay
+	if _, err := fmt.Fprint(w, "-- Apply after UI loads\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "vim.api.nvim_create_autocmd('UIEnter', {\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  once = true,\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  callback = function()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    vim.defer_fn(apply_lualine_theme, 100)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  end,\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "})\n"); err != nil {
 		return err
 	}
 
 	return nil
 }
 
-// writeLualineMode writes a single lualine mode (normal, insert, etc.) to the output.
+// writeLualineMode writes a single lualine mode configuration.
 func writeLualineMode(w io.Writer, name string, mode ports.LualineMode) error {
 	if _, err := fmt.Fprintf(w, "  %s = {\n", name); err != nil {
 		return err
@@ -269,10 +465,13 @@ func writeLualineMode(w io.Writer, name string, mode ports.LualineMode) error {
 	return nil
 }
 
-// writeLualineSection writes a single section (a, b, or c) of a lualine mode.
+// writeLualineSection writes a single lualine section (a, b, or c).
 func writeLualineSection(w io.Writer, name string, colors ports.LualineModeColors) error {
-	var parts []string
+	if _, err := fmt.Fprintf(w, "    %s = { ", name); err != nil {
+		return err
+	}
 
+	var parts []string
 	if colors.Fg != nil {
 		parts = append(parts, fmt.Sprintf("fg = '%s'", colors.Fg.Hex()))
 	}
@@ -280,95 +479,11 @@ func writeLualineSection(w io.Writer, name string, colors ports.LualineModeColor
 		parts = append(parts, fmt.Sprintf("bg = '%s'", colors.Bg.Hex()))
 	}
 
-	if _, err := fmt.Fprintf(w, "    %s = { %s },\n", name, strings.Join(parts, ", ")); err != nil {
+	if _, err := fmt.Fprint(w, strings.Join(parts, ", ")); err != nil {
 		return err
 	}
 
-	return nil
-}
-
-// writeBufferlineTheme writes the bufferline theme setup to the Lua file.
-// It defines a local bufferline_theme table and applies it via pcall to
-// protect against missing bufferline plugin.
-func writeBufferlineTheme(w io.Writer, theme *ports.BufferlineTheme) error {
-	if _, err := fmt.Fprint(w, "\n-- Bufferline theme\n"); err != nil {
-		return err
-	}
-
-	if _, err := fmt.Fprint(w, "local bufferline_theme = {\n"); err != nil {
-		return err
-	}
-
-	// Define groups in a fixed order for deterministic output.
-	groups := []struct {
-		name   string
-		colors ports.BufferlineColors
-	}{
-		{"fill", theme.Fill},
-		{"background", theme.Background},
-		{"buffer_visible", theme.BufferVisible},
-		{"buffer_selected", theme.BufferSelected},
-		{"separator", theme.Separator},
-		{"separator_visible", theme.SeparatorVisible},
-		{"separator_selected", theme.SeparatorSelected},
-		{"indicator_selected", theme.IndicatorSelected},
-		{"modified", theme.Modified},
-		{"modified_visible", theme.ModifiedVisible},
-		{"modified_selected", theme.ModifiedSelected},
-		{"error", theme.Error},
-		{"warning", theme.Warning},
-		{"info", theme.Info},
-		{"hint", theme.Hint},
-	}
-
-	for _, g := range groups {
-		if err := writeBufferlineGroup(w, g.name, g.colors); err != nil {
-			return err
-		}
-	}
-
-	if _, err := fmt.Fprint(w, "}\n\n"); err != nil {
-		return err
-	}
-
-	// Write pcall wrapper to apply bufferline theme if plugin is available.
-	if _, err := fmt.Fprint(w, "-- Apply bufferline theme if bufferline is available\n"); err != nil {
-		return err
-	}
-	if _, err := fmt.Fprint(w, "local bl_ok, bufferline = pcall(require, 'bufferline')\n"); err != nil {
-		return err
-	}
-	if _, err := fmt.Fprint(w, "if bl_ok then\n"); err != nil {
-		return err
-	}
-	if _, err := fmt.Fprint(w, "  bufferline.setup({ highlights = bufferline_theme })\n"); err != nil {
-		return err
-	}
-	if _, err := fmt.Fprint(w, "end\n"); err != nil {
-		return err
-	}
-
-	return nil
-}
-
-// writeBufferlineGroup writes a single bufferline highlight group to the output.
-func writeBufferlineGroup(w io.Writer, name string, colors ports.BufferlineColors) error {
-	var parts []string
-
-	if colors.Fg != nil {
-		parts = append(parts, fmt.Sprintf("fg = '%s'", colors.Fg.Hex()))
-	}
-	if colors.Bg != nil {
-		parts = append(parts, fmt.Sprintf("bg = '%s'", colors.Bg.Hex()))
-	}
-	if colors.Bold {
-		parts = append(parts, "bold = true")
-	}
-	if colors.Italic {
-		parts = append(parts, "italic = true")
-	}
-
-	if _, err := fmt.Fprintf(w, "  %s = { %s },\n", name, strings.Join(parts, ", ")); err != nil {
+	if _, err := fmt.Fprint(w, " },\n"); err != nil {
 		return err
 	}
 

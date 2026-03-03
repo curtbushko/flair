@@ -158,14 +158,14 @@ func TestVimMapper_TreesitterHighlights(t *testing.T) {
 		{"@constant", colorPtr("#ff9e64"), false, false, ""},
 		{"@operator", colorPtr("#8db6fa"), false, false, ""},
 		{"@number", colorPtr("#ff9e64"), false, false, ""},
-		{"@string.escape", colorPtr("#bb9af7"), false, false, ""},
+		{"@string.escape", colorPtr("#c8acf8"), false, false, ""},   // syntax.escape = base17
 		{"@string.regex", colorPtr("#7dcfff"), false, false, ""},
 		{"@tag", colorPtr("#f7768e"), false, false, ""},
-		{"@property", colorPtr("#9ece6a"), false, false, ""},
+		{"@property", colorPtr("#97d8f8"), false, false, ""},        // syntax.property = base15
 		{"@parameter", colorPtr("#e0af68"), false, false, ""},
 		{"@constructor", colorPtr("#c8acf8"), false, false, ""},
-		{"@function.builtin", colorPtr("#7aa2f7"), false, false, ""},
-		{"@type.builtin", colorPtr("#e0af68"), false, false, ""},
+		{"@function.builtin", colorPtr("#7dcfff"), false, false, ""}, // syntax.function.builtin = base0C
+		{"@type.builtin", colorPtr("#7dcfff"), false, false, ""},     // syntax.type.builtin = base0C
 		{"@variable.builtin", colorPtr("#f7768e"), false, false, ""},
 		{"@keyword.return", colorPtr("#bb9af7"), false, false, ""},
 		{"@keyword.function", colorPtr("#bb9af7"), false, false, ""},
@@ -241,7 +241,7 @@ func TestVimMapper_LSPHighlights(t *testing.T) {
 		{"@lsp.type.class", "@type"},
 		{"@lsp.type.interface", "@type"},
 		{"@lsp.type.decorator", "@function"},
-		{"@lsp.type.macro", "@constant"},
+		{"@lsp.type.macro", "@function.macro"},
 	}
 
 	for _, tc := range lspTests {
@@ -729,11 +729,12 @@ func TestVimMapper_BufferlineTheme(t *testing.T) {
 		}
 	})
 
-	// Verify BufferVisible uses statusline.b.fg token with surface.background bg
+	// Verify BufferVisible uses text.secondary with surface.background.raised bg
+	// (raised bg provides contrast for triangle separators)
 	t.Run("BufferVisible", func(t *testing.T) {
-		// From tokenizer: statusline.b.fg = base05 (#c0caf5), surface.background = base00 (#1a1b26)
-		wantFg := colorPtr("#c0caf5")
-		wantBg := colorPtr("#1a1b26")
+		// From tokenizer: text.secondary = base04 (#a9b1d6), surface.background.raised = base01 (#1f2335)
+		wantFg := colorPtr("#a9b1d6")
+		wantBg := colorPtr("#1f2335")
 
 		if bl.BufferVisible.Fg == nil {
 			t.Errorf("BufferVisible.Fg is nil, want %s", wantFg.Hex())
@@ -748,11 +749,12 @@ func TestVimMapper_BufferlineTheme(t *testing.T) {
 		}
 	})
 
-	// Verify Background uses statusline.c.fg token with surface.background bg
+	// Verify Background uses text.muted with surface.background.raised bg
+	// (raised bg provides contrast for triangle separators)
 	t.Run("Background", func(t *testing.T) {
-		// From tokenizer: statusline.c.fg = base05 (#c0caf5), surface.background = base00 (#1a1b26)
-		wantFg := colorPtr("#c0caf5")
-		wantBg := colorPtr("#1a1b26")
+		// From tokenizer: text.muted = base03 (#565f89), surface.background.raised = base01 (#1f2335)
+		wantFg := colorPtr("#565f89")
+		wantBg := colorPtr("#1f2335")
 
 		if bl.Background.Fg == nil {
 			t.Errorf("Background.Fg is nil, want %s", wantFg.Hex())
@@ -806,15 +808,17 @@ func TestVimMapper_BufferlineSeparators(t *testing.T) {
 
 	// surface.background = base00 (#1a1b26)
 	wantSurfaceBg := colorPtr("#1a1b26")
+	// surface.background.raised = base01 (#1f2335)
+	wantSurfaceRaised := colorPtr("#1f2335")
 	// statusline.a.bg = base04 (#a9b1d6)
 	wantStatuslineABg := colorPtr("#a9b1d6")
 
-	// Separator: fg = surface.background, bg = surface.background (invisible)
+	// Separator: fg = surface.background.raised, bg = surface.background (for triangle)
 	t.Run("Separator", func(t *testing.T) {
 		if bl.Separator.Fg == nil {
-			t.Errorf("Separator.Fg is nil, want %s", wantSurfaceBg.Hex())
-		} else if !bl.Separator.Fg.Equal(*wantSurfaceBg) {
-			t.Errorf("Separator.Fg = %s, want %s", bl.Separator.Fg.Hex(), wantSurfaceBg.Hex())
+			t.Errorf("Separator.Fg is nil, want %s", wantSurfaceRaised.Hex())
+		} else if !bl.Separator.Fg.Equal(*wantSurfaceRaised) {
+			t.Errorf("Separator.Fg = %s, want %s", bl.Separator.Fg.Hex(), wantSurfaceRaised.Hex())
 		}
 
 		if bl.Separator.Bg == nil {
@@ -824,12 +828,12 @@ func TestVimMapper_BufferlineSeparators(t *testing.T) {
 		}
 	})
 
-	// SeparatorVisible: fg = surface.background, bg = surface.background (invisible)
+	// SeparatorVisible: fg = surface.background.raised, bg = surface.background
 	t.Run("SeparatorVisible", func(t *testing.T) {
 		if bl.SeparatorVisible.Fg == nil {
-			t.Errorf("SeparatorVisible.Fg is nil, want %s", wantSurfaceBg.Hex())
-		} else if !bl.SeparatorVisible.Fg.Equal(*wantSurfaceBg) {
-			t.Errorf("SeparatorVisible.Fg = %s, want %s", bl.SeparatorVisible.Fg.Hex(), wantSurfaceBg.Hex())
+			t.Errorf("SeparatorVisible.Fg is nil, want %s", wantSurfaceRaised.Hex())
+		} else if !bl.SeparatorVisible.Fg.Equal(*wantSurfaceRaised) {
+			t.Errorf("SeparatorVisible.Fg = %s, want %s", bl.SeparatorVisible.Fg.Hex(), wantSurfaceRaised.Hex())
 		}
 
 		if bl.SeparatorVisible.Bg == nil {
@@ -839,18 +843,18 @@ func TestVimMapper_BufferlineSeparators(t *testing.T) {
 		}
 	})
 
-	// SeparatorSelected: fg = surface.background, bg = statusline.a.bg
+	// SeparatorSelected: fg = statusline.a.bg, bg = surface.background (triangle from selected)
 	t.Run("SeparatorSelected", func(t *testing.T) {
 		if bl.SeparatorSelected.Fg == nil {
-			t.Errorf("SeparatorSelected.Fg is nil, want %s", wantSurfaceBg.Hex())
-		} else if !bl.SeparatorSelected.Fg.Equal(*wantSurfaceBg) {
-			t.Errorf("SeparatorSelected.Fg = %s, want %s", bl.SeparatorSelected.Fg.Hex(), wantSurfaceBg.Hex())
+			t.Errorf("SeparatorSelected.Fg is nil, want %s", wantStatuslineABg.Hex())
+		} else if !bl.SeparatorSelected.Fg.Equal(*wantStatuslineABg) {
+			t.Errorf("SeparatorSelected.Fg = %s, want %s", bl.SeparatorSelected.Fg.Hex(), wantStatuslineABg.Hex())
 		}
 
 		if bl.SeparatorSelected.Bg == nil {
-			t.Errorf("SeparatorSelected.Bg is nil, want %s", wantStatuslineABg.Hex())
-		} else if !bl.SeparatorSelected.Bg.Equal(*wantStatuslineABg) {
-			t.Errorf("SeparatorSelected.Bg = %s, want %s", bl.SeparatorSelected.Bg.Hex(), wantStatuslineABg.Hex())
+			t.Errorf("SeparatorSelected.Bg is nil, want %s", wantSurfaceBg.Hex())
+		} else if !bl.SeparatorSelected.Bg.Equal(*wantSurfaceBg) {
+			t.Errorf("SeparatorSelected.Bg = %s, want %s", bl.SeparatorSelected.Bg.Hex(), wantSurfaceBg.Hex())
 		}
 	})
 }

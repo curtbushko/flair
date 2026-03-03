@@ -19,11 +19,61 @@ func mapPlugins(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["DashboardFooter"] = ports.VimHighlight{Fg: fg("text.muted"), Italic: true}
 	hl["DashboardShortCut"] = ports.VimHighlight{Fg: fg("accent.primary")}
 
-	// --- bufferline.nvim ---
-	hl["BufferLineFill"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("surface.background")}
-	hl["BufferLineBackground"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("surface.background")}
-	hl["BufferLineBufferSelected"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg"), Bold: true}
-	hl["BufferLineBufferVisible"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("surface.background")}
+	// --- lualine.nvim ---
+	// All modes use the same statusline.a/b/c tokens
+	// Sections: a, b, c (left side) and x, y, z (right side, mirrors c, b, a)
+	// Normal mode
+	hl["lualine_a_normal"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	hl["lualine_b_normal"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_c_normal"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_x_normal"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_y_normal"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_z_normal"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	// Insert mode
+	hl["lualine_a_insert"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	hl["lualine_b_insert"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_c_insert"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_x_insert"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_y_insert"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_z_insert"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	// Visual mode
+	hl["lualine_a_visual"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	hl["lualine_b_visual"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_c_visual"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_x_visual"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_y_visual"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_z_visual"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	// Replace mode
+	hl["lualine_a_replace"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	hl["lualine_b_replace"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_c_replace"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_x_replace"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_y_replace"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_z_replace"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	// Command mode
+	hl["lualine_a_command"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	hl["lualine_b_command"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_c_command"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_x_command"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_y_command"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_z_command"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	// Terminal mode
+	hl["lualine_a_terminal"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	hl["lualine_b_terminal"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_c_terminal"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_x_terminal"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_y_terminal"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_z_terminal"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	// Inactive mode
+	hl["lualine_a_inactive"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	hl["lualine_b_inactive"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_c_inactive"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_x_inactive"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["lualine_y_inactive"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_z_inactive"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg")}
+	// Transitional highlights (separators between sections)
+	hl["lualine_transitional_lualine_a_normal_to_lualine_b_normal"] = ports.VimHighlight{Fg: fg("statusline.a.bg"), Bg: bg("statusline.b.bg")}
+	hl["lualine_transitional_lualine_b_normal_to_lualine_c_normal"] = ports.VimHighlight{Fg: fg("statusline.b.bg"), Bg: bg("statusline.c.bg")}
 
 	// --- nvim-cmp ---
 	hl["CmpItemAbbr"] = ports.VimHighlight{Fg: fg("text.primary")}
@@ -499,19 +549,26 @@ func mapPlugins(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["NeoTreeTabSeparatorInactive"] = ports.VimHighlight{Fg: fg("text.muted")}
 
 	// --- BufferLine additional ---
-	hl["BufferLineTab"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("surface.background")}
-	hl["BufferLineTabSelected"] = ports.VimHighlight{Fg: fg("statusline.a.fg"), Bg: bg("statusline.a.bg"), Bold: true}
-	hl["BufferLineSeparator"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
-	hl["BufferLineSeparatorSelected"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("statusline.a.bg")}
-	hl["BufferLineSeparatorVisible"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
-	hl["BufferLineIndicatorSelected"] = ports.VimHighlight{Fg: fg("accent.primary"), Bg: bg("statusline.a.bg")}
-	hl["BufferLineModified"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("surface.background")}
-	hl["BufferLineModifiedSelected"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("statusline.a.bg")}
-	hl["BufferLineModifiedVisible"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("surface.background")}
-	hl["BufferLineOffsetSeparator"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
-	hl["BufferLineDuplicate"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background")}
-	hl["BufferLineDuplicateSelected"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("statusline.a.bg")}
-	hl["BufferLineDuplicateVisible"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background")}
-	hl["BufferLineTabSeparator"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
-	hl["BufferLineTabSeparatorSelected"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("statusline.a.bg")}
+	// Uses statusline.c for inactive/fill, statusline.b for selected
+	// For slope separators: fg draws the slope, bg is behind it
+	hl["BufferLineBackground"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineBuffer"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineBufferVisible"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineBufferSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["BufferLineTab"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineTabSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["BufferLineFill"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineSeparatorSelected"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.b.bg")}
+	hl["BufferLineSeparatorVisible"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineIndicatorSelected"] = ports.VimHighlight{Fg: fg("statusline.b.bg"), Bg: bg("statusline.b.bg")}
+	hl["BufferLineModified"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineModifiedSelected"] = ports.VimHighlight{Fg: fg("statusline.b.bg"), Bg: bg("statusline.b.bg")}
+	hl["BufferLineModifiedVisible"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineOffsetSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineDuplicate"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineDuplicateSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["BufferLineDuplicateVisible"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineTabSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineTabSeparatorSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
 }

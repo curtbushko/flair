@@ -366,61 +366,17 @@ func sampleBufferlineTheme() *ports.BufferlineTheme {
 	}
 }
 
-// TestVimGenerator_BufferlineTheme verifies that Generate outputs
-// a bufferline_theme table with all 15 highlight groups and pcall wrapper.
-func TestVimGenerator_BufferlineTheme(t *testing.T) {
-	g := generator.NewVim()
-	theme := sampleVimTheme()
-	theme.Bufferline = sampleBufferlineTheme()
-
-	var buf bytes.Buffer
-	if err := g.Generate(&buf, theme); err != nil {
-		t.Fatalf("Generate() error: %v", err)
-	}
-
-	output := buf.String()
-
-	// Must contain bufferline_theme table definition.
-	if !strings.Contains(output, "local bufferline_theme = {") {
-		t.Error("output does not contain 'local bufferline_theme = {'")
-	}
-
-	// Must contain all 15 highlight group names.
-	expectedGroups := []string{
-		"fill", "background", "buffer_visible", "buffer_selected",
-		"separator", "separator_visible", "separator_selected",
-		"indicator_selected", "modified", "modified_visible", "modified_selected",
-		"error", "warning", "info", "hint",
-	}
-	for _, group := range expectedGroups {
-		expected := group + " = {"
-		if !strings.Contains(output, expected) {
-			t.Errorf("output does not contain '%s'", expected)
-		}
-	}
-
-	// Must contain pcall wrapper.
-	if !strings.Contains(output, "pcall(require, 'bufferline')") {
-		t.Error("output does not contain pcall(require, 'bufferline')")
-	}
-
-	// Must contain setup call with highlights.
-	if !strings.Contains(output, "bufferline.setup({ highlights = bufferline_theme })") {
-		t.Error("output does not contain bufferline.setup({ highlights = bufferline_theme })")
-	}
-}
-
-// TestVimGenerator_BufferlineFill verifies that the fill group has correct format.
-func TestVimGenerator_BufferlineFill(t *testing.T) {
+// TestVimGenerator_BufferlineHighlightGroups verifies that BufferLine highlight
+// groups are set via vim.api.nvim_set_hl (not bufferline.setup which would
+// override user config).
+func TestVimGenerator_BufferlineHighlightGroups(t *testing.T) {
 	g := generator.NewVim()
 	theme := sampleVimTheme()
 
+	// Add BufferLine highlight groups to the theme
 	fillFg := domain.Color{R: 0xc0, G: 0xca, B: 0xf5}
 	fillBg := domain.Color{R: 0x16, G: 0x16, B: 0x1e}
-
-	theme.Bufferline = &ports.BufferlineTheme{
-		Fill: ports.BufferlineColors{Fg: &fillFg, Bg: &fillBg},
-	}
+	theme.Highlights["BufferLineFill"] = ports.VimHighlight{Fg: &fillFg, Bg: &fillBg}
 
 	var buf bytes.Buffer
 	if err := g.Generate(&buf, theme); err != nil {
@@ -429,132 +385,18 @@ func TestVimGenerator_BufferlineFill(t *testing.T) {
 
 	output := buf.String()
 
-	if !strings.Contains(output, "fill = {") {
-		t.Error("output does not contain 'fill = {'")
-	}
-	if !strings.Contains(output, "fg = '#c0caf5'") {
-		t.Error("output does not contain fg = '#c0caf5'")
-	}
-	if !strings.Contains(output, "bg = '#16161e'") {
-		t.Error("output does not contain bg = '#16161e'")
-	}
-}
-
-// TestVimGenerator_BufferlineSelectedBold verifies that buffer_selected includes bold attribute.
-func TestVimGenerator_BufferlineSelectedBold(t *testing.T) {
-	g := generator.NewVim()
-	theme := sampleVimTheme()
-
-	selectedFg := domain.Color{R: 0x1a, G: 0x1b, B: 0x26}
-	selectedBg := domain.Color{R: 0x7a, G: 0xa2, B: 0xf7}
-
-	theme.Bufferline = &ports.BufferlineTheme{
-		BufferSelected: ports.BufferlineColors{
-			Fg:   &selectedFg,
-			Bg:   &selectedBg,
-			Bold: true,
-		},
+	// Should contain BufferLineFill highlight via nvim_set_hl
+	if !strings.Contains(output, "BufferLineFill") {
+		t.Error("output does not contain 'BufferLineFill' highlight group")
 	}
 
-	var buf bytes.Buffer
-	if err := g.Generate(&buf, theme); err != nil {
-		t.Fatalf("Generate() error: %v", err)
+	// Should NOT contain bufferline.setup (would override user config)
+	if strings.Contains(output, "bufferline.setup") {
+		t.Error("output should not contain 'bufferline.setup' - this overrides user config")
 	}
 
-	output := buf.String()
-
-	if !strings.Contains(output, "buffer_selected = {") {
-		t.Error("output does not contain 'buffer_selected = {'")
-	}
-
-	// Find the buffer_selected line and check it contains bold = true
-	lines := strings.Split(output, "\n")
-	found := false
-	for _, line := range lines {
-		if strings.Contains(line, "buffer_selected = {") && strings.Contains(line, "bold = true") {
-			found = true
-			break
-		}
-	}
-	if !found {
-		t.Error("buffer_selected line does not contain 'bold = true'")
-	}
-}
-
-// TestVimGenerator_BufferlineDeterministic verifies that generating with bufferline
-// twice produces byte-identical output.
-func TestVimGenerator_BufferlineDeterministic(t *testing.T) {
-	g := generator.NewVim()
-	theme := sampleVimTheme()
-	theme.Bufferline = sampleBufferlineTheme()
-
-	var buf1, buf2 bytes.Buffer
-	if err := g.Generate(&buf1, theme); err != nil {
-		t.Fatalf("first Generate() error: %v", err)
-	}
-	if err := g.Generate(&buf2, theme); err != nil {
-		t.Fatalf("second Generate() error: %v", err)
-	}
-
-	if !bytes.Equal(buf1.Bytes(), buf2.Bytes()) {
-		t.Error("output is not deterministic; two runs produced different results")
-		t.Logf("run 1:\n%s", buf1.String())
-		t.Logf("run 2:\n%s", buf2.String())
-	}
-}
-
-// TestVimGenerator_NoBufferlineWhenNil verifies that no bufferline output is
-// generated when Bufferline is nil.
-func TestVimGenerator_NoBufferlineWhenNil(t *testing.T) {
-	g := generator.NewVim()
-	theme := sampleVimTheme()
-	theme.Bufferline = nil
-
-	var buf bytes.Buffer
-	if err := g.Generate(&buf, theme); err != nil {
-		t.Fatalf("Generate() error: %v", err)
-	}
-
-	output := buf.String()
-
+	// Should NOT contain bufferline_theme table
 	if strings.Contains(output, "bufferline_theme") {
-		t.Error("output should not contain 'bufferline_theme' when Bufferline is nil")
-	}
-}
-
-// TestVimGenerator_BufferlineItalic verifies that italic attribute is included when true.
-func TestVimGenerator_BufferlineItalic(t *testing.T) {
-	g := generator.NewVim()
-	theme := sampleVimTheme()
-
-	visibleFg := domain.Color{R: 0x73, G: 0xda, B: 0xca}
-	visibleBg := domain.Color{R: 0x24, G: 0x28, B: 0x3b}
-
-	theme.Bufferline = &ports.BufferlineTheme{
-		BufferVisible: ports.BufferlineColors{
-			Fg:     &visibleFg,
-			Bg:     &visibleBg,
-			Italic: true,
-		},
-	}
-
-	var buf bytes.Buffer
-	if err := g.Generate(&buf, theme); err != nil {
-		t.Fatalf("Generate() error: %v", err)
-	}
-
-	output := buf.String()
-
-	// Find the buffer_visible line and check it contains italic = true
-	lines := strings.Split(output, "\n")
-	found := false
-	for _, line := range lines {
-		if strings.Contains(line, "buffer_visible = {") && strings.Contains(line, "italic = true") {
-			found = true
-			break
-		}
-	}
-	if !found {
-		t.Error("buffer_visible line does not contain 'italic = true'")
+		t.Error("output should not contain 'bufferline_theme'")
 	}
 }

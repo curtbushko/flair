@@ -10,7 +10,7 @@ highlights:
     '@character.printf':
         link: SpecialChar
     '@character.special':
-        fg: '#bb9af7'
+        fg: '#c8acf8'
     '@comment':
         link: Comment
     '@comment.error':
@@ -30,7 +30,7 @@ highlights:
     '@constant.builtin':
         fg: '#ff9e64'
     '@constant.macro':
-        fg: '#ff9e64'
+        fg: '#e9c582'
     '@constructor':
         fg: '#c8acf8'
     '@constructor.tsx':
@@ -48,11 +48,11 @@ highlights:
     '@function':
         fg: '#7aa2f7'
     '@function.builtin':
-        fg: '#7aa2f7'
+        fg: '#7dcfff'
     '@function.call':
         fg: '#7aa2f7'
     '@function.macro':
-        fg: '#ff9e64'
+        fg: '#e9c582'
     '@function.method':
         link: Function
     '@function.method.call':
@@ -87,7 +87,10 @@ highlights:
     '@keyword.storage':
         link: StorageClass
     '@label':
-        fg: '#bb9af7'
+        fg: '#7aa2f7'
+    '@lsp.mod.deprecated':
+        fg: '#db4b4b'
+        strikethrough: true
     '@lsp.type.boolean':
         link: '@boolean'
     '@lsp.type.builtinType':
@@ -121,7 +124,7 @@ highlights:
     '@lsp.type.lifetime':
         link: '@keyword.storage'
     '@lsp.type.macro':
-        link: '@constant'
+        link: '@function.macro'
     '@lsp.type.method':
         link: '@function'
     '@lsp.type.modifier':
@@ -281,7 +284,7 @@ highlights:
     '@preproc':
         fg: '#bb9af7'
     '@property':
-        fg: '#9ece6a'
+        fg: '#97d8f8'
     '@punctuation.bracket':
         fg: '#c0caf5'
     '@punctuation.delimiter':
@@ -291,19 +294,19 @@ highlights:
     '@string':
         fg: '#9ece6a'
     '@string.documentation':
-        fg: '#9ece6a'
+        fg: '#e0af68'
     '@string.escape':
-        fg: '#bb9af7'
+        fg: '#c8acf8'
     '@string.regex':
         fg: '#7dcfff'
     '@string.regexp':
         fg: '#7dcfff'
     '@string.special':
-        fg: '#bb9af7'
+        fg: '#c8acf8'
     '@tag':
         fg: '#f7768e'
     '@tag.attribute':
-        fg: '#9ece6a'
+        fg: '#97d8f8'
     '@tag.builtin':
         fg: '#f7768e'
     '@tag.delimiter':
@@ -339,7 +342,7 @@ highlights:
     '@type':
         fg: '#e0af68'
     '@type.builtin':
-        fg: '#e0af68'
+        fg: '#7dcfff'
     '@type.definition':
         fg: '#e0af68'
     '@type.qualifier':
@@ -349,7 +352,7 @@ highlights:
     '@variable.builtin':
         fg: '#f7768e'
     '@variable.member':
-        fg: '#9ece6a'
+        fg: '#97d8f8'
     '@variable.parameter':
         fg: '#e0af68'
     '@variable.parameter.builtin':
@@ -439,63 +442,74 @@ highlights:
     Boolean:
         fg: '#ff9e64'
     BufferLineBackground:
-        fg: '#c0caf5'
+        fg: '#565f89'
+        bg: '#1f2335'
+    BufferLineBuffer:
+        fg: '#565f89'
         bg: '#1f2335'
     BufferLineBufferSelected:
-        fg: '#c0caf5'
-        bg: '#16161e'
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+        bold: true
     BufferLineBufferVisible:
-        fg: '#c0caf5'
+        fg: '#a9b1d6'
         bg: '#1f2335'
     BufferLineDuplicate:
-        fg: '#c0caf5'
+        fg: '#565f89'
         bg: '#1f2335'
     BufferLineDuplicateSelected:
-        fg: '#c0caf5'
-        bg: '#16161e'
+        fg: '#565f89'
+        bg: '#a9b1d6'
     BufferLineDuplicateVisible:
-        fg: '#c0caf5'
+        fg: '#565f89'
         bg: '#1f2335'
     BufferLineFill:
-        fg: '#1f2335'
-        bg: '#1f2335'
+        fg: '#565f89'
+        bg: '#1a1b26'
     BufferLineIndicatorSelected:
-        fg: '#16161e'
-        bg: '#16161e'
-    BufferLineModifiedSelected:
-        fg: '#16161e'
-        bg: '#16161e'
-    BufferLineOffsetSeparator:
-        fg: '#1f2335'
+        fg: '#7aa2f7'
+        bg: '#a9b1d6'
+    BufferLineModified:
+        fg: '#e9c582'
         bg: '#1f2335'
+    BufferLineModifiedSelected:
+        fg: '#e9c582'
+        bg: '#a9b1d6'
+    BufferLineModifiedVisible:
+        fg: '#e9c582'
+        bg: '#1f2335'
+    BufferLineOffsetSeparator:
+        fg: '#1a1b26'
+        bg: '#1a1b26'
     BufferLineSeparator:
         fg: '#1f2335'
-        bg: '#1f2335'
+        bg: '#1a1b26'
     BufferLineSeparatorSelected:
-        fg: '#1f2335'
-        bg: '#16161e'
+        fg: '#a9b1d6'
+        bg: '#1a1b26'
     BufferLineSeparatorVisible:
         fg: '#1f2335'
-        bg: '#1f2335'
+        bg: '#1a1b26'
     BufferLineTab:
-        fg: '#c0caf5'
+        fg: '#565f89'
         bg: '#1f2335'
     BufferLineTabSelected:
-        fg: '#c0caf5'
-        bg: '#16161e'
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+        bold: true
     BufferLineTabSeparator:
         fg: '#1f2335'
-        bg: '#1f2335'
+        bg: '#1a1b26'
     BufferLineTabSeparatorSelected:
-        fg: '#c0caf5'
-        bg: '#16161e'
+        fg: '#a9b1d6'
+        bg: '#1a1b26'
     Character:
         fg: '#9ece6a'
     CmpDocumentation:
         fg: '#c0caf5'
         bg: '#16161e'
     CmpDocumentationBorder:
-        fg: '#32364e'
+        fg: '#ff9e64'
         bg: '#16161e'
     CmpGhostText:
         fg: '#565f89'
@@ -567,7 +581,7 @@ highlights:
     CmpItemKindPackage:
         link: LspKindPackage
     CmpItemKindProperty:
-        fg: '#9ece6a'
+        fg: '#97d8f8'
     CmpItemKindReference:
         link: LspKindReference
     CmpItemKindSnippet:
@@ -710,7 +724,7 @@ highlights:
     Float:
         fg: '#ff9e64'
     FloatBorder:
-        fg: '#9ece6a'
+        fg: '#97d8f8'
     FloatTitle:
         fg: '#ff9e64'
     FoldColumn:
@@ -722,7 +736,7 @@ highlights:
     Function:
         fg: '#7aa2f7'
     FzfLuaBorder:
-        fg: '#32364e'
+        fg: '#ff9e64'
     FzfLuaCursor:
         link: IncSearch
     FzfLuaDirPart:
@@ -736,7 +750,7 @@ highlights:
     FzfLuaFzfPointer:
         fg: '#7aa2f7'
     FzfLuaFzfSeparator:
-        fg: '#32364e'
+        fg: '#ff9e64'
     FzfLuaHeaderBind:
         link: '@punctuation.special'
     FzfLuaHeaderText:
@@ -838,7 +852,7 @@ highlights:
     Keyword:
         fg: '#bb9af7'
     Label:
-        fg: '#bb9af7'
+        fg: '#7aa2f7'
     LazyButton:
         fg: '#c0caf5'
         bg: '#1f2335'
@@ -934,14 +948,14 @@ highlights:
     LspKindVariable:
         link: '@variable'
     LspSagaCodeActionBorder:
-        fg: '#32364e'
+        fg: '#ff9e64'
     LspSagaCodeActionContent:
         fg: '#c0caf5'
     LspSagaCodeActionTitle:
         fg: '#7aa2f7'
         bold: true
     Macro:
-        fg: '#ff9e64'
+        fg: '#e9c582'
     MasonHeader:
         fg: '#1a1b26'
         bg: '#7aa2f7'
@@ -968,7 +982,7 @@ highlights:
     MiniClueNextKeyWithPostkeys:
         fg: '#bb9af7'
     MiniFilesBorder:
-        fg: '#32364e'
+        fg: '#ff9e64'
     MiniFilesBorderModified:
         fg: '#e9c582'
     MiniIndentscopeSymbol:
@@ -1182,7 +1196,7 @@ highlights:
         fg: '#e9c582'
     NoiceCmdlinePopup: {}
     NoiceCmdlinePopupBorder:
-        fg: '#32364e'
+        fg: '#ff9e64'
     NoiceCmdlinePopupBorderSearch:
         fg: '#e9c582'
     NoiceCmdlinePopupTitle:
@@ -1318,7 +1332,7 @@ highlights:
     NvimTreeSymlink:
         fg: '#7aa2f7'
     NvimTreeWinSeparator:
-        fg: '#32364e'
+        fg: '#ff9e64'
     Operator:
         fg: '#8db6fa'
     Pmenu:
@@ -1423,7 +1437,7 @@ highlights:
     Special:
         fg: '#7aa2f7'
     SpecialChar:
-        fg: '#bb9af7'
+        fg: '#c8acf8'
     SpecialComment:
         fg: '#565f89'
         italic: true
@@ -1470,7 +1484,7 @@ highlights:
     Tag:
         fg: '#f7768e'
     TelescopeBorder:
-        fg: '#32364e'
+        fg: '#ff9e64'
     TelescopeMatching:
         fg: '#7aa2f7'
         bold: true
@@ -1481,13 +1495,13 @@ highlights:
     TelescopeNormal:
         fg: '#c0caf5'
     TelescopePreviewBorder:
-        fg: '#32364e'
+        fg: '#ff9e64'
     TelescopePreviewNormal: {}
     TelescopePreviewTitle:
         fg: '#afd67a'
         bold: true
     TelescopePromptBorder:
-        fg: '#32364e'
+        fg: '#ff9e64'
     TelescopePromptNormal:
         fg: '#c0caf5'
     TelescopePromptPrefix:
@@ -1523,7 +1537,7 @@ highlights:
     Underlined:
         underline: true
     VertSplit:
-        fg: '#32364e'
+        fg: '#ff9e64'
     Visual:
         bg: '#374465'
     VisualNOS:
@@ -1544,6 +1558,8 @@ highlights:
         fg: '#383d58'
     WhichKeyValue:
         fg: '#565f89'
+    Whitespace:
+        fg: '#383d58'
     WildMenu:
         fg: '#1a1b26'
         bg: '#7aa2f7'
@@ -1552,7 +1568,7 @@ highlights:
     WinBarNC:
         fg: '#565f89'
     WinSeparator:
-        fg: '#32364e'
+        fg: '#ff9e64'
     YankyPut:
         link: IncSearch
     YankyYanked:

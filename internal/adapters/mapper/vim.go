@@ -150,21 +150,21 @@ func mapBase(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["String"] = ports.VimHighlight{Fg: fg("syntax.string")}
 	hl["Character"] = ports.VimHighlight{Fg: fg("syntax.string")}
 	hl["Number"] = ports.VimHighlight{Fg: fg("syntax.number")}
-	hl["Boolean"] = ports.VimHighlight{Fg: fg("syntax.constant")}
+	hl["Boolean"] = ports.VimHighlight{Fg: fg("syntax.boolean")}
 	hl["Float"] = ports.VimHighlight{Fg: fg("syntax.number")}
 	hl["Identifier"] = ports.VimHighlight{Fg: fg("syntax.variable")}
 	hl["Function"] = ports.VimHighlight{Fg: fg("syntax.function")}
 	hl["Statement"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
 	hl["Conditional"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
 	hl["Repeat"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
-	hl["Label"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
+	hl["Label"] = ports.VimHighlight{Fg: fg("syntax.label")}
 	hl["Operator"] = ports.VimHighlight{Fg: fg("syntax.operator")}
 	hl["Keyword"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
 	hl["Exception"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
 	hl["PreProc"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
 	hl["Include"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
 	hl["Define"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
-	hl["Macro"] = ports.VimHighlight{Fg: fg("syntax.constant")}
+	hl["Macro"] = ports.VimHighlight{Fg: fg("syntax.macro")}
 	hl["PreCondit"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
 	hl["Type"] = ports.VimHighlight{Fg: fg("syntax.type")}
 	hl["StorageClass"] = ports.VimHighlight{Fg: fg("syntax.keyword")}
@@ -185,6 +185,7 @@ func mapBase(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["MatchParen"] = ports.VimHighlight{Fg: fg("accent.primary"), Bold: true}
 	hl["NonText"] = ports.VimHighlight{Fg: fg("text.subtle")}
 	hl["SpecialKey"] = ports.VimHighlight{Fg: fg("text.subtle")}
+	hl["Whitespace"] = ports.VimHighlight{Fg: fg("text.subtle")} // listchars whitespace
 	hl["Conceal"] = ports.VimHighlight{Fg: fg("text.muted")}
 	hl["Directory"] = ports.VimHighlight{Fg: fg("accent.primary")}
 	hl["Title"] = ports.VimHighlight{Fg: fg("accent.primary"), Bold: true}
@@ -241,14 +242,14 @@ var treesitterMappings = []treesitterMapping{
 	{group: "@string.regex", tokenPath: "syntax.regexp"},
 	{group: "@string.regexp", tokenPath: "syntax.regexp"},
 	{group: "@string.special", tokenPath: "syntax.escape"},
-	{group: "@string.documentation", tokenPath: "syntax.string"},
+	{group: "@string.documentation", tokenPath: "syntax.string.documentation"},
 	{group: "@character", tokenPath: "syntax.string"},
 	{group: "@character.special", tokenPath: "syntax.escape"},
 	{group: "@character.printf", link: "SpecialChar"},
 	{group: "@function", tokenPath: "syntax.function"},
-	{group: "@function.builtin", tokenPath: "syntax.function"},
+	{group: "@function.builtin", tokenPath: "syntax.function.builtin"},
 	{group: "@function.call", tokenPath: "syntax.function"},
-	{group: "@function.macro", tokenPath: "syntax.constant"},
+	{group: "@function.macro", tokenPath: "syntax.macro"},
 	{group: "@function.method", link: "Function"},
 	{group: "@function.method.call", link: "@function.method"},
 	{group: "@method", tokenPath: "syntax.function"},
@@ -259,19 +260,19 @@ var treesitterMappings = []treesitterMapping{
 	{group: "@variable.parameter.builtin", tokenPath: "syntax.parameter"},
 	{group: "@variable.member", tokenPath: "syntax.property"},
 	{group: "@type", tokenPath: "syntax.type"},
-	{group: "@type.builtin", tokenPath: "syntax.type"},
+	{group: "@type.builtin", tokenPath: "syntax.type.builtin"},
 	{group: "@type.definition", tokenPath: "syntax.type"},
 	{group: "@type.qualifier", tokenPath: "syntax.keyword"},
 	{group: "@constant", tokenPath: "syntax.constant"},
 	{group: "@constant.builtin", tokenPath: "syntax.constant"},
-	{group: "@constant.macro", tokenPath: "syntax.constant"},
+	{group: "@constant.macro", tokenPath: "syntax.macro"},
 	{group: "@number", tokenPath: "syntax.number"},
 	{group: "@number.float", tokenPath: "syntax.number"},
-	{group: "@boolean", tokenPath: "syntax.constant"},
+	{group: "@boolean", tokenPath: "syntax.boolean"},
 	{group: "@operator", tokenPath: "syntax.operator"},
 	{group: "@punctuation.bracket", tokenPath: "text.overlay"},
-	{group: "@punctuation.delimiter", tokenPath: "syntax.operator"},
-	{group: "@punctuation.special", tokenPath: "syntax.operator"},
+	{group: "@punctuation.delimiter", tokenPath: "syntax.punctuation"},
+	{group: "@punctuation.special", tokenPath: "syntax.punctuation"},
 	{group: "@tag", tokenPath: "syntax.tag"},
 	{group: "@tag.attribute", tokenPath: "syntax.property"},
 	{group: "@tag.delimiter", tokenPath: "text.secondary"},
@@ -283,11 +284,11 @@ var treesitterMappings = []treesitterMapping{
 	{group: "@parameter", tokenPath: "syntax.parameter"},
 	{group: "@constructor", tokenPath: "syntax.constructor"},
 	{group: "@constructor.tsx", tokenPath: "syntax.function"},
-	{group: "@namespace", tokenPath: "syntax.type"},
-	{group: "@namespace.builtin", tokenPath: "syntax.variable"},
-	{group: "@module", tokenPath: "syntax.type"},
-	{group: "@module.builtin", tokenPath: "syntax.variable"},
-	{group: "@label", tokenPath: "syntax.keyword"},
+	{group: "@namespace", tokenPath: "syntax.module"},
+	{group: "@namespace.builtin", tokenPath: "syntax.module.builtin"},
+	{group: "@module", tokenPath: "syntax.module"},
+	{group: "@module.builtin", tokenPath: "syntax.module.builtin"},
+	{group: "@label", tokenPath: "syntax.label"},
 	{group: "@include", tokenPath: "syntax.keyword"},
 	{group: "@exception", tokenPath: "syntax.keyword"},
 	{group: "@define", tokenPath: "syntax.keyword"},
@@ -405,7 +406,7 @@ var lspMappings = []lspMapping{
 	{"@lsp.type.operator", "@operator"},
 	{"@lsp.type.comment", "@comment"},
 	{"@lsp.type.decorator", "@function"},
-	{"@lsp.type.macro", "@constant"},
+	{"@lsp.type.macro", "@function.macro"},
 	{"@lsp.type.typeParameter", "@type"},
 	{"@lsp.type.event", "@type"},
 	{"@lsp.type.modifier", "@keyword"},
@@ -456,6 +457,12 @@ func mapLSP(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	}
 	hl["@lsp.typemod.typeAlias.defaultLibrary"] = ports.VimHighlight{
 		Fg: colorOf(theme, "syntax.regexp"),
+	}
+
+	// Deprecated modifier - applies strikethrough to deprecated symbols
+	hl["@lsp.mod.deprecated"] = ports.VimHighlight{
+		Fg:            colorOf(theme, "syntax.deprecated"),
+		Strikethrough: true,
 	}
 }
 
@@ -589,18 +596,18 @@ func mapBufferline(theme *domain.ResolvedTheme) *ports.BufferlineTheme {
 	return &ports.BufferlineTheme{
 		// Fill: the empty space in the bufferline
 		Fill: ports.BufferlineColors{
-			Fg: fg("statusline.c.fg"),
+			Fg: fg("text.muted"),
 			Bg: bg("surface.background"),
 		},
-		// Background: inactive/hidden buffers
+		// Background: inactive/hidden buffers (slightly raised for contrast)
 		Background: ports.BufferlineColors{
-			Fg: fg("statusline.c.fg"),
-			Bg: bg("surface.background"),
+			Fg: fg("text.muted"),
+			Bg: bg("surface.background.raised"),
 		},
 		// BufferVisible: visible but not selected buffers
 		BufferVisible: ports.BufferlineColors{
-			Fg: fg("statusline.b.fg"),
-			Bg: bg("surface.background"),
+			Fg: fg("text.secondary"),
+			Bg: bg("surface.background.raised"),
 		},
 		// BufferSelected: currently active buffer (highlighted)
 		BufferSelected: ports.BufferlineColors{
@@ -608,20 +615,20 @@ func mapBufferline(theme *domain.ResolvedTheme) *ports.BufferlineTheme {
 			Bg:   bg("statusline.a.bg"),
 			Bold: true,
 		},
-		// Separator: between background buffers (same as background)
+		// Separator: between background buffers (triangle: buffer -> fill)
 		Separator: ports.BufferlineColors{
-			Fg: fg("surface.background"),
+			Fg: fg("surface.background.raised"),
 			Bg: bg("surface.background"),
 		},
-		// SeparatorVisible: between visible buffers (same as background)
+		// SeparatorVisible: between visible buffers
 		SeparatorVisible: ports.BufferlineColors{
-			Fg: fg("surface.background"),
+			Fg: fg("surface.background.raised"),
 			Bg: bg("surface.background"),
 		},
-		// SeparatorSelected: adjacent to selected buffer
+		// SeparatorSelected: adjacent to selected buffer (triangle from selected)
 		SeparatorSelected: ports.BufferlineColors{
-			Fg: fg("surface.background"),
-			Bg: bg("statusline.a.bg"),
+			Fg: fg("statusline.a.bg"),
+			Bg: bg("surface.background"),
 		},
 		// IndicatorSelected: active buffer indicator
 		IndicatorSelected: ports.BufferlineColors{
