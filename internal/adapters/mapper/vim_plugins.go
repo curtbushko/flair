@@ -104,11 +104,17 @@ func mapPlugins(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["GitSignsDeleteLn"] = ports.VimHighlight{Bg: bg("diff.deleted.bg")}
 
 	// --- indent-blankline.nvim ---
-	hl["IndentBlanklineChar"] = ports.VimHighlight{Fg: fg("border.muted")}
-	hl["IndentBlanklineContextChar"] = ports.VimHighlight{Fg: fg("accent.primary")}
+	hl["IndentBlanklineChar"] = ports.VimHighlight{Fg: fg("text.subtle"), Nocombine: true}
+	hl["IndentBlanklineContextChar"] = ports.VimHighlight{Fg: fg("accent.primary"), Nocombine: true}
 	hl["IndentBlanklineContextStart"] = ports.VimHighlight{Underline: true}
-	hl["IblIndent"] = ports.VimHighlight{Fg: fg("border.muted")}
-	hl["IblScope"] = ports.VimHighlight{Fg: fg("accent.primary")}
+	hl["IblIndent"] = ports.VimHighlight{Fg: fg("text.subtle"), Nocombine: true}
+	hl["IblScope"] = ports.VimHighlight{Fg: fg("accent.primary"), Nocombine: true}
+	hl["IblWhitespace"] = ports.VimHighlight{Fg: fg("text.subtle"), Nocombine: true}
+	// indent-blankline v3 internal highlights (defined with colors, not links)
+	hl["@ibl.indent.char.1"] = ports.VimHighlight{Fg: fg("text.subtle"), Nocombine: true}
+	hl["@ibl.whitespace.char.1"] = ports.VimHighlight{Fg: fg("text.subtle"), Nocombine: true}
+	hl["@ibl.scope.char.1"] = ports.VimHighlight{Fg: fg("accent.primary"), Nocombine: true}
+	hl["@ibl.scope.underline.1"] = ports.VimHighlight{Fg: fg("accent.primary"), Underline: true}
 
 	// --- lazy.nvim ---
 	hl["LazyButton"] = ports.VimHighlight{Fg: fg("text.primary"), Bg: bg("surface.background.raised")}

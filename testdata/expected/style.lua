@@ -30,6 +30,10 @@ vim.api.nvim_set_hl(0, '@function.call', { fg = '#7aa2f7' })
 vim.api.nvim_set_hl(0, '@function.macro', { fg = '#e9c582' })
 vim.api.nvim_set_hl(0, '@function.method', { link = 'Function' })
 vim.api.nvim_set_hl(0, '@function.method.call', { link = '@function.method' })
+vim.api.nvim_set_hl(0, '@ibl.indent.char.1', { fg = '#383d58', nocombine = true })
+vim.api.nvim_set_hl(0, '@ibl.scope.char.1', { fg = '#7aa2f7', nocombine = true })
+vim.api.nvim_set_hl(0, '@ibl.scope.underline.1', { fg = '#7aa2f7', underline = true })
+vim.api.nvim_set_hl(0, '@ibl.whitespace.char.1', { fg = '#383d58', nocombine = true })
 vim.api.nvim_set_hl(0, '@include', { fg = '#bb9af7' })
 vim.api.nvim_set_hl(0, '@keyword', { fg = '#bb9af7', italic = true })
 vim.api.nvim_set_hl(0, '@keyword.conditional', { fg = '#bb9af7' })
@@ -216,26 +220,26 @@ vim.api.nvim_set_hl(0, 'AlphaHeader', { fg = '#7aa2f7' })
 vim.api.nvim_set_hl(0, 'AlphaHeaderLabel', { fg = '#ff9e64' })
 vim.api.nvim_set_hl(0, 'AlphaShortcut', { fg = '#ff9e64' })
 vim.api.nvim_set_hl(0, 'Boolean', { fg = '#ff9e64' })
-vim.api.nvim_set_hl(0, 'BufferLineBackground', { fg = '#565f89', bg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'BufferLineBuffer', { fg = '#565f89', bg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'BufferLineBufferSelected', { fg = '#1a1b26', bg = '#a9b1d6', bold = true })
-vim.api.nvim_set_hl(0, 'BufferLineBufferVisible', { fg = '#a9b1d6', bg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'BufferLineDuplicate', { fg = '#565f89', bg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'BufferLineDuplicateSelected', { fg = '#565f89', bg = '#a9b1d6' })
-vim.api.nvim_set_hl(0, 'BufferLineDuplicateVisible', { fg = '#565f89', bg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'BufferLineFill', { fg = '#565f89', bg = '#1a1b26' })
-vim.api.nvim_set_hl(0, 'BufferLineIndicatorSelected', { fg = '#7aa2f7', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'BufferLineBackground', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineBuffer', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineBufferSelected', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'BufferLineBufferVisible', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineDuplicate', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineDuplicateSelected', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'BufferLineDuplicateVisible', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineFill', { fg = '#1f2335', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineIndicatorSelected', { fg = '#16161e', bg = '#16161e' })
 vim.api.nvim_set_hl(0, 'BufferLineModified', { fg = '#e9c582', bg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'BufferLineModifiedSelected', { fg = '#e9c582', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'BufferLineModifiedSelected', { fg = '#16161e', bg = '#16161e' })
 vim.api.nvim_set_hl(0, 'BufferLineModifiedVisible', { fg = '#e9c582', bg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'BufferLineOffsetSeparator', { fg = '#1a1b26', bg = '#1a1b26' })
-vim.api.nvim_set_hl(0, 'BufferLineSeparator', { fg = '#1f2335', bg = '#1a1b26' })
-vim.api.nvim_set_hl(0, 'BufferLineSeparatorSelected', { fg = '#a9b1d6', bg = '#1a1b26' })
-vim.api.nvim_set_hl(0, 'BufferLineSeparatorVisible', { fg = '#1f2335', bg = '#1a1b26' })
-vim.api.nvim_set_hl(0, 'BufferLineTab', { fg = '#565f89', bg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'BufferLineTabSelected', { fg = '#1a1b26', bg = '#a9b1d6', bold = true })
-vim.api.nvim_set_hl(0, 'BufferLineTabSeparator', { fg = '#1f2335', bg = '#1a1b26' })
-vim.api.nvim_set_hl(0, 'BufferLineTabSeparatorSelected', { fg = '#a9b1d6', bg = '#1a1b26' })
+vim.api.nvim_set_hl(0, 'BufferLineOffsetSeparator', { fg = '#1f2335', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineSeparator', { fg = '#1f2335', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineSeparatorSelected', { fg = '#1f2335', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'BufferLineSeparatorVisible', { fg = '#1f2335', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineTab', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineTabSelected', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'BufferLineTabSeparator', { fg = '#1f2335', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'BufferLineTabSeparatorSelected', { fg = '#c0caf5', bg = '#16161e' })
 vim.api.nvim_set_hl(0, 'Character', { fg = '#9ece6a' })
 vim.api.nvim_set_hl(0, 'CmpDocumentation', { fg = '#c0caf5', bg = '#16161e' })
 vim.api.nvim_set_hl(0, 'CmpDocumentationBorder', { fg = '#ff9e64', bg = '#16161e' })
@@ -382,8 +386,9 @@ vim.api.nvim_set_hl(0, 'GrugFarResultsMatch', { fg = '#1a1b26', bg = '#7aa2f7' }
 vim.api.nvim_set_hl(0, 'GrugFarResultsStats', { fg = '#7aa2f7' })
 vim.api.nvim_set_hl(0, 'HopNextKey', { fg = '#7aa2f7', bold = true })
 vim.api.nvim_set_hl(0, 'HopUnmatched', { fg = '#565f89' })
-vim.api.nvim_set_hl(0, 'IblIndent', { fg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'IblScope', { fg = '#7aa2f7' })
+vim.api.nvim_set_hl(0, 'IblIndent', { fg = '#383d58', nocombine = true })
+vim.api.nvim_set_hl(0, 'IblScope', { fg = '#7aa2f7', nocombine = true })
+vim.api.nvim_set_hl(0, 'IblWhitespace', { fg = '#383d58', nocombine = true })
 vim.api.nvim_set_hl(0, 'Identifier', { fg = '#c0caf5' })
 vim.api.nvim_set_hl(0, 'Ignore', {  })
 vim.api.nvim_set_hl(0, 'IlluminatedWordRead', { bg = '#292e42' })
@@ -391,8 +396,8 @@ vim.api.nvim_set_hl(0, 'IlluminatedWordText', { bg = '#292e42' })
 vim.api.nvim_set_hl(0, 'IlluminatedWordWrite', { bg = '#292e42' })
 vim.api.nvim_set_hl(0, 'IncSearch', { fg = '#1a1b26', bg = '#7aa2f7' })
 vim.api.nvim_set_hl(0, 'Include', { fg = '#bb9af7' })
-vim.api.nvim_set_hl(0, 'IndentBlanklineChar', { fg = '#1f2335' })
-vim.api.nvim_set_hl(0, 'IndentBlanklineContextChar', { fg = '#7aa2f7' })
+vim.api.nvim_set_hl(0, 'IndentBlanklineChar', { fg = '#383d58', nocombine = true })
+vim.api.nvim_set_hl(0, 'IndentBlanklineContextChar', { fg = '#7aa2f7', nocombine = true })
 vim.api.nvim_set_hl(0, 'IndentBlanklineContextStart', { underline = true })
 vim.api.nvim_set_hl(0, 'Keyword', { fg = '#bb9af7' })
 vim.api.nvim_set_hl(0, 'Label', { fg = '#7aa2f7' })
@@ -723,6 +728,50 @@ vim.api.nvim_set_hl(0, 'helpSectionDelim', { fg = '#565f89' })
 vim.api.nvim_set_hl(0, 'illuminatedCurWord', { bg = '#292e42' })
 vim.api.nvim_set_hl(0, 'illuminatedWord', { bg = '#292e42' })
 vim.api.nvim_set_hl(0, 'lCursor', { reverse = true })
+vim.api.nvim_set_hl(0, 'lualine_a_command', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_a_inactive', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_a_insert', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_a_normal', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_a_replace', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_a_terminal', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_a_visual', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_b_command', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_b_inactive', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_b_insert', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_b_normal', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_b_replace', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_b_terminal', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_b_visual', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_c_command', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_c_inactive', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_c_insert', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_c_normal', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_c_replace', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_c_terminal', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_c_visual', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_transitional_lualine_a_normal_to_lualine_b_normal', { fg = '#a9b1d6', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_transitional_lualine_b_normal_to_lualine_c_normal', { fg = '#16161e', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_x_command', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_x_inactive', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_x_insert', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_x_normal', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_x_replace', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_x_terminal', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_x_visual', { fg = '#c0caf5', bg = '#1f2335' })
+vim.api.nvim_set_hl(0, 'lualine_y_command', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_y_inactive', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_y_insert', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_y_normal', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_y_replace', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_y_terminal', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_y_visual', { fg = '#c0caf5', bg = '#16161e' })
+vim.api.nvim_set_hl(0, 'lualine_z_command', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_z_inactive', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_z_insert', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_z_normal', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_z_replace', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_z_terminal', { fg = '#1a1b26', bg = '#a9b1d6' })
+vim.api.nvim_set_hl(0, 'lualine_z_visual', { fg = '#1a1b26', bg = '#a9b1d6' })
 vim.api.nvim_set_hl(0, 'markdownBlockquote', { fg = '#565f89', italic = true })
 vim.api.nvim_set_hl(0, 'markdownBold', { bold = true })
 vim.api.nvim_set_hl(0, 'markdownCode', { fg = '#9ece6a' })
@@ -753,3 +802,158 @@ vim.g.terminal_color_12 = '#8db6fa'
 vim.g.terminal_color_13 = '#c8acf8'
 vim.g.terminal_color_14 = '#97d8f8'
 vim.g.terminal_color_15 = '#c8d3f5'
+
+-- Re-apply plugin highlights after plugins load
+local function apply_plugin_highlights()
+  vim.api.nvim_set_hl(0, 'BufferLineBackground', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineBuffer', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineBufferSelected', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'BufferLineBufferVisible', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineDuplicate', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineDuplicateSelected', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'BufferLineDuplicateVisible', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineFill', { fg = '#1f2335', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineIndicatorSelected', { fg = '#16161e', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'BufferLineModified', { fg = '#e9c582', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineModifiedSelected', { fg = '#16161e', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'BufferLineModifiedVisible', { fg = '#e9c582', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineOffsetSeparator', { fg = '#1f2335', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineSeparator', { fg = '#1f2335', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineSeparatorSelected', { fg = '#1f2335', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'BufferLineSeparatorVisible', { fg = '#1f2335', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineTab', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineTabSelected', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'BufferLineTabSeparator', { fg = '#1f2335', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'BufferLineTabSeparatorSelected', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_a_command', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_a_inactive', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_a_insert', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_a_normal', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_a_replace', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_a_terminal', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_a_visual', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_b_command', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_b_inactive', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_b_insert', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_b_normal', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_b_replace', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_b_terminal', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_b_visual', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_c_command', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_c_inactive', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_c_insert', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_c_normal', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_c_replace', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_c_terminal', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_c_visual', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_transitional_lualine_a_normal_to_lualine_b_normal', { fg = '#a9b1d6', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_transitional_lualine_b_normal_to_lualine_c_normal', { fg = '#16161e', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_x_command', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_x_inactive', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_x_insert', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_x_normal', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_x_replace', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_x_terminal', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_x_visual', { fg = '#c0caf5', bg = '#1f2335' })
+  vim.api.nvim_set_hl(0, 'lualine_y_command', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_y_inactive', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_y_insert', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_y_normal', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_y_replace', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_y_terminal', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_y_visual', { fg = '#c0caf5', bg = '#16161e' })
+  vim.api.nvim_set_hl(0, 'lualine_z_command', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_z_inactive', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_z_insert', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_z_normal', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_z_replace', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_z_terminal', { fg = '#1a1b26', bg = '#a9b1d6' })
+  vim.api.nvim_set_hl(0, 'lualine_z_visual', { fg = '#1a1b26', bg = '#a9b1d6' })
+end
+
+-- Apply immediately
+apply_plugin_highlights()
+
+-- Apply on UIEnter with delay for lazy-loaded plugins
+vim.api.nvim_create_autocmd('UIEnter', {
+  once = true,
+  callback = function()
+    apply_plugin_highlights()
+    vim.defer_fn(apply_plugin_highlights, 100)
+    vim.defer_fn(apply_plugin_highlights, 500)
+  end,
+})
+
+-- Re-apply when colorscheme changes
+vim.api.nvim_create_autocmd('ColorScheme', {
+  callback = function()
+    apply_plugin_highlights()
+    vim.defer_fn(apply_plugin_highlights, 50)
+  end,
+})
+
+-- Re-apply when bufferline renders
+vim.api.nvim_create_autocmd('User', {
+  pattern = 'BufferlineRender',
+  callback = apply_plugin_highlights,
+})
+
+-- Lualine theme configuration
+local lualine_theme = {
+  normal = {
+    a = { fg = '#1a1b26', bg = '#a9b1d6' },
+    b = { fg = '#c0caf5', bg = '#16161e' },
+    c = { fg = '#c0caf5', bg = '#1f2335' },
+  },
+  insert = {
+    a = { fg = '#1a1b26', bg = '#a9b1d6' },
+    b = { fg = '#c0caf5', bg = '#16161e' },
+    c = { fg = '#c0caf5', bg = '#1f2335' },
+  },
+  visual = {
+    a = { fg = '#1a1b26', bg = '#a9b1d6' },
+    b = { fg = '#c0caf5', bg = '#16161e' },
+    c = { fg = '#c0caf5', bg = '#1f2335' },
+  },
+  replace = {
+    a = { fg = '#1a1b26', bg = '#a9b1d6' },
+    b = { fg = '#c0caf5', bg = '#16161e' },
+    c = { fg = '#c0caf5', bg = '#1f2335' },
+  },
+  command = {
+    a = { fg = '#1a1b26', bg = '#a9b1d6' },
+    b = { fg = '#c0caf5', bg = '#16161e' },
+    c = { fg = '#c0caf5', bg = '#1f2335' },
+  },
+  inactive = {
+    a = { fg = '#1a1b26', bg = '#a9b1d6' },
+    b = { fg = '#c0caf5', bg = '#16161e' },
+    c = { fg = '#c0caf5', bg = '#1f2335' },
+  },
+}
+
+-- Register lualine theme globally
+_G.flair_lualine_theme = lualine_theme
+
+-- Apply lualine theme
+local function apply_lualine_theme()
+  local ok, lualine = pcall(require, 'lualine')
+  if ok then
+    local cfg = require('lualine').get_config()
+    cfg.options.theme = lualine_theme
+    require('lualine').setup(cfg)
+  end
+end
+
+-- Apply immediately if lualine is loaded
+if package.loaded['lualine'] then
+  apply_lualine_theme()
+end
+
+-- Apply after UI loads
+vim.api.nvim_create_autocmd('UIEnter', {
+  once = true,
+  callback = function()
+    vim.defer_fn(apply_lualine_theme, 100)
+  end,
+})

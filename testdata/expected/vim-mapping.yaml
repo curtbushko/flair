@@ -57,6 +57,18 @@ highlights:
         link: Function
     '@function.method.call':
         link: '@function.method'
+    '@ibl.indent.char.1':
+        fg: '#383d58'
+        nocombine: true
+    '@ibl.scope.char.1':
+        fg: '#7aa2f7'
+        nocombine: true
+    '@ibl.scope.underline.1':
+        fg: '#7aa2f7'
+        underline: true
+    '@ibl.whitespace.char.1':
+        fg: '#383d58'
+        nocombine: true
     '@include':
         fg: '#bb9af7'
     '@keyword':
@@ -442,67 +454,65 @@ highlights:
     Boolean:
         fg: '#ff9e64'
     BufferLineBackground:
-        fg: '#565f89'
+        fg: '#c0caf5'
         bg: '#1f2335'
     BufferLineBuffer:
-        fg: '#565f89'
+        fg: '#c0caf5'
         bg: '#1f2335'
     BufferLineBufferSelected:
-        fg: '#1a1b26'
-        bg: '#a9b1d6'
-        bold: true
+        fg: '#c0caf5'
+        bg: '#16161e'
     BufferLineBufferVisible:
-        fg: '#a9b1d6'
+        fg: '#c0caf5'
         bg: '#1f2335'
     BufferLineDuplicate:
-        fg: '#565f89'
+        fg: '#c0caf5'
         bg: '#1f2335'
     BufferLineDuplicateSelected:
-        fg: '#565f89'
-        bg: '#a9b1d6'
+        fg: '#c0caf5'
+        bg: '#16161e'
     BufferLineDuplicateVisible:
-        fg: '#565f89'
+        fg: '#c0caf5'
         bg: '#1f2335'
     BufferLineFill:
-        fg: '#565f89'
-        bg: '#1a1b26'
+        fg: '#1f2335'
+        bg: '#1f2335'
     BufferLineIndicatorSelected:
-        fg: '#7aa2f7'
-        bg: '#a9b1d6'
+        fg: '#16161e'
+        bg: '#16161e'
     BufferLineModified:
         fg: '#e9c582'
         bg: '#1f2335'
     BufferLineModifiedSelected:
-        fg: '#e9c582'
-        bg: '#a9b1d6'
+        fg: '#16161e'
+        bg: '#16161e'
     BufferLineModifiedVisible:
         fg: '#e9c582'
         bg: '#1f2335'
     BufferLineOffsetSeparator:
-        fg: '#1a1b26'
-        bg: '#1a1b26'
+        fg: '#1f2335'
+        bg: '#1f2335'
     BufferLineSeparator:
         fg: '#1f2335'
-        bg: '#1a1b26'
+        bg: '#1f2335'
     BufferLineSeparatorSelected:
-        fg: '#a9b1d6'
-        bg: '#1a1b26'
+        fg: '#1f2335'
+        bg: '#16161e'
     BufferLineSeparatorVisible:
         fg: '#1f2335'
-        bg: '#1a1b26'
+        bg: '#1f2335'
     BufferLineTab:
-        fg: '#565f89'
+        fg: '#c0caf5'
         bg: '#1f2335'
     BufferLineTabSelected:
-        fg: '#1a1b26'
-        bg: '#a9b1d6'
-        bold: true
+        fg: '#c0caf5'
+        bg: '#16161e'
     BufferLineTabSeparator:
         fg: '#1f2335'
-        bg: '#1a1b26'
+        bg: '#1f2335'
     BufferLineTabSeparatorSelected:
-        fg: '#a9b1d6'
-        bg: '#1a1b26'
+        fg: '#c0caf5'
+        bg: '#16161e'
     Character:
         fg: '#9ece6a'
     CmpDocumentation:
@@ -826,9 +836,14 @@ highlights:
     HopUnmatched:
         fg: '#565f89'
     IblIndent:
-        fg: '#1f2335'
+        fg: '#383d58'
+        nocombine: true
     IblScope:
         fg: '#7aa2f7'
+        nocombine: true
+    IblWhitespace:
+        fg: '#383d58'
+        nocombine: true
     Identifier:
         fg: '#c0caf5'
     Ignore: {}
@@ -844,9 +859,11 @@ highlights:
     Include:
         fg: '#bb9af7'
     IndentBlanklineChar:
-        fg: '#1f2335'
+        fg: '#383d58'
+        nocombine: true
     IndentBlanklineContextChar:
         fg: '#7aa2f7'
+        nocombine: true
     IndentBlanklineContextStart:
         underline: true
     Keyword:
@@ -1594,6 +1611,138 @@ highlights:
         bg: '#292e42'
     lCursor:
         reverse: true
+    lualine_a_command:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_a_inactive:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_a_insert:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_a_normal:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_a_replace:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_a_terminal:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_a_visual:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_b_command:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_b_inactive:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_b_insert:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_b_normal:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_b_replace:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_b_terminal:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_b_visual:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_c_command:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_c_inactive:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_c_insert:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_c_normal:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_c_replace:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_c_terminal:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_c_visual:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_transitional_lualine_a_normal_to_lualine_b_normal:
+        fg: '#a9b1d6'
+        bg: '#16161e'
+    lualine_transitional_lualine_b_normal_to_lualine_c_normal:
+        fg: '#16161e'
+        bg: '#1f2335'
+    lualine_x_command:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_x_inactive:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_x_insert:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_x_normal:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_x_replace:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_x_terminal:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_x_visual:
+        fg: '#c0caf5'
+        bg: '#1f2335'
+    lualine_y_command:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_y_inactive:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_y_insert:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_y_normal:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_y_replace:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_y_terminal:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_y_visual:
+        fg: '#c0caf5'
+        bg: '#16161e'
+    lualine_z_command:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_z_inactive:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_z_insert:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_z_normal:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_z_replace:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_z_terminal:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
+    lualine_z_visual:
+        fg: '#1a1b26'
+        bg: '#a9b1d6'
     markdownBlockquote:
         fg: '#565f89'
         italic: true
