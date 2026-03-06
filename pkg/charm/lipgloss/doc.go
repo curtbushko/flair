@@ -1,6 +1,6 @@
 // Package lipgloss provides themed lipgloss styles built from flair themes.
 //
-// This package creates pre-configured lipgloss.Style instances for common
+// This package creates pre-configured [lipgloss.Style] instances for common
 // TUI elements including surfaces, text, status indicators, borders, and
 // interactive components. It reads theme data from pkg/flair and translates
 // semantic color tokens into ready-to-use lipgloss styles.
@@ -9,9 +9,9 @@
 // External projects can import it without pulling in flair's internal
 // implementation details.
 //
-// # Basic Usage
+// # Quick Start
 //
-// Load the currently selected flair theme and create styles:
+// The simplest way to get themed styles is using [Default]:
 //
 //	styles := lipgloss.Default()
 //	if styles != nil {
@@ -25,9 +25,9 @@
 //
 // # Using a Specific Theme
 //
-// Load a named theme and create styles:
+// Load a specific theme and create styles with [NewStyles]:
 //
-//	theme, err := flair.LoadNamed("tokyo-night-dark")
+//	theme, err := flair.LoadBuiltin("gruvbox-dark")
 //	if err != nil {
 //	    log.Fatal(err)
 //	}
@@ -35,14 +35,24 @@
 //
 // # Style Categories
 //
-// The Styles struct provides styles for:
+// The [Styles] struct provides pre-built styles organized by category:
 //
 //   - Surface: Background, Raised, Sunken, Overlay, Popup
 //   - Text: Text (primary), Secondary, Muted, Inverse
 //   - Status: Error, Warning, Success, Info
-//   - Border: Border, BorderFocus
+//   - Border: Border, BorderFocus, BorderMuted
 //   - Components: Button, ButtonFocused, Input, InputFocused, ListItem,
 //     ListSelected, Table, TableHeader, Dialog
+//   - State: Hover, Active, Disabled, Selected
+//
+// # Builder Functions
+//
+// For fine-grained control, use the individual Build* functions to create
+// specific styles:
+//
+//	theme, _ := flair.Default()
+//	errorStyle := lipgloss.BuildStatusError(theme)
+//	buttonStyle := lipgloss.BuildButton(theme)
 //
 // # Dependencies
 //

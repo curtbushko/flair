@@ -1,0 +1,156 @@
+# Example: Custom Theme with Token Overrides
+#
+# This palette demonstrates how to use overrides to customize specific
+# semantic tokens without modifying the base24 color derivation rules.
+#
+# Overrides are applied AFTER the standard tokenization, allowing you to:
+# - Change specific syntax highlighting colors
+# - Customize statusline appearance
+# - Adjust status indicator colors
+# - Override any semantic token with custom styling
+#
+# Override Format:
+#   overrides:
+#     token_path:           # Use underscores instead of dots (YAML-safe)
+#       color: "#RRGGBB"    # Optional: hex color (with or without #)
+#       bold: true          # Optional: enable bold
+#       italic: true        # Optional: enable italic
+#       underline: true     # Optional: enable underline
+#       strikethrough: true # Optional: enable strikethrough
+#
+# Token paths use underscores in YAML (e.g., syntax_keyword) but are
+# converted to dots internally (e.g., syntax.keyword).
+
+system: "base24"
+name: "My Custom Tokyo Night"
+author: "Your Name"
+variant: "dark"
+
+# Base24 palette colors - starting from Tokyo Night Dark
+palette:
+  # Background shades (dark to light)
+  base00: "1a1b26"  # Default background
+  base01: "1f2335"  # Raised surfaces (sidebars, popups)
+  base02: "292e42"  # Selection, highlights
+  base03: "565f89"  # Comments, muted text
+  base04: "a9b1d6"  # Secondary text
+  base05: "c0caf5"  # Primary text (foreground)
+  base06: "c0caf5"  # Overlay text
+  base07: "c8d3f5"  # Bright text
+
+  # Accent colors
+  base08: "f7768e"  # Red - errors, deletions
+  base09: "ff9e64"  # Orange - hints, constants
+  base0A: "e0af68"  # Yellow - warnings, types
+  base0B: "9ece6a"  # Green - strings, success
+  base0C: "7dcfff"  # Cyan - regex, links
+  base0D: "7aa2f7"  # Blue - functions, info
+  base0E: "bb9af7"  # Purple - keywords
+  base0F: "db4b4b"  # Brown/maroon
+
+  # Extended colors (base24)
+  base10: "16161e"  # Sunken background
+  base11: "101014"  # Darkest background
+  base12: "ff899d"  # Bright red
+  base13: "e9c582"  # Bright yellow
+  base14: "afd67a"  # Bright green
+  base15: "97d8f8"  # Bright cyan
+  base16: "8db6fa"  # Bright blue
+  base17: "c8acf8"  # Bright purple
+
+# Token Overrides
+#
+# Override specific semantic tokens to customize your theme.
+# Any token from the token inventory can be overridden.
+#
+# Common override categories:
+# - syntax.*      : Code highlighting (keyword, string, function, comment, etc.)
+# - status.*      : Status indicators (error, warning, success, info)
+# - surface.*     : Background colors
+# - text.*        : Text colors
+# - statusline.*  : Statusline sections (a, b, c with fg/bg)
+# - diff.*        : Git diff colors
+# - markup.*      : Markdown/documentation
+
+overrides:
+  # ==========================================================================
+  # Syntax Highlighting Overrides
+  # ==========================================================================
+
+  # Make keywords a vibrant magenta for emphasis
+  syntax_keyword:
+    color: "#ff00ff"
+    bold: true
+
+  # Use a softer green for strings
+  syntax_string:
+    color: "#98c379"
+
+  # Make comments more visible with a brighter shade
+  syntax_comment:
+    color: "#6a737d"
+    italic: true
+
+  # Highlight function names in a distinct cyan
+  syntax_function:
+    color: "#61afef"
+
+  # ==========================================================================
+  # Status Indicator Overrides
+  # ==========================================================================
+
+  # Custom error color - a deeper red
+  status_error:
+    color: "#e06c75"
+    bold: true
+
+  # Warning with attention-grabbing orange
+  status_warning:
+    color: "#d19a66"
+
+  # Success in a calming green
+  status_success:
+    color: "#98c379"
+
+  # ==========================================================================
+  # Statusline Overrides
+  # ==========================================================================
+
+  # Section A: Mode indicator with high contrast
+  statusline_a_bg:
+    color: "7aa2f7"  # Blue background
+  statusline_a_fg:
+    color: "1a1b26"  # Dark text for contrast
+
+  # Section B: Branch/info with subtle background
+  statusline_b_bg:
+    color: "292e42"
+  statusline_b_fg:
+    color: "c0caf5"
+
+  # Section C: Filename area
+  statusline_c_bg:
+    color: "1f2335"
+  statusline_c_fg:
+    color: "a9b1d6"
+
+  # ==========================================================================
+  # Surface/Background Overrides
+  # ==========================================================================
+
+  # Custom selection background - more visible
+  surface_background_selection:
+    color: "#3d4966"
+
+  # ==========================================================================
+  # Markup Overrides (for markdown/documentation)
+  # ==========================================================================
+
+  # Bold headings in a distinct color
+  markup_heading:
+    color: "#61afef"
+    bold: true
+
+  # Links in cyan
+  markup_link:
+    color: "#56b6c2"

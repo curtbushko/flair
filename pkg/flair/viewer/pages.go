@@ -4,6 +4,8 @@ package viewer
 // The actual rendering logic is in view.go.
 
 // String returns a human-readable name for the page.
+//
+// This is useful for displaying page titles in the UI.
 func (p Page) String() string {
 	switch p {
 	case PageTextStatus:
@@ -18,6 +20,8 @@ func (p Page) String() string {
 }
 
 // TokenCategories returns the ordered list of token category names.
+//
+// These categories correspond to the groupings in [TokenData].
 func TokenCategories() []string {
 	return []string{"Surface", "Text", "Status", "Syntax", "Diff"}
 }

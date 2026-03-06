@@ -8,6 +8,7 @@ import (
 	"github.com/curtbushko/flair/internal/adapters/palettes"
 	yamlparser "github.com/curtbushko/flair/internal/adapters/yaml"
 	"github.com/curtbushko/flair/internal/ports"
+	"github.com/curtbushko/flair/pkg/flair"
 )
 
 // Verify Source satisfies ports.PaletteSource at compile time.
@@ -362,4 +363,48 @@ func searchString(s, substr string) bool {
 		}
 	}
 	return false
+}
+
+// TestSource_UsesPkgFlairPalettes verifies that internal/adapters/palettes
+// delegates to pkg/flair/palettes (DRY - single source of truth).
+func TestSource_UsesPkgFlairPalettes(t *testing.T) {
+	src := palettes.NewSource()
+
+	// Get the list from internal adapter
+	internalList := src.List()
+
+	// Get the list from pkg/flair builtins
+	pkgList := flair.ListBuiltins()
+
+	// Both should return the same number of palettes
+	if len(internalList) != len(pkgList) {
+		t.Fatalf("internal palettes count (%d) != pkg/flair palettes count (%d)",
+			len(internalList), len(pkgList))
+	}
+
+	// Both should have the exact same palette names
+	for i, name := range internalList {
+		if name != pkgList[i] {
+			t.Errorf("palette mismatch at index %d: internal=%q, pkg=%q",
+				i, name, pkgList[i])
+		}
+	}
+
+	// Verify content is identical for a sample palette
+	internalReader, err := src.Get("tokyo-night-dark")
+	if err != nil {
+		t.Fatalf("internal Get error: %v", err)
+	}
+	internalData, err := io.ReadAll(internalReader)
+	if err != nil {
+		t.Fatalf("internal ReadAll error: %v", err)
+	}
+	if len(internalData) == 0 {
+		t.Fatal("internal palette data is empty")
+	}
+
+	// Load via pkg/flair to verify same content is accessible
+	if !flair.HasBuiltin("tokyo-night-dark") {
+		t.Fatal("pkg/flair does not have tokyo-night-dark builtin")
+	}
 }

@@ -25,6 +25,315 @@ make build
 # binary is in ./bin/flair
 ```
 
+## Using Flair in Your CLI
+
+Flair provides Go packages for building themed CLI applications with
+[lipgloss](https://github.com/charmbracelet/lipgloss).
+
+### Import the packages
+
+```go
+import (
+    "github.com/curtbushko/flair/pkg/flair"
+    "github.com/curtbushko/flair/pkg/charm/lipgloss"
+)
+```
+
+### Load a theme and create styles
+
+```go
+// Load the currently selected theme (or fall back to tokyo-night-dark)
+theme, err := flair.Default()
+if err != nil {
+    log.Fatal(err)
+}
+
+// Create pre-configured lipgloss styles from the theme
+styles := lipgloss.NewStyles(theme)
+```
+
+### Use the pre-configured styles
+
+```go
+// Surface styles for containers
+header := styles.Raised.Render("My Application")
+content := styles.Background.Render("Main content area")
+
+// Text styles
+title := styles.Text.Render("Primary text")
+subtitle := styles.Secondary.Render("Secondary text")
+hint := styles.Muted.Render("Muted hint")
+
+// Status indicators
+errorMsg := styles.Error.Render("Something went wrong")
+successMsg := styles.Success.Render("Operation complete")
+warnMsg := styles.Warning.Render("Proceed with caution")
+infoMsg := styles.Info.Render("FYI")
+
+// Component styles for interactive elements
+button := styles.Button.Render("Submit")
+focused := styles.ButtonFocused.Render("Submit")
+listItem := styles.ListItem.Render("Item 1")
+selected := styles.ListSelected.Render("Item 2")
+```
+
+### Available style categories
+
+| Category   | Styles                                          |
+|------------|-------------------------------------------------|
+| Surface    | Background, Raised, Sunken, Overlay, Popup      |
+| Text       | Text, Secondary, Muted, Inverse                 |
+| Status     | Error, Warning, Success, Info                   |
+| Border     | Border, BorderFocus, BorderMuted                |
+| Component  | Button, ButtonFocused, Input, InputFocused      |
+|            | ListItem, ListSelected, Table, TableHeader, Dialog |
+| State      | Hover, Active, Disabled, Selected               |
+
+### Alternative loading methods
+
+```go
+// Load a specific theme by name
+theme, err := flair.LoadNamed("gruvbox-dark")
+
+// Load from the currently selected theme only (no fallback)
+theme, err := flair.Load()
+
+// Quick one-liner for styles (returns nil on error)
+styles := lipgloss.Default()
+```
+
+## Using Flair as a Library
+
+Flair can be used as a Go library without installing the CLI. All built-in
+themes are embedded in the binary, so external programs can load and use
+themes with zero filesystem setup.
+
+### Zero-setup usage with built-in themes
+
+```go
+import "github.com/curtbushko/flair/pkg/flair"
+
+func main() {
+    // Load a built-in theme directly - no CLI, no config directory needed
+    theme, err := flair.LoadBuiltin("tokyo-night-dark")
+    if err != nil {
+        log.Fatal(err)
+    }
+
+    // Access theme colors
+    colors := theme.Colors()
+    fmt.Println("Background:", colors["surface.background"].Hex())
+}
+```
+
+### Discovering built-in themes
+
+```go
+// List all available built-in theme names
+names := flair.ListBuiltins()
+// Returns: ["catppuccin-mocha", "gruvbox-dark", "tokyo-night-dark", ...]
+
+// Check if a specific built-in exists
+if flair.HasBuiltin("gruvbox-dark") {
+    theme, _ := flair.LoadBuiltin("gruvbox-dark")
+}
+```
+
+### Convenience functions
+
+```go
+// Default() - loads selected theme or falls back to tokyo-night-dark
+// This is the recommended way to load a theme for most use cases
+theme, err := flair.Default()
+
+// MustLoad() - same as Default() but panics on error
+// Useful for init-time loading where failure should be fatal
+theme := flair.MustLoad()
+
+// LoadOrDefault() - try a specific theme, fall back to a built-in
+theme, err := flair.LoadOrDefault("my-custom-theme", "gruvbox-dark")
+
+// EnsureInstalled() - install built-ins to config dir if empty
+// Useful for first-run setup in CLI applications
+err := flair.EnsureInstalled()
+```
+
+### The Store type for programmatic theme management
+
+The `Store` type provides full control over theme installation and selection:
+
+```go
+import "github.com/curtbushko/flair/pkg/flair"
+
+// Create a store using the default config directory (~/.config/flair)
+store := flair.NewStore()
+
+// Or use a custom directory
+store := flair.NewStoreAt("/path/to/themes")
+
+// Install a built-in theme to the config directory
+err := store.Install("tokyo-night-dark")
+
+// Install all built-in themes
+err := store.InstallAll()
+
+// Select a theme (creates symlinks at config root)
+err := store.Select("tokyo-night-dark")
+
+// Load the currently selected theme
+theme, err := store.Load()
+
+// Load a specific installed theme by name
+theme, err := store.LoadNamed("gruvbox-dark")
+
+// List all installed themes
+themes, err := store.List()
+
+// Get the currently selected theme name
+selected, err := store.Selected()
+```
+
+### Example: themed CLI without the flair CLI
+
+```go
+package main
+
+import (
+    "fmt"
+    "os"
+
+    "github.com/curtbushko/flair/pkg/flair"
+    "github.com/curtbushko/flair/pkg/charm/lipgloss"
+)
+
+func main() {
+    // Load directly from built-ins - no flair CLI needed
+    theme, err := flair.LoadBuiltin("catppuccin-mocha")
+    if err != nil {
+        fmt.Fprintln(os.Stderr, "Failed to load theme:", err)
+        os.Exit(1)
+    }
+
+    // Create lipgloss styles from the theme
+    styles := lipgloss.NewStyles(theme)
+
+    // Use the styles in your CLI
+    fmt.Println(styles.Text.Render("Welcome to my app!"))
+    fmt.Println(styles.Success.Render("Operation successful"))
+    fmt.Println(styles.Error.Render("Something went wrong"))
+}
+```
+
+## Customizing with Overrides
+
+Flair allows you to override specific semantic tokens directly in your
+`palette.yaml` file. Overrides are applied after default tokenization, giving
+you fine-grained control over individual tokens while inheriting the rest from
+the palette.
+
+### Override format in palette.yaml
+
+Add an `overrides` section to your theme's `palette.yaml`:
+
+```yaml
+system: "base24"
+name: "Tokyo Night Dark Custom"
+author: "Your Name"
+variant: "dark"
+palette:
+  base00: "1a1b26"
+  base01: "1f2335"
+  # ... palette colors ...
+
+overrides:
+  syntax.keyword:
+    color: "#ff00ff"
+    italic: true
+  syntax.comment:
+    color: "#666666"
+  surface.background:
+    color: "#000000"
+  status.error:
+    color: "#ff0000"
+    bold: true
+```
+
+### Supported token paths
+
+Any token path from the token inventory can be overridden:
+
+| Category       | Token paths                                        |
+|----------------|----------------------------------------------------|
+| Surface        | `surface.*` -- backgrounds, raised, sunken, overlay |
+| Text           | `text.*` -- primary, secondary, muted, inverse     |
+| Status         | `status.*` -- error, warning, success, info, hint  |
+| Syntax         | `syntax.*` -- keyword, string, comment, function, etc. |
+| Markup         | `markup.*` -- heading, bold, italic, link, code    |
+| Diff           | `diff.*` -- added, removed, changed                |
+| Accent         | `accent.*` -- primary, secondary accents           |
+| Border         | `border.*` -- default, focus, muted                |
+| Terminal       | `terminal.*` -- ANSI colors                        |
+| Git            | `git.*` -- added, modified, deleted, ignored       |
+| State          | `state.*` -- hover, active, disabled, selected     |
+| Scrollbar      | `scrollbar.*` -- track, thumb                      |
+| Statusline     | `statusline.*` -- a/b/c sections with fg/bg        |
+
+### Override properties
+
+Each override can specify any combination of these properties:
+
+| Property        | Type    | Description                    |
+|-----------------|---------|--------------------------------|
+| `color`         | string  | Hex color (e.g., `"#ff00ff"`)  |
+| `bold`          | boolean | Bold text style                |
+| `italic`        | boolean | Italic text style              |
+| `underline`     | boolean | Underline text style           |
+| `undercurl`     | boolean | Undercurl text style           |
+| `strikethrough` | boolean | Strikethrough text style       |
+
+### Managing overrides with the CLI
+
+The `flair override` command provides a convenient way to manage overrides
+without manually editing YAML files.
+
+Add or update an override:
+
+```sh
+# Set color only
+flair override mytheme syntax.keyword "#ff00ff"
+
+# Set style flags only
+flair override mytheme syntax.keyword --bold --italic
+
+# Set both color and styles
+flair override mytheme syntax.keyword "#ff00ff" --bold
+```
+
+List current overrides:
+
+```sh
+flair override mytheme --list
+```
+
+Remove an override:
+
+```sh
+flair override mytheme --remove syntax.keyword
+```
+
+Options:
+
+- `--dir <path>` -- Config directory (default: `~/.config/flair`)
+- `--bold`, `--italic`, `--underline`, `--undercurl`, `--strikethrough` -- Style flags
+- `--list` -- List all overrides for the theme
+- `--remove <token>` -- Remove an override
+
+After modifying overrides, regenerate the theme to apply changes:
+
+```sh
+flair regenerate mytheme
+```
+
 ## Quick Start
 
 ```sh

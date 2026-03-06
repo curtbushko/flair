@@ -1,23 +1,21 @@
-// Package palettes provides a PaletteSource adapter using go:embed to
-// ship built-in palette YAML files with the binary. Each .yaml file in
-// this directory is embedded at compile time and accessible via List,
-// Get, and Has methods.
+// Package palettes provides a PaletteSource adapter that delegates to
+// pkg/flair/palettes for embedded YAML files. This ensures a single
+// source of truth for built-in palettes (DRY principle).
 package palettes
 
 import (
 	"bytes"
-	"embed"
 	"fmt"
 	"io"
 	"io/fs"
 	"sort"
 	"strings"
+
+	pkgpalettes "github.com/curtbushko/flair/pkg/flair/palettes"
 )
 
-//go:embed *.yaml
-var embedded embed.FS
-
-// Source implements ports.PaletteSource using embedded YAML files.
+// Source implements ports.PaletteSource using embedded YAML files
+// from pkg/flair/palettes.
 type Source struct{}
 
 // NewSource returns a new built-in palette source.
@@ -28,7 +26,7 @@ func NewSource() *Source {
 // List returns the names of all built-in palettes sorted alphabetically.
 // Each name is the filename without the .yaml extension.
 func (s *Source) List() []string {
-	entries, err := fs.ReadDir(embedded, ".")
+	entries, err := fs.ReadDir(pkgpalettes.EmbeddedFS, ".")
 	if err != nil {
 		return nil
 	}
@@ -52,7 +50,7 @@ func (s *Source) List() []string {
 // The returned reader wraps the embedded bytes via bytes.NewReader,
 // so no file I/O occurs. Returns an error if the name is not found.
 func (s *Source) Get(name string) (io.Reader, error) {
-	data, err := embedded.ReadFile(name + ".yaml")
+	data, err := pkgpalettes.EmbeddedFS.ReadFile(name + ".yaml")
 	if err != nil {
 		return nil, fmt.Errorf("built-in palette %q not found: %w", name, err)
 	}
@@ -61,6 +59,6 @@ func (s *Source) Get(name string) (io.Reader, error) {
 
 // Has returns true if the named palette exists as a built-in.
 func (s *Source) Has(name string) bool {
-	_, err := embedded.ReadFile(name + ".yaml")
+	_, err := pkgpalettes.EmbeddedFS.ReadFile(name + ".yaml")
 	return err == nil
 }

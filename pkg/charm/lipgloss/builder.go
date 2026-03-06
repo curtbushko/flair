@@ -5,7 +5,20 @@ import (
 )
 
 // NewStyles creates a Styles struct from a flair theme.
-// It builds pre-configured lipgloss.Style instances for all style categories.
+//
+// NewStyles builds pre-configured [lipgloss.Style] instances for all style
+// categories by extracting semantic colors from the theme. The resulting
+// Styles struct provides ready-to-use styles for common TUI elements.
+//
+// Returns nil if theme is nil.
+//
+// Example:
+//
+//	theme, _ := flair.LoadBuiltin("tokyo-night-dark")
+//	styles := lipgloss.NewStyles(theme)
+//
+//	fmt.Println(styles.Error.Render("Error: connection failed"))
+//	fmt.Println(styles.Button.Render("Submit"))
 func NewStyles(theme *flair.Theme) *Styles {
 	if theme == nil {
 		return nil
@@ -58,7 +71,19 @@ func NewStyles(theme *flair.Theme) *Styles {
 }
 
 // Default returns styles using the currently selected flair theme.
-// Returns nil if no theme is selected or loading fails.
+//
+// This is a convenience function that loads the selected theme from the
+// default config directory and creates styles. Returns nil if no theme
+// is selected or loading fails.
+//
+// Example:
+//
+//	styles := lipgloss.Default()
+//	if styles == nil {
+//	    // Handle no theme selected
+//	    return
+//	}
+//	fmt.Println(styles.Text.Render("Hello, world!"))
 func Default() *Styles {
 	theme, err := flair.Load()
 	if err != nil {
@@ -68,6 +93,8 @@ func Default() *Styles {
 }
 
 // DefaultFrom returns styles from the specified config directory.
+//
+// This is useful for testing or when using a non-standard config location.
 // Returns nil if no theme is selected or loading fails.
 func DefaultFrom(configDir string) *Styles {
 	theme, err := flair.LoadFrom(configDir)

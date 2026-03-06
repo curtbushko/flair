@@ -35,20 +35,40 @@ type tokensFile struct {
 	Tokens map[string]tokensEntry `yaml:"tokens"`
 }
 
-// ErrNoSelectedTheme is returned when no theme is currently selected.
+// ErrNoSelectedTheme is returned by [Load] and [Store.Load] when no theme
+// is currently selected in the config directory.
 var ErrNoSelectedTheme = errors.New("no theme selected")
 
-// ErrThemeNotFound is returned when a requested theme does not exist.
+// ErrThemeNotFound is returned by [LoadNamed] and [LoadNamedFrom] when
+// the requested theme does not exist in the config directory.
 var ErrThemeNotFound = errors.New("theme not found")
 
 // Load loads the currently selected theme from the default config directory.
-// It respects XDG_CONFIG_HOME if set, otherwise uses ~/.config/flair.
+//
+// The default config directory respects XDG_CONFIG_HOME if set, otherwise
+// uses ~/.config/flair. The selected theme is determined by following
+// symlinks (e.g., style.json -> themename/style.json).
+//
+// Load returns [ErrNoSelectedTheme] if no theme symlinks exist.
+// For a fallback to built-in themes, use [Default] instead.
+//
+// Example:
+//
+//	theme, err := flair.Load()
+//	if errors.Is(err, flair.ErrNoSelectedTheme) {
+//	    fmt.Println("No theme selected, using default")
+//	    theme, _ = flair.LoadBuiltin("tokyo-night-dark")
+//	}
 func Load() (*Theme, error) {
 	return LoadFrom(defaultConfigDir())
 }
 
 // LoadFrom loads the currently selected theme from the specified config directory.
+//
 // The selected theme is determined by following symlinks (e.g., style.json -> themename/style.json).
+// This function is useful for testing or when using a non-standard config location.
+//
+// LoadFrom returns [ErrNoSelectedTheme] if no theme symlinks exist.
 func LoadFrom(configDir string) (*Theme, error) {
 	selected, err := SelectedThemeFrom(configDir)
 	if err != nil {
@@ -63,11 +83,26 @@ func LoadFrom(configDir string) (*Theme, error) {
 }
 
 // LoadNamed loads a specific theme by name from the default config directory.
+//
+// The theme must already be installed in the config directory. Use [Store.Install]
+// to install built-in themes, or [LoadBuiltin] to load embedded themes directly.
+//
+// LoadNamed returns [ErrThemeNotFound] if the theme does not exist.
+//
+// Example:
+//
+//	theme, err := flair.LoadNamed("gruvbox-dark")
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
 func LoadNamed(name string) (*Theme, error) {
 	return LoadNamedFrom(defaultConfigDir(), name)
 }
 
 // LoadNamedFrom loads a specific theme by name from the specified config directory.
+//
+// The theme directory must contain a tokens.yaml file with color definitions.
+// LoadNamedFrom returns [ErrThemeNotFound] if the theme does not exist.
 func LoadNamedFrom(configDir, name string) (*Theme, error) {
 	themeDir := filepath.Join(configDir, name)
 	tokensPath := filepath.Join(themeDir, "tokens.yaml")
@@ -105,13 +140,30 @@ func LoadNamedFrom(configDir, name string) (*Theme, error) {
 	return NewTheme(name, variant, colors), nil
 }
 
-// ListThemes returns the names of all available themes in the default config directory.
+// ListThemes returns the names of all installed themes in the default config directory.
+//
+// Theme directories are identified by the presence of a tokens.yaml file.
+// The returned slice is sorted alphabetically. Returns nil (not an error)
+// if the config directory does not exist.
+//
+// Example:
+//
+//	themes, err := flair.ListThemes()
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
+//	for _, name := range themes {
+//	    fmt.Println(name)
+//	}
 func ListThemes() ([]string, error) {
 	return ListThemesFrom(defaultConfigDir())
 }
 
-// ListThemesFrom returns the names of all available themes in the specified config directory.
+// ListThemesFrom returns the names of all installed themes in the specified config directory.
+//
 // Theme directories are identified by the presence of a tokens.yaml file.
+// The returned slice is sorted alphabetically. Returns nil (not an error)
+// if the config directory does not exist.
 func ListThemesFrom(configDir string) ([]string, error) {
 	entries, err := os.ReadDir(configDir)
 	if err != nil {
@@ -139,13 +191,31 @@ func ListThemesFrom(configDir string) ([]string, error) {
 }
 
 // SelectedTheme returns the name of the currently selected theme from the default config directory.
-// Returns an empty string if no theme is selected.
+//
+// The selection is determined by reading symlinks at the config root
+// (e.g., style.json -> themename/style.json). Returns an empty string
+// (not an error) if no theme is selected.
+//
+// Example:
+//
+//	name, err := flair.SelectedTheme()
+//	if err != nil {
+//	    log.Fatal(err)
+//	}
+//	if name == "" {
+//	    fmt.Println("No theme selected")
+//	} else {
+//	    fmt.Printf("Selected theme: %s\n", name)
+//	}
 func SelectedTheme() (string, error) {
 	return SelectedThemeFrom(defaultConfigDir())
 }
 
 // SelectedThemeFrom returns the name of the currently selected theme by reading symlinks.
-// Returns an empty string if no theme is selected.
+//
+// The function examines output file symlinks (style.lua, style.css, etc.)
+// to determine which theme directory they point to.
+// Returns an empty string (not an error) if no theme is selected.
 func SelectedThemeFrom(configDir string) (string, error) {
 	for _, f := range outputFiles {
 		link := filepath.Join(configDir, f)

@@ -7,7 +7,9 @@ import (
 )
 
 // BuildButton creates a lipgloss style for unfocused buttons.
-// Uses raised surface background with primary text and horizontal padding.
+//
+// This style uses a raised surface background with primary text foreground
+// and horizontal padding. Suitable for standard button elements.
 func BuildButton(theme *flair.Theme) lipgloss.Style {
 	text := theme.Text()
 	surface := theme.Surface()
@@ -18,7 +20,9 @@ func BuildButton(theme *flair.Theme) lipgloss.Style {
 }
 
 // BuildButtonFocused creates a lipgloss style for focused buttons.
-// Uses accent primary background with inverse text, bold, and horizontal padding.
+//
+// This style uses an accent primary background with inverse text, bold weight,
+// and horizontal padding. Suitable for highlighting the focused button.
 func BuildButtonFocused(theme *flair.Theme) lipgloss.Style {
 	text := theme.Text()
 	accentPrimary := getColor(theme, "accent.primary", flair.Color{R: 122, G: 162, B: 247})
@@ -30,7 +34,9 @@ func BuildButtonFocused(theme *flair.Theme) lipgloss.Style {
 }
 
 // BuildInput creates a lipgloss style for unfocused input fields.
-// Uses sunken surface background with primary text and default border.
+//
+// This style uses a sunken surface background with primary text foreground
+// and a rounded default border. Suitable for text input fields.
 func BuildInput(theme *flair.Theme) lipgloss.Style {
 	text := theme.Text()
 	surface := theme.Surface()
@@ -43,7 +49,9 @@ func BuildInput(theme *flair.Theme) lipgloss.Style {
 }
 
 // BuildInputFocused creates a lipgloss style for focused input fields.
-// Uses sunken surface background with primary text and focus border.
+//
+// This style uses a sunken surface background with primary text foreground
+// and a rounded focus border. Suitable for indicating the active input field.
 func BuildInputFocused(theme *flair.Theme) lipgloss.Style {
 	text := theme.Text()
 	surface := theme.Surface()
@@ -56,7 +64,8 @@ func BuildInputFocused(theme *flair.Theme) lipgloss.Style {
 }
 
 // BuildListItem creates a lipgloss style for list items.
-// Uses primary text foreground.
+//
+// This style uses primary text foreground. Suitable for normal list items.
 func BuildListItem(theme *flair.Theme) lipgloss.Style {
 	text := theme.Text()
 	return lipgloss.NewStyle().
@@ -64,7 +73,9 @@ func BuildListItem(theme *flair.Theme) lipgloss.Style {
 }
 
 // BuildListSelected creates a lipgloss style for selected list items.
-// Uses accent primary foreground with bold.
+//
+// This style uses accent primary foreground with bold weight.
+// Suitable for highlighting the currently selected list item.
 func BuildListSelected(theme *flair.Theme) lipgloss.Style {
 	accentPrimary := getColor(theme, "accent.primary", flair.Color{R: 122, G: 162, B: 247})
 	return lipgloss.NewStyle().
@@ -73,7 +84,8 @@ func BuildListSelected(theme *flair.Theme) lipgloss.Style {
 }
 
 // BuildTable creates a lipgloss style for table cells.
-// Uses primary text foreground.
+//
+// This style uses primary text foreground. Suitable for table body cells.
 func BuildTable(theme *flair.Theme) lipgloss.Style {
 	text := theme.Text()
 	return lipgloss.NewStyle().
@@ -81,7 +93,9 @@ func BuildTable(theme *flair.Theme) lipgloss.Style {
 }
 
 // BuildTableHeader creates a lipgloss style for table headers.
-// Uses secondary text foreground with bold.
+//
+// This style uses secondary text foreground with bold weight.
+// Suitable for table column headers.
 func BuildTableHeader(theme *flair.Theme) lipgloss.Style {
 	text := theme.Text()
 	return lipgloss.NewStyle().
@@ -90,7 +104,9 @@ func BuildTableHeader(theme *flair.Theme) lipgloss.Style {
 }
 
 // BuildDialog creates a lipgloss style for dialog boxes.
-// Uses overlay surface background with default border and padding.
+//
+// This style uses overlay surface background with a rounded default border
+// and padding. Suitable for modal dialogs and confirmation boxes.
 func BuildDialog(theme *flair.Theme) lipgloss.Style {
 	surface := theme.Surface()
 	borderDefault := getColor(theme, "border.default", flair.Color{R: 86, G: 95, B: 137})
