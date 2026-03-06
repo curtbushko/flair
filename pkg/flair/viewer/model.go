@@ -25,10 +25,19 @@ const (
 	// PageDataDisplay shows tables, dialogs, and code blocks.
 	// Demonstrates data presentation styles including syntax highlighting.
 	PageDataDisplay
+	// PageBubbletea shows bubbletea component examples.
+	// Demonstrates spinner, progress bar, and text input styles.
+	PageBubbletea
+	// PageHuh shows huh form component examples.
+	// Demonstrates text inputs, selects, and confirm dialogs styled with the theme.
+	PageHuh
+	// PageBubbles shows bubbles component examples.
+	// Demonstrates list, table, and viewport components styled with the theme.
+	PageBubbles
 )
 
 // pageCount is the total number of content pages for Tab cycling.
-const pageCount = 3
+const pageCount = 6
 
 // Options configures the viewer [Model].
 //

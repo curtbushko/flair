@@ -305,3 +305,150 @@ func TestTokenData_HasStatuslineField(t *testing.T) {
 		t.Error("TokenData.Statusline field not working correctly")
 	}
 }
+
+// TestView_HuhPage verifies the Huh page renders form component examples.
+func TestView_HuhPage(t *testing.T) {
+	m := NewModel(Options{
+		Themes: []string{"test-theme"},
+	})
+
+	m.currentPage = PageHuh
+	m.width = 120
+	m.height = 40
+	m.tokens = TokenData{
+		Text: map[string]string{
+			"text.primary":   "#c0caf5",
+			"text.secondary": "#a9b1d6",
+			"text.muted":     "#565f89",
+		},
+		Surface: map[string]string{
+			"surface.background":        "#1a1b26",
+			"surface.background.raised": "#24283b",
+			"surface.background.sunken": "#16161e",
+		},
+		Status: map[string]string{
+			"status.success": "#9ece6a",
+			"status.error":   "#f7768e",
+		},
+	}
+
+	view := m.View()
+
+	// Should contain the page title.
+	if !strings.Contains(view.Content, "Huh") {
+		t.Error("huh page missing title")
+	}
+
+	// Should contain text input example.
+	if !strings.Contains(view.Content, "Text Input") {
+		t.Error("huh page missing Text Input section")
+	}
+
+	// Should contain select example.
+	if !strings.Contains(view.Content, "Select") {
+		t.Error("huh page missing Select section")
+	}
+
+	// Should contain confirm example.
+	if !strings.Contains(view.Content, "Confirm") {
+		t.Error("huh page missing Confirm section")
+	}
+}
+
+// TestView_BubblesPage verifies the Bubbles page renders list, table, viewport examples.
+func TestView_BubblesPage(t *testing.T) {
+	m := NewModel(Options{
+		Themes: []string{"test-theme"},
+	})
+
+	m.currentPage = PageBubbles
+	m.width = 120
+	m.height = 40
+	m.tokens = TokenData{
+		Text: map[string]string{
+			"text.primary":   "#c0caf5",
+			"text.secondary": "#a9b1d6",
+			"text.muted":     "#565f89",
+		},
+		Surface: map[string]string{
+			"surface.background":        "#1a1b26",
+			"surface.background.raised": "#24283b",
+			"surface.background.sunken": "#16161e",
+		},
+		Status: map[string]string{
+			"status.success": "#9ece6a",
+			"status.error":   "#f7768e",
+		},
+	}
+
+	view := m.View()
+
+	// Should contain the page title.
+	if !strings.Contains(view.Content, "Bubbles") {
+		t.Error("bubbles page missing title")
+	}
+
+	// Should contain list example.
+	if !strings.Contains(view.Content, "List") {
+		t.Error("bubbles page missing List section")
+	}
+
+	// Should contain table example.
+	if !strings.Contains(view.Content, "Table") {
+		t.Error("bubbles page missing Table section")
+	}
+
+	// Should contain viewport example.
+	if !strings.Contains(view.Content, "Viewport") {
+		t.Error("bubbles page missing Viewport section")
+	}
+}
+
+// TestView_BubbleteaPage verifies the Bubbletea page renders component examples.
+func TestView_BubbleteaPage(t *testing.T) {
+	m := NewModel(Options{
+		Themes: []string{"test-theme"},
+	})
+
+	m.currentPage = PageBubbletea
+	m.width = 120
+	m.height = 40
+	m.tokens = TokenData{
+		Text: map[string]string{
+			"text.primary":   "#c0caf5",
+			"text.secondary": "#a9b1d6",
+			"text.muted":     "#565f89",
+		},
+		Surface: map[string]string{
+			"surface.background":        "#1a1b26",
+			"surface.background.raised": "#24283b",
+			"surface.background.sunken": "#16161e",
+		},
+		Status: map[string]string{
+			"status.success": "#9ece6a",
+			"status.error":   "#f7768e",
+		},
+	}
+
+	view := m.View()
+
+	// Should contain the page title.
+	if !strings.Contains(view.Content, "Bubbletea") {
+		t.Error("bubbletea page missing title")
+	}
+
+	// Should contain spinner example.
+	if !strings.Contains(view.Content, "Spinner") {
+		t.Error("bubbletea page missing Spinner section")
+	}
+
+	// Should contain progress bar example.
+	if !strings.Contains(view.Content, "Progress") {
+		t.Error("bubbletea page missing Progress section")
+	}
+
+	// Should contain text input example.
+	if !strings.Contains(view.Content, "Text Input") {
+		t.Error("bubbletea page missing Text Input section")
+	}
+}

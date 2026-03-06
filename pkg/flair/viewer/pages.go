@@ -14,6 +14,12 @@ func (p Page) String() string {
 		return "Interactive Components"
 	case PageDataDisplay:
 		return "Data Display"
+	case PageBubbletea:
+		return "Bubbletea Components"
+	case PageHuh:
+		return "Huh Forms"
+	case PageBubbles:
+		return "Bubbles Components"
 	default:
 		return "Unknown"
 	}

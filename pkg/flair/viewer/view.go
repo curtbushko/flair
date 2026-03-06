@@ -21,6 +21,12 @@ func (m Model) View() tea.View {
 		rightPanel = m.renderInteractive()
 	case PageDataDisplay:
 		rightPanel = m.renderDataDisplay()
+	case PageBubbletea:
+		rightPanel = m.renderBubbletea()
+	case PageHuh:
+		rightPanel = m.renderHuh()
+	case PageBubbles:
+		rightPanel = m.renderBubbles()
 	}
 
 	// Calculate panel widths.
@@ -458,6 +464,362 @@ func (m Model) renderDataDisplay() string {
 	codeBuf.WriteString(normalStyle.Render("}"))
 
 	b.WriteString(codeBlockStyle.Render(codeBuf.String()))
+	b.WriteString("\n")
+
+	return b.String()
+}
+
+// renderBubbletea renders the Bubbletea Components page.
+func (m Model) renderBubbletea() string {
+	var b strings.Builder
+
+	titleStyle := m.titleStyle()
+	sectionStyle := m.sectionStyle()
+
+	b.WriteString(titleStyle.Render("Bubbletea Components"))
+	b.WriteString("\n\n")
+
+	primaryHex := m.getTextColor("text.primary", "#c0caf5")
+	mutedHex := m.getTextColor("text.muted", "#565f89")
+	accentHex := m.getAccentColor("#7aa2f7")
+	successHex := m.getStatusColor("status.success", "#9ece6a")
+	sunkenHex := m.getSurfaceColor("surface.background.sunken", "#16161e")
+	borderHex := m.getBorderColor("#565f89")
+
+	// Spinner section.
+	b.WriteString(sectionStyle.Render("Spinner"))
+	b.WriteString("\n\n")
+
+	spinnerStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(accentHex))
+	labelStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(primaryHex))
+
+	// Simulated spinner frames.
+	spinnerFrames := []string{"⠋", "⠙", "⠹", "⠸", "⠼", "⠴", "⠦", "⠧", "⠇", "⠏"}
+	b.WriteString("  ")
+	b.WriteString(spinnerStyle.Render(spinnerFrames[0]))
+	b.WriteString(" ")
+	b.WriteString(labelStyle.Render("Loading..."))
+	b.WriteString("\n")
+	b.WriteString("  ")
+	b.WriteString(spinnerStyle.Render(spinnerFrames[3]))
+	b.WriteString(" ")
+	b.WriteString(labelStyle.Render("Fetching data..."))
+	b.WriteString("\n")
+	b.WriteString("  ")
+	b.WriteString(spinnerStyle.Render(spinnerFrames[6]))
+	b.WriteString(" ")
+	b.WriteString(labelStyle.Render("Processing..."))
+	b.WriteString("\n\n")
+
+	// Progress bar section.
+	b.WriteString(sectionStyle.Render("Progress Bar"))
+	b.WriteString("\n\n")
+
+	progressFillStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(successHex))
+	progressEmptyStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(mutedHex))
+	percentStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(primaryHex))
+
+	// Progress bar examples at different percentages.
+	progressExamples := []struct {
+		percent int
+		label   string
+	}{
+		{25, "Downloading"},
+		{67, "Installing"},
+		{100, "Complete"},
+	}
+
+	barWidth := 30
+	for _, ex := range progressExamples {
+		filled := barWidth * ex.percent / 100
+		empty := barWidth - filled
+
+		b.WriteString("  ")
+		b.WriteString(labelStyle.Render(ex.label))
+		b.WriteString("\n  ")
+		b.WriteString(progressFillStyle.Render(strings.Repeat("█", filled)))
+		b.WriteString(progressEmptyStyle.Render(strings.Repeat("░", empty)))
+		b.WriteString(" ")
+		b.WriteString(percentStyle.Render(itoa(ex.percent) + "%"))
+		b.WriteString("\n\n")
+	}
+
+	// Text Input section.
+	b.WriteString(sectionStyle.Render("Text Input"))
+	b.WriteString("\n\n")
+
+	inputStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(sunkenHex)).
+		Foreground(lipgloss.Color(primaryHex)).
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color(borderHex)).
+		Padding(0, 1).
+		Width(40)
+
+	cursorStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(accentHex)).
+		Foreground(lipgloss.Color(sunkenHex))
+
+	// Empty input with placeholder.
+	placeholderStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(mutedHex))
+	b.WriteString(inputStyle.Render(placeholderStyle.Render("Enter your name...")))
+	b.WriteString("\n\n")
+
+	// Input with text and cursor.
+	inputContent := "Hello, World" + cursorStyle.Render(" ")
+	b.WriteString(inputStyle.Render(inputContent))
+	b.WriteString(" (focused)")
+	b.WriteString("\n")
+
+	return b.String()
+}
+
+// renderHuh renders the Huh Forms page with form component examples.
+func (m Model) renderHuh() string {
+	var b strings.Builder
+
+	titleStyle := m.titleStyle()
+	sectionStyle := m.sectionStyle()
+
+	b.WriteString(titleStyle.Render("Huh Forms"))
+	b.WriteString("\n\n")
+
+	primaryHex := m.getTextColor("text.primary", "#c0caf5")
+	mutedHex := m.getTextColor("text.muted", "#565f89")
+	accentHex := m.getAccentColor("#7aa2f7")
+	successHex := m.getStatusColor("status.success", "#9ece6a")
+	sunkenHex := m.getSurfaceColor("surface.background.sunken", "#16161e")
+	raisedHex := m.getSurfaceColor("surface.background.raised", "#24283b")
+	borderHex := m.getBorderColor("#565f89")
+	borderFocusHex := m.getBorderFocusColor("#7aa2f7")
+
+	// Text Input section.
+	b.WriteString(sectionStyle.Render("Text Input"))
+	b.WriteString("\n\n")
+
+	labelStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(primaryHex)).Bold(true)
+	placeholderStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(mutedHex))
+
+	inputStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(sunkenHex)).
+		Foreground(lipgloss.Color(primaryHex)).
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color(borderHex)).
+		Padding(0, 1).
+		Width(40)
+
+	inputFocusedStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(sunkenHex)).
+		Foreground(lipgloss.Color(primaryHex)).
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color(borderFocusHex)).
+		Padding(0, 1).
+		Width(40)
+
+	// Name field.
+	b.WriteString(labelStyle.Render("What is your name?"))
+	b.WriteString("\n")
+	b.WriteString(inputFocusedStyle.Render("Alice"))
+	b.WriteString("\n\n")
+
+	// Email field.
+	b.WriteString(labelStyle.Render("Email address"))
+	b.WriteString("\n")
+	b.WriteString(inputStyle.Render(placeholderStyle.Render("you@example.com")))
+	b.WriteString("\n\n")
+
+	// Select section.
+	b.WriteString(sectionStyle.Render("Select"))
+	b.WriteString("\n\n")
+
+	b.WriteString(labelStyle.Render("Choose your editor"))
+	b.WriteString("\n")
+
+	selectionHex := m.getSurfaceColor("surface.background.selection", "#33467c")
+
+	listItemStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(primaryHex))
+	listSelectedStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(selectionHex)).
+		Foreground(lipgloss.Color(accentHex)).
+		Bold(true)
+
+	editors := []string{"Neovim", "VS Code", "Emacs", "Helix"}
+	for i, editor := range editors {
+		prefix := "  "
+		if i == 0 {
+			// Selected item.
+			prefix = "> "
+			b.WriteString(listSelectedStyle.Render(prefix + editor))
+		} else {
+			b.WriteString(listItemStyle.Render(prefix + editor))
+		}
+		b.WriteString("\n")
+	}
+	b.WriteString("\n")
+
+	// Confirm section.
+	b.WriteString(sectionStyle.Render("Confirm"))
+	b.WriteString("\n\n")
+
+	b.WriteString(labelStyle.Render("Are you sure you want to continue?"))
+	b.WriteString("\n\n")
+
+	// Yes/No buttons.
+	yesStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(successHex)).
+		Foreground(lipgloss.Color(sunkenHex)).
+		Padding(0, 2).
+		Bold(true)
+
+	noStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(raisedHex)).
+		Foreground(lipgloss.Color(primaryHex)).
+		Padding(0, 2)
+
+	b.WriteString("  ")
+	b.WriteString(yesStyle.Render("Yes"))
+	b.WriteString("  ")
+	b.WriteString(noStyle.Render("No"))
+	b.WriteString("\n")
+
+	return b.String()
+}
+
+// renderBubbles renders the Bubbles Components page with list, table, and viewport examples.
+func (m Model) renderBubbles() string {
+	var b strings.Builder
+
+	titleStyle := m.titleStyle()
+	sectionStyle := m.sectionStyle()
+
+	b.WriteString(titleStyle.Render("Bubbles Components"))
+	b.WriteString("\n\n")
+
+	primaryHex := m.getTextColor("text.primary", "#c0caf5")
+	secondaryHex := m.getTextColor("text.secondary", "#a9b1d6")
+	mutedHex := m.getTextColor("text.muted", "#565f89")
+	accentHex := m.getAccentColor("#7aa2f7")
+	sunkenHex := m.getSurfaceColor("surface.background.sunken", "#16161e")
+	selectionHex := m.getSurfaceColor("surface.background.selection", "#33467c")
+	borderHex := m.getBorderColor("#565f89")
+
+	// List section.
+	b.WriteString(sectionStyle.Render("List"))
+	b.WriteString("\n\n")
+
+	listTitleStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(accentHex)).
+		Bold(true)
+	listItemStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(primaryHex))
+	listSelectedStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(selectionHex)).
+		Foreground(lipgloss.Color(accentHex)).
+		Bold(true)
+	listDescStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(mutedHex))
+
+	b.WriteString(listTitleStyle.Render("  Recent Files"))
+	b.WriteString("\n\n")
+
+	listItems := []struct {
+		name string
+		desc string
+	}{
+		{"main.go", "Last modified 2 hours ago"},
+		{"config.yaml", "Last modified yesterday"},
+		{"README.md", "Last modified 3 days ago"},
+		{"go.mod", "Last modified 1 week ago"},
+	}
+
+	for i, item := range listItems {
+		if i == 1 {
+			// Selected item.
+			b.WriteString(listSelectedStyle.Render("  > " + item.name))
+			b.WriteString("\n")
+			b.WriteString(listDescStyle.Render("    " + item.desc))
+		} else {
+			b.WriteString(listItemStyle.Render("    " + item.name))
+			b.WriteString("\n")
+			b.WriteString(listDescStyle.Render("    " + item.desc))
+		}
+		b.WriteString("\n")
+	}
+	b.WriteString("\n")
+
+	// Table section.
+	b.WriteString(sectionStyle.Render("Table"))
+	b.WriteString("\n\n")
+
+	headerStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(secondaryHex)).
+		Bold(true).
+		Width(12)
+	cellStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(primaryHex)).
+		Width(12)
+	rowSelectedStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(selectionHex))
+
+	// Table header.
+	b.WriteString("  ")
+	b.WriteString(headerStyle.Render("Name"))
+	b.WriteString(headerStyle.Render("Size"))
+	b.WriteString(headerStyle.Render("Modified"))
+	b.WriteString("\n")
+
+	// Separator.
+	sepStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(mutedHex))
+	b.WriteString("  ")
+	b.WriteString(sepStyle.Render(strings.Repeat("-", 36)))
+	b.WriteString("\n")
+
+	// Table rows.
+	tableData := []struct {
+		name     string
+		size     string
+		modified string
+		selected bool
+	}{
+		{"app.go", "2.4 KB", "Today", false},
+		{"util.go", "1.1 KB", "Yesterday", true},
+		{"test.go", "856 B", "Last week", false},
+	}
+
+	for _, row := range tableData {
+		b.WriteString("  ")
+		rowContent := cellStyle.Render(row.name) +
+			cellStyle.Render(row.size) +
+			cellStyle.Render(row.modified)
+		if row.selected {
+			b.WriteString(rowSelectedStyle.Render(rowContent))
+		} else {
+			b.WriteString(rowContent)
+		}
+		b.WriteString("\n")
+	}
+	b.WriteString("\n")
+
+	// Viewport section.
+	b.WriteString(sectionStyle.Render("Viewport"))
+	b.WriteString("\n\n")
+
+	viewportStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(sunkenHex)).
+		Border(lipgloss.RoundedBorder()).
+		BorderForeground(lipgloss.Color(borderHex)).
+		Padding(1, 2).
+		Width(46).
+		Height(8)
+
+	contentStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(primaryHex))
+	scrollIndicator := lipgloss.NewStyle().Foreground(lipgloss.Color(mutedHex))
+
+	viewportContent := contentStyle.Render("This is a scrollable viewport component.\n") +
+		contentStyle.Render("It can display long content that exceeds\n") +
+		contentStyle.Render("the visible area. Users can scroll up and\n") +
+		contentStyle.Render("down to view more content.\n") +
+		scrollIndicator.Render("\n[3/10 lines]")
+
+	b.WriteString(viewportStyle.Render(viewportContent))
 	b.WriteString("\n")
 
 	return b.String()

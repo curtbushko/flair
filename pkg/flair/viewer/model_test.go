@@ -64,11 +64,104 @@ func TestModel_TabSwitchesPages(t *testing.T) {
 		t.Errorf("after Tab: page = %v, want PageDataDisplay", m.currentPage)
 	}
 
+	// Tab to bubbletea page.
+	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
+	m = updated.(Model)
+	if m.currentPage != PageBubbletea {
+		t.Errorf("after Tab: page = %v, want PageBubbletea", m.currentPage)
+	}
+
+	// Tab to huh page.
+	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
+	m = updated.(Model)
+	if m.currentPage != PageHuh {
+		t.Errorf("after Tab: page = %v, want PageHuh", m.currentPage)
+	}
+
+	// Tab to bubbles page.
+	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
+	m = updated.(Model)
+	if m.currentPage != PageBubbles {
+		t.Errorf("after Tab: page = %v, want PageBubbles", m.currentPage)
+	}
+
 	// Tab wraps back to text status.
 	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
 	m = updated.(Model)
 	if m.currentPage != PageTextStatus {
 		t.Errorf("after Tab (wrap): page = %v, want PageTextStatus", m.currentPage)
+	}
+}
+
+// TestUpdate_TabCyclesBubbletea verifies Tab from DataDisplay goes to Bubbletea.
+func TestUpdate_TabCyclesBubbletea(t *testing.T) {
+	m := NewModel(Options{
+		Themes: []string{"theme1"},
+	})
+
+	// Set to PageDataDisplay.
+	m.currentPage = PageDataDisplay
+
+	// Tab should go to PageBubbletea.
+	updated, _ := m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
+	m = updated.(Model)
+
+	if m.currentPage != PageBubbletea {
+		t.Errorf("after Tab from DataDisplay: page = %v, want PageBubbletea", m.currentPage)
+	}
+}
+
+// TestUpdate_TabCyclesHuh verifies Tab from Bubbletea goes to Huh.
+func TestUpdate_TabCyclesHuh(t *testing.T) {
+	m := NewModel(Options{
+		Themes: []string{"theme1"},
+	})
+
+	// Set to PageBubbletea.
+	m.currentPage = PageBubbletea
+
+	// Tab should go to PageHuh.
+	updated, _ := m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
+	m = updated.(Model)
+
+	if m.currentPage != PageHuh {
+		t.Errorf("after Tab from Bubbletea: page = %v, want PageHuh", m.currentPage)
+	}
+}
+
+// TestUpdate_TabCyclesBubbles verifies Tab from Huh goes to Bubbles.
+func TestUpdate_TabCyclesBubbles(t *testing.T) {
+	m := NewModel(Options{
+		Themes: []string{"theme1"},
+	})
+
+	// Set to PageHuh.
+	m.currentPage = PageHuh
+
+	// Tab should go to PageBubbles.
+	updated, _ := m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
+	m = updated.(Model)
+
+	if m.currentPage != PageBubbles {
+		t.Errorf("after Tab from Huh: page = %v, want PageBubbles", m.currentPage)
+	}
+}
+
+// TestUpdate_TabWrapsFromBubbles verifies Tab from Bubbles wraps to TextStatus.
+func TestUpdate_TabWrapsFromBubbles(t *testing.T) {
+	m := NewModel(Options{
+		Themes: []string{"theme1"},
+	})
+
+	// Set to PageBubbles (last page).
+	m.currentPage = PageBubbles
+
+	// Tab should wrap to PageTextStatus.
+	updated, _ := m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
+	m = updated.(Model)
+
+	if m.currentPage != PageTextStatus {
+		t.Errorf("after Tab from Bubbles: page = %v, want PageTextStatus", m.currentPage)
 	}
 }
 
