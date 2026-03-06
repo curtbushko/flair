@@ -329,43 +329,6 @@ func TestVimGenerator_SpColor(t *testing.T) {
 	}
 }
 
-// sampleBufferlineTheme returns a BufferlineTheme with all 15 highlight groups populated.
-func sampleBufferlineTheme() *ports.BufferlineTheme {
-	fillFg := domain.Color{R: 0xc0, G: 0xca, B: 0xf5}
-	fillBg := domain.Color{R: 0x16, G: 0x16, B: 0x1e}
-	bgFg := domain.Color{R: 0xa9, G: 0xb1, B: 0xd6}
-	bgBg := domain.Color{R: 0x1a, G: 0x1b, B: 0x26}
-	visibleFg := domain.Color{R: 0x73, G: 0xda, B: 0xca}
-	visibleBg := domain.Color{R: 0x24, G: 0x28, B: 0x3b}
-	selectedFg := domain.Color{R: 0x1a, G: 0x1b, B: 0x26}
-	selectedBg := domain.Color{R: 0x7a, G: 0xa2, B: 0xf7}
-	sepFg := domain.Color{R: 0x3b, G: 0x40, B: 0x48}
-	indicatorFg := domain.Color{R: 0x7a, G: 0xa2, B: 0xf7}
-	modifiedFg := domain.Color{R: 0xe0, G: 0xaf, B: 0x68}
-	errorFg := domain.Color{R: 0xf7, G: 0x76, B: 0x8e}
-	warningFg := domain.Color{R: 0xe0, G: 0xaf, B: 0x68}
-	infoFg := domain.Color{R: 0x0d, G: 0xb9, B: 0xd7}
-	hintFg := domain.Color{R: 0x1a, G: 0xbc, B: 0x9c}
-
-	return &ports.BufferlineTheme{
-		Fill:              ports.BufferlineColors{Fg: &fillFg, Bg: &fillBg},
-		Background:        ports.BufferlineColors{Fg: &bgFg, Bg: &bgBg},
-		BufferVisible:     ports.BufferlineColors{Fg: &visibleFg, Bg: &visibleBg},
-		BufferSelected:    ports.BufferlineColors{Fg: &selectedFg, Bg: &selectedBg, Bold: true},
-		Separator:         ports.BufferlineColors{Fg: &sepFg, Bg: &bgBg},
-		SeparatorVisible:  ports.BufferlineColors{Fg: &sepFg, Bg: &visibleBg},
-		SeparatorSelected: ports.BufferlineColors{Fg: &sepFg, Bg: &selectedBg},
-		IndicatorSelected: ports.BufferlineColors{Fg: &indicatorFg, Bg: &selectedBg},
-		Modified:          ports.BufferlineColors{Fg: &modifiedFg, Bg: &bgBg},
-		ModifiedVisible:   ports.BufferlineColors{Fg: &modifiedFg, Bg: &visibleBg},
-		ModifiedSelected:  ports.BufferlineColors{Fg: &modifiedFg, Bg: &selectedBg},
-		Error:             ports.BufferlineColors{Fg: &errorFg},
-		Warning:           ports.BufferlineColors{Fg: &warningFg},
-		Info:              ports.BufferlineColors{Fg: &infoFg},
-		Hint:              ports.BufferlineColors{Fg: &hintFg},
-	}
-}
-
 // TestVimGenerator_BufferlineHighlightGroups verifies that BufferLine highlight
 // groups are set via vim.api.nvim_set_hl (not bufferline.setup which would
 // override user config).

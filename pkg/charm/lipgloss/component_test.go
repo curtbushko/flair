@@ -43,6 +43,7 @@ func TestComponent_Button(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.Button.Render("test")
 	if rendered == "" {
@@ -86,6 +87,7 @@ func TestComponent_ButtonFocused(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.ButtonFocused.Render("test")
 	if rendered == "" {
@@ -128,6 +130,7 @@ func TestComponent_Input(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.Input.Render("test")
 	if rendered == "" {
@@ -170,6 +173,7 @@ func TestComponent_InputFocused(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.InputFocused.Render("test")
 	if rendered == "" {
@@ -212,6 +216,7 @@ func TestComponent_ListItem(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.ListItem.Render("test")
 	if rendered == "" {
@@ -254,6 +259,7 @@ func TestComponent_ListSelected(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.ListSelected.Render("test")
 	if rendered == "" {
@@ -296,6 +302,7 @@ func TestComponent_Table(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.Table.Render("test")
 	if rendered == "" {
@@ -338,6 +345,7 @@ func TestComponent_TableHeader(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.TableHeader.Render("test")
 	if rendered == "" {
@@ -380,6 +388,7 @@ func TestComponent_Dialog(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.Dialog.Render("test")
 	if rendered == "" {

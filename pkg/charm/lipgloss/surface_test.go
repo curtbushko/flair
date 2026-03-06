@@ -32,6 +32,7 @@ func TestSurface_Background(t *testing.T) {
 	// Then: Background style has background color #1a1b26
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// Verify background style via builder function renders non-empty
@@ -73,6 +74,7 @@ func TestSurface_Raised(t *testing.T) {
 	// Then: Raised style has background color #1f2335
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// Verify raised style via builder function renders non-empty

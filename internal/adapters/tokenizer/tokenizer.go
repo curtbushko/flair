@@ -140,10 +140,10 @@ func deriveSyntax(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("syntax.type", domain.Token{Color: p.Base(0x0A)})
 	ts.Set("syntax.number", domain.Token{Color: p.Base(0x09)})
 	ts.Set("syntax.tag", domain.Token{Color: p.Base(0x08)})
-	ts.Set("syntax.property", domain.Token{Color: p.Base(0x15)})    // bright cyan (was 0x0B)
+	ts.Set("syntax.property", domain.Token{Color: p.Base(0x15)}) // bright cyan (was 0x0B)
 	ts.Set("syntax.parameter", domain.Token{Color: p.Base(0x0A)})
 	ts.Set("syntax.regexp", domain.Token{Color: p.Base(0x0C)})
-	ts.Set("syntax.escape", domain.Token{Color: p.Base(0x17)})      // bright purple (was 0x0E)
+	ts.Set("syntax.escape", domain.Token{Color: p.Base(0x17)}) // bright purple (was 0x0E)
 	ts.Set("syntax.constructor", domain.Token{Color: p.Base(0x17)})
 
 	// New tokens for color variety

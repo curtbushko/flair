@@ -42,6 +42,7 @@ func TestBorder_Default(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.Border.Render("test")
 	if rendered == "" {
@@ -84,6 +85,7 @@ func TestBorder_Focus(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.BorderFocus.Render("test")
 	if rendered == "" {
@@ -126,6 +128,7 @@ func TestBorder_Muted(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.BorderMuted.Render("test")
 	if rendered == "" {

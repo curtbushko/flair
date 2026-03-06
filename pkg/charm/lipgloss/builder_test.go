@@ -37,6 +37,7 @@ func TestNewStyles_CreatesStyles(t *testing.T) {
 	// Then: Returns *Styles with non-zero Background, Text styles
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// Check that Background style renders (non-zero)
@@ -125,6 +126,7 @@ tokens:
 	// Then: Returns Styles based on the selected theme
 	if styles == nil {
 		t.Fatal("DefaultFrom returned nil for a valid config")
+		return
 	}
 
 	// Verify styles have been configured

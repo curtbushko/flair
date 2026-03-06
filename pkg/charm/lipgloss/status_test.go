@@ -32,6 +32,7 @@ func TestStatus_Error(t *testing.T) {
 	// Then: Error style has foreground color #f7768e
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// Verify error style via builder function renders non-empty

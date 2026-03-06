@@ -158,10 +158,10 @@ func TestVimMapper_TreesitterHighlights(t *testing.T) {
 		{"@constant", colorPtr("#ff9e64"), false, false, ""},
 		{"@operator", colorPtr("#8db6fa"), false, false, ""},
 		{"@number", colorPtr("#ff9e64"), false, false, ""},
-		{"@string.escape", colorPtr("#c8acf8"), false, false, ""},   // syntax.escape = base17
+		{"@string.escape", colorPtr("#c8acf8"), false, false, ""}, // syntax.escape = base17
 		{"@string.regex", colorPtr("#7dcfff"), false, false, ""},
 		{"@tag", colorPtr("#f7768e"), false, false, ""},
-		{"@property", colorPtr("#97d8f8"), false, false, ""},        // syntax.property = base15
+		{"@property", colorPtr("#97d8f8"), false, false, ""}, // syntax.property = base15
 		{"@parameter", colorPtr("#e0af68"), false, false, ""},
 		{"@constructor", colorPtr("#c8acf8"), false, false, ""},
 		{"@function.builtin", colorPtr("#7dcfff"), false, false, ""}, // syntax.function.builtin = base0C
@@ -932,8 +932,8 @@ func TestVimMapper_BufferlineModified(t *testing.T) {
 		colors ports.BufferlineColors
 		wantBg *domain.Color
 	}{
-		{"Modified", bl.Modified, colorPtr("#1a1b26")},             // surface.background = base00
-		{"ModifiedVisible", bl.ModifiedVisible, colorPtr("#1a1b26")}, // surface.background = base00
+		{"Modified", bl.Modified, colorPtr("#1a1b26")},                 // surface.background = base00
+		{"ModifiedVisible", bl.ModifiedVisible, colorPtr("#1a1b26")},   // surface.background = base00
 		{"ModifiedSelected", bl.ModifiedSelected, colorPtr("#a9b1d6")}, // statusline.a.bg = base04
 	}
 

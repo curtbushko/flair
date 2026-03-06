@@ -33,6 +33,7 @@ func TestText_Primary(t *testing.T) {
 	// Then: Text style has foreground color #c0caf5
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// Verify text style via builder function renders non-empty
@@ -132,6 +133,7 @@ func TestText_Inverse(t *testing.T) {
 	// Then: Inverse has text.inverse as foreground
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// Verify inverse style via builder function renders non-empty

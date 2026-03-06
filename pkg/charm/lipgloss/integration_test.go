@@ -81,6 +81,7 @@ func TestIntegration_TokyoNightStyles(t *testing.T) {
 	// Then: All style fields are configured, Render() produces non-empty output
 	if styles == nil {
 		t.Fatal("NewStyles returned nil for a complete Tokyo Night theme")
+		return
 	}
 
 	// Test all surface styles render
@@ -209,6 +210,7 @@ func TestStyles_RenderOutput(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// When: Call styles.Error.Render('Error message')
@@ -233,6 +235,7 @@ func TestStyles_RenderOutput_AllStyles(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// Test that various styles produce output containing the original text
@@ -278,6 +281,7 @@ func TestNewStyles_MissingTokensFallback(t *testing.T) {
 	// Then: No panic, styles are created successfully
 	if styles == nil {
 		t.Fatal("NewStyles returned nil for minimal theme")
+		return
 	}
 
 	// Styles that use fallback colors should still render
@@ -326,6 +330,7 @@ func TestStyles_AllNonZero(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// When: Check each style field in Styles struct
@@ -372,6 +377,7 @@ func TestStyles_EndToEnd_ThemeLoadToRender(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 
 	// Then: Can build a complete UI layout

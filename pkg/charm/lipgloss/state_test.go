@@ -44,6 +44,7 @@ func TestState_Hover(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.Hover.Render("test")
 	if rendered == "" {
@@ -88,6 +89,7 @@ func TestState_Active(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.Active.Render("test")
 	if rendered == "" {
@@ -132,6 +134,7 @@ func TestState_Disabled(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.Disabled.Render("test")
 	if rendered == "" {
@@ -176,6 +179,7 @@ func TestState_Selected(t *testing.T) {
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
+		return
 	}
 	rendered = styles.Selected.Render("test")
 	if rendered == "" {
