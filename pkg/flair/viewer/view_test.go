@@ -216,3 +216,92 @@ func TestView_HelpFooter(t *testing.T) {
 		}
 	}
 }
+
+// TestView_HelpFooterAtBottom verifies help footer is pinned to window bottom.
+func TestView_HelpFooterAtBottom(t *testing.T) {
+	m := NewModel(Options{
+		Themes: []string{"test-theme"},
+	})
+	m.width = 120
+	m.height = 30
+
+	view := m.View()
+
+	// Count lines in the view.
+	lines := strings.Split(view, "\n")
+
+	// The view should use the full height (minus 1 for the help line).
+	// Last non-empty line should contain help hints.
+	lastLine := ""
+	for i := len(lines) - 1; i >= 0; i-- {
+		if strings.TrimSpace(lines[i]) != "" {
+			lastLine = lines[i]
+			break
+		}
+	}
+
+	if !strings.Contains(lastLine, "Tab:") {
+		t.Errorf("help footer should be at bottom, got last line: %q", lastLine)
+	}
+
+	// View should have approximately height lines (allow some variance for borders).
+	if len(lines) < m.height-2 {
+		t.Errorf("view has %d lines, expected at least %d to fill window", len(lines), m.height-2)
+	}
+}
+
+// TestView_StatusBarSimulation verifies status bar is rendered with powerline style.
+func TestView_StatusBarSimulation(t *testing.T) {
+	m := NewModel(Options{
+		Themes: []string{"test-theme"},
+	})
+	m.currentPage = PageInteractive
+	m.width = 120
+	m.height = 40
+	m.tokens = TokenData{
+		Text: map[string]string{
+			"text.primary": "#c0caf5",
+		},
+		Surface: map[string]string{
+			"surface.background": "#1a1b26",
+		},
+		Statusline: map[string]string{
+			"statusline.a.bg": "#7aa2f7",
+			"statusline.a.fg": "#1a1b26",
+			"statusline.b.bg": "#3b4261",
+			"statusline.b.fg": "#c0caf5",
+			"statusline.c.bg": "#24283b",
+			"statusline.c.fg": "#a9b1d6",
+		},
+	}
+
+	view := m.View()
+
+	// Should contain status bar section.
+	if !strings.Contains(view, "Status Bar") {
+		t.Error("interactive page missing Status Bar section")
+	}
+
+	// Should contain powerline separator characters.
+	if !strings.Contains(view, "") {
+		t.Error("status bar missing powerline separator")
+	}
+
+	// Should contain sample content like mode indicator.
+	if !strings.Contains(view, "NORMAL") || !strings.Contains(view, "main") {
+		t.Error("status bar missing sample content (NORMAL mode or main branch)")
+	}
+}
+
+// TestTokenData_HasStatuslineField verifies TokenData includes Statusline map.
+func TestTokenData_HasStatuslineField(t *testing.T) {
+	td := TokenData{
+		Statusline: map[string]string{
+			"statusline.a.bg": "#7aa2f7",
+		},
+	}
+
+	if td.Statusline["statusline.a.bg"] != "#7aa2f7" {
+		t.Error("TokenData.Statusline field not working correctly")
+	}
+}

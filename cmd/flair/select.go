@@ -168,11 +168,12 @@ func (l *appThemeLoader) LoadPalette(name string) (viewer.PaletteData, error) {
 // LoadTokens returns semantic tokens for a theme.
 func (l *appThemeLoader) LoadTokens(name string) (viewer.TokenData, error) {
 	td := viewer.TokenData{
-		Surface: make(map[string]string),
-		Text:    make(map[string]string),
-		Status:  make(map[string]string),
-		Syntax:  make(map[string]string),
-		Diff:    make(map[string]string),
+		Surface:    make(map[string]string),
+		Text:       make(map[string]string),
+		Status:     make(map[string]string),
+		Syntax:     make(map[string]string),
+		Diff:       make(map[string]string),
+		Statusline: make(map[string]string),
 	}
 
 	// Try to read tokens.yaml.
@@ -207,6 +208,8 @@ func (l *appThemeLoader) LoadTokens(name string) (viewer.TokenData, error) {
 			td.Syntax[path] = hex
 		case strings.HasPrefix(path, "diff."):
 			td.Diff[path] = hex
+		case strings.HasPrefix(path, "statusline."):
+			td.Statusline[path] = hex
 		}
 	}
 
@@ -246,11 +249,12 @@ func (l *appThemeLoader) deriveTokensFromPalette(name string, td viewer.TokenDat
 // tokenSetToTokenData converts a domain.TokenSet to viewer.TokenData.
 func (l *appThemeLoader) tokenSetToTokenData(ts *domain.TokenSet) viewer.TokenData {
 	td := viewer.TokenData{
-		Surface: make(map[string]string),
-		Text:    make(map[string]string),
-		Status:  make(map[string]string),
-		Syntax:  make(map[string]string),
-		Diff:    make(map[string]string),
+		Surface:    make(map[string]string),
+		Text:       make(map[string]string),
+		Status:     make(map[string]string),
+		Syntax:     make(map[string]string),
+		Diff:       make(map[string]string),
+		Statusline: make(map[string]string),
 	}
 
 	for _, path := range ts.Paths() {
@@ -271,6 +275,8 @@ func (l *appThemeLoader) tokenSetToTokenData(ts *domain.TokenSet) viewer.TokenDa
 			td.Syntax[path] = hex
 		case strings.HasPrefix(path, "diff."):
 			td.Diff[path] = hex
+		case strings.HasPrefix(path, "statusline."):
+			td.Statusline[path] = hex
 		}
 	}
 

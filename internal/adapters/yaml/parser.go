@@ -6,6 +6,7 @@ package yaml
 import (
 	"fmt"
 	"io"
+	"strings"
 
 	"github.com/curtbushko/flair/internal/domain"
 
@@ -89,11 +90,16 @@ func (p *Parser) Parse(r io.Reader) (*domain.Palette, error) {
 }
 
 // parseOverrides converts the YAML override map to domain.TokenOverride map.
+// Underscores in YAML keys are converted to dots to match the token inventory.
+// This allows YAML files to use unquoted keys (e.g., statusline_a_bg instead of "statusline.a.bg").
 // Returns a *domain.ParseError if any override has an invalid hex color.
 func parseOverrides(rawOverrides map[string]overrideYAML) (map[string]domain.TokenOverride, error) {
 	overrides := make(map[string]domain.TokenOverride, len(rawOverrides))
 
-	for tokenPath, raw := range rawOverrides {
+	for yamlKey, raw := range rawOverrides {
+		// Convert underscores to dots for token path matching.
+		tokenPath := strings.ReplaceAll(yamlKey, "_", ".")
+
 		override, err := domain.NewTokenOverride(
 			raw.Color,
 			raw.Bold,
@@ -104,8 +110,8 @@ func parseOverrides(rawOverrides map[string]overrideYAML) (map[string]domain.Tok
 		)
 		if err != nil {
 			return nil, &domain.ParseError{
-				Field:   fmt.Sprintf("overrides.%s.color", tokenPath),
-				Message: fmt.Sprintf("invalid hex color %q for override %s", raw.Color, tokenPath),
+				Field:   fmt.Sprintf("overrides.%s.color", yamlKey),
+				Message: fmt.Sprintf("invalid hex color %q for override %s", raw.Color, yamlKey),
 				Cause:   err,
 			}
 		}

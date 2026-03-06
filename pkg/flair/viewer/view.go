@@ -29,9 +29,16 @@ func (m Model) View() string {
 		rightWidth = 40
 	}
 
-	// Style the panels.
+	// Calculate content height (reserve 1 line for help footer).
+	contentHeight := m.height - 1
+	if contentHeight < 10 {
+		contentHeight = 10
+	}
+
+	// Style the panels with fixed height.
 	leftStyle := lipgloss.NewStyle().
 		Width(leftWidth).
+		Height(contentHeight).
 		BorderRight(true).
 		BorderStyle(lipgloss.NormalBorder()).
 		BorderForeground(lipgloss.Color("240")).
@@ -39,6 +46,7 @@ func (m Model) View() string {
 
 	rightStyle := lipgloss.NewStyle().
 		Width(rightWidth).
+		Height(contentHeight).
 		PaddingLeft(2)
 
 	// Join panels horizontally.
@@ -48,12 +56,13 @@ func (m Model) View() string {
 		rightStyle.Render(rightPanel),
 	)
 
-	// Add help footer.
+	// Add help footer pinned at bottom.
 	help := m.renderHelp()
 	return layout + "\n" + help
 }
 
-// renderThemeList renders the theme list for the left panel.
+// renderThemeList renders the theme list for the left panel with scrolling.
+// The cursor stays fixed at line 4 from the top, and theme names scroll past it.
 func (m Model) renderThemeList() string {
 	var b strings.Builder
 
@@ -61,7 +70,28 @@ func (m Model) renderThemeList() string {
 	b.WriteString(titleStyle.Render("Styles"))
 	b.WriteString("\n\n")
 
-	for i, theme := range m.themes {
+	// Calculate visible window - reserve lines for title, spacing, and help.
+	visibleLines := m.height - 6
+	if visibleLines < 5 {
+		visibleLines = 5
+	}
+
+	// Fixed cursor position (4th line, 0-indexed = 3).
+	const cursorLine = 3
+
+	// Calculate scroll offset to keep cursor at fixed position.
+	// The item at m.cursor should appear at cursorLine.
+	start := m.cursor - cursorLine
+	if start < 0 {
+		start = 0
+	}
+	end := start + visibleLines
+	if end > len(m.themes) {
+		end = len(m.themes)
+	}
+
+	for i := start; i < end; i++ {
+		theme := m.themes[i]
 		// Build prefix: cursor indicator + selection indicator
 		cursor := " "
 		if i == m.cursor {
@@ -92,7 +122,34 @@ func (m Model) renderThemeList() string {
 		b.WriteString("\n")
 	}
 
+	// Show scroll indicator if there are more items.
+	if len(m.themes) > visibleLines {
+		mutedStyle := lipgloss.NewStyle().Foreground(lipgloss.Color("240"))
+		indicator := ""
+		if start > 0 {
+			indicator += "↑ "
+		}
+		if end < len(m.themes) {
+			indicator += "↓ "
+		}
+		indicator += "(" + itoa(m.cursor+1) + "/" + itoa(len(m.themes)) + ")"
+		b.WriteString(mutedStyle.Render(indicator))
+	}
+
 	return b.String()
+}
+
+// itoa converts int to string without importing strconv.
+func itoa(n int) string {
+	if n == 0 {
+		return "0"
+	}
+	var digits []byte
+	for n > 0 {
+		digits = append([]byte{byte('0' + n%10)}, digits...)
+		n /= 10
+	}
+	return string(digits)
 }
 
 // renderTextStatus renders the Text & Status page with realistic content.
@@ -258,6 +315,13 @@ func (m Model) renderInteractive() string {
 		}
 		b.WriteString("\n")
 	}
+	b.WriteString("\n")
+
+	// Status bar simulation section.
+	b.WriteString(sectionStyle.Render("Status Bar"))
+	b.WriteString("\n\n")
+	b.WriteString(m.renderStatusBar())
+	b.WriteString("\n")
 
 	return b.String()
 }
@@ -408,6 +472,66 @@ func (m Model) renderHelp() string {
 	return helpStyle.Render(strings.Join(hints, " | "))
 }
 
+// renderStatusBar renders a simulated statusline with powerline separators.
+// Styled like starship/lualine with 3 segments: A (mode), B (branch), C (file).
+func (m Model) renderStatusBar() string {
+	var b strings.Builder
+
+	// Get statusline colors with fallbacks.
+	aBg := m.getStatuslineColor("statusline.a.bg", "#7aa2f7")
+	aFg := m.getStatuslineColor("statusline.a.fg", "#1a1b26")
+	bBg := m.getStatuslineColor("statusline.b.bg", "#3b4261")
+	bFg := m.getStatuslineColor("statusline.b.fg", "#c0caf5")
+	cBg := m.getStatuslineColor("statusline.c.bg", "#24283b")
+	cFg := m.getStatuslineColor("statusline.c.fg", "#a9b1d6")
+
+	// Powerline separator character.
+	sep := ""
+
+	// Section A: Mode indicator (bold background).
+	aStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(aBg)).
+		Foreground(lipgloss.Color(aFg)).
+		Bold(true).
+		Padding(0, 1)
+
+	// Separator A->B.
+	sepABStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(bBg)).
+		Foreground(lipgloss.Color(aBg))
+
+	// Section B: Branch info.
+	bStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(bBg)).
+		Foreground(lipgloss.Color(bFg)).
+		Padding(0, 1)
+
+	// Separator B->C.
+	sepBCStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(cBg)).
+		Foreground(lipgloss.Color(bBg))
+
+	// Section C: File/path info.
+	cStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(cBg)).
+		Foreground(lipgloss.Color(cFg)).
+		Padding(0, 1)
+
+	// Separator C->end.
+	sepCEndStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(cBg))
+
+	// Build the status bar.
+	b.WriteString(aStyle.Render(" NORMAL"))
+	b.WriteString(sepABStyle.Render(sep))
+	b.WriteString(bStyle.Render(" main"))
+	b.WriteString(sepBCStyle.Render(sep))
+	b.WriteString(cStyle.Render(" src/main.go"))
+	b.WriteString(sepCEndStyle.Render(sep))
+
+	return b.String()
+}
+
 // Helper methods for styling.
 
 func (m Model) titleStyle() lipgloss.Style {
@@ -480,5 +604,15 @@ func (m Model) getBorderColor(fallback string) string {
 }
 
 func (m Model) getBorderFocusColor(fallback string) string {
+	return fallback
+}
+
+func (m Model) getStatuslineColor(key, fallback string) string {
+	if m.tokens.Statusline == nil {
+		return fallback
+	}
+	if hex, ok := m.tokens.Statusline[key]; ok {
+		return hex
+	}
 	return fallback
 }

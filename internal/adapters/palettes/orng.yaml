@@ -1,0 +1,42 @@
+system: "base24"
+name: "Orng"
+author: "roerohan (base24 by curtbushko)"
+variant: "dark"
+palette:
+  base00: "0a0a0a"  # bg - background
+  base01: "1a1a1a"  # cursorline - lighter bg
+  base02: "2a2a2a"  # selection/visual - highlight
+  base03: "6a6a6a"  # comment - muted text
+  base04: "4a4a4a"  # linenr - gutter fg
+  base05: "e6e8ee"  # fg - foreground
+  base06: "eeeeee"  # white - light fg
+  base07: "eeeeee"  # bright_white - lightest fg
+  base08: "e06c75"  # red - variables/errors
+  base09: "EC5B2B"  # orange - constants/numbers (the orng!)
+  base0A: "e5c07b"  # yellow - types/classes
+  base0B: "7fd88f"  # green - strings
+  base0C: "56b6c2"  # cyan - regex/escape
+  base0D: "6ba1e6"  # blue - functions
+  base0E: "c678dd"  # magenta - keywords
+  base0F: "EE7948"  # pink - deprecated/special
+  base10: "1a1a1a"  # menu_bg - floating bg
+  base11: "0a0a0a"  # black - darkest
+  base12: "f38ba8"  # bright_red
+  base13: "f9e2af"  # bright_yellow
+  base14: "a3d6a5"  # bright_green
+  base15: "89dceb"  # bright_cyan
+  base16: "89b4fa"  # bright_blue
+  base17: "f5c2e7"  # bright_magenta
+overrides:
+  statusline_a_bg:
+    color: "EC5B2B"
+  statusline_a_fg:
+    color: "0a0a0a"
+  statusline_b_bg:
+    color: "EE7948"
+  statusline_b_fg:
+    color: "0a0a0a"
+  statusline_c_bg:
+    color: "1a1a1a"
+  statusline_c_fg:
+    color: "e6e8ee"

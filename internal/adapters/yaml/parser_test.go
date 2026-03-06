@@ -697,3 +697,77 @@ overrides:
 		t.Error("expected Strikethrough to be true")
 	}
 }
+
+// TestParser_Parse_OverrideUnderscoreToDot verifies that underscores in override
+// keys are converted to dots for matching the token inventory.
+// YAML keys with dots require quoting, so underscores are allowed as an alternative.
+func TestParser_Parse_OverrideUnderscoreToDot(t *testing.T) {
+	yamlContent := `system: "base24"
+name: "Test"
+author: "Test"
+variant: "dark"
+palette:
+  base00: "1a1b26"
+  base01: "1f2335"
+  base02: "292e42"
+  base03: "565f89"
+  base04: "a9b1d6"
+  base05: "c0caf5"
+  base06: "c0caf5"
+  base07: "c8d3f5"
+  base08: "f7768e"
+  base09: "ff9e64"
+  base0A: "e0af68"
+  base0B: "9ece6a"
+  base0C: "7dcfff"
+  base0D: "7aa2f7"
+  base0E: "bb9af7"
+  base0F: "db4b4b"
+  base10: "16161e"
+  base11: "101014"
+  base12: "ff899d"
+  base13: "e9c582"
+  base14: "afd67a"
+  base15: "97d8f8"
+  base16: "8db6fa"
+  base17: "c8acf8"
+overrides:
+  statusline_a_bg:
+    color: "7aa2f7"
+  statusline_a_fg:
+    color: "1a1b26"
+  surface_background_raised:
+    color: "2a2b36"
+`
+	parser := yaml.NewParser()
+	reader := strings.NewReader(yamlContent)
+
+	pal, err := parser.Parse(reader)
+	if err != nil {
+		t.Fatalf("unexpected error: %v", err)
+	}
+
+	// Verify underscores are converted to dots
+	tests := []struct {
+		yamlKey   string
+		tokenPath string
+		wantColor string
+	}{
+		{"statusline_a_bg", "statusline.a.bg", "7aa2f7"},
+		{"statusline_a_fg", "statusline.a.fg", "1a1b26"},
+		{"surface_background_raised", "surface.background.raised", "2a2b36"},
+	}
+
+	for _, tc := range tests {
+		override, ok := pal.Overrides[tc.tokenPath]
+		if !ok {
+			t.Errorf("expected override for %q (from YAML key %q) to exist", tc.tokenPath, tc.yamlKey)
+			continue
+		}
+
+		wantColor, _ := domain.ParseHex(tc.wantColor)
+		if !override.Color.Equal(wantColor) {
+			t.Errorf("override %q color = %s, want %s", tc.tokenPath, override.Color.Hex(), wantColor.Hex())
+		}
+	}
+}

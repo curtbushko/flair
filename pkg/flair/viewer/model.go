@@ -4,6 +4,8 @@
 package viewer
 
 import (
+	"sort"
+
 	tea "github.com/charmbracelet/bubbletea"
 )
 
@@ -55,11 +57,12 @@ type PaletteData struct {
 
 // TokenData contains semantic tokens grouped by category.
 type TokenData struct {
-	Surface map[string]string // surface.* tokens
-	Text    map[string]string // text.* tokens
-	Status  map[string]string // status.* tokens
-	Syntax  map[string]string // syntax.* tokens
-	Diff    map[string]string // diff.* tokens
+	Surface    map[string]string // surface.* tokens
+	Text       map[string]string // text.* tokens
+	Status     map[string]string // status.* tokens
+	Syntax     map[string]string // syntax.* tokens
+	Diff       map[string]string // diff.* tokens
+	Statusline map[string]string // statusline.* tokens
 }
 
 // Model implements tea.Model for the style viewer TUI.
@@ -87,6 +90,9 @@ func NewModel(opts Options) Model {
 	if themes == nil {
 		themes = []string{}
 	}
+
+	// Sort themes alphabetically.
+	sort.Strings(themes)
 
 	m := Model{
 		themes:        themes,
