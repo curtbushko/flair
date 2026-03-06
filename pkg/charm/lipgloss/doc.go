@@ -57,6 +57,6 @@
 // # Dependencies
 //
 // This package depends on:
-//   - github.com/charmbracelet/lipgloss
+//   - charm.land/lipgloss/v2
 //   - github.com/curtbushko/flair/pkg/flair
 package lipgloss

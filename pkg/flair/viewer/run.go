@@ -5,7 +5,7 @@ import (
 	"fmt"
 	"io"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 
 	"github.com/curtbushko/flair/pkg/flair"
 )
@@ -136,11 +136,10 @@ func Run(opts Options) error {
 func RunWithOptions(opts Options, runOpts RunOptions) error {
 	model := NewModel(opts)
 
-	var teaOpts []tea.ProgramOption
+	// In bubbletea v2, alt screen is controlled via View.AltScreen field.
+	model.altScreen = runOpts.WithAltScreen
 
-	if runOpts.WithAltScreen {
-		teaOpts = append(teaOpts, tea.WithAltScreen())
-	}
+	var teaOpts []tea.ProgramOption
 
 	if runOpts.Input != nil {
 		teaOpts = append(teaOpts, tea.WithInput(runOpts.Input))

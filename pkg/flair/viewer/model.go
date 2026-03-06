@@ -6,7 +6,7 @@ package viewer
 import (
 	"sort"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 )
 
 // Page represents which content page is displayed in the right panel.
@@ -116,6 +116,9 @@ type Model struct {
 	// Terminal dimensions.
 	width  int
 	height int
+
+	// altScreen controls whether the view uses alternate screen buffer.
+	altScreen bool
 }
 
 // NewModel creates a new viewer Model with the given options.
@@ -190,49 +193,31 @@ func (m Model) Update(msg tea.Msg) (tea.Model, tea.Cmd) {
 
 // handleKey processes keyboard input.
 func (m Model) handleKey(msg tea.KeyMsg) (tea.Model, tea.Cmd) {
-	switch msg.Type {
-	case tea.KeyTab:
+	switch msg.String() {
+	case "tab":
 		m.currentPage = (m.currentPage + 1) % pageCount
 		return m, nil
 
-	case tea.KeyUp:
+	case "up", "k":
 		if m.cursor > 0 {
 			m.cursor--
 			m.previewCurrentTheme()
 		}
 		return m, nil
 
-	case tea.KeyDown:
+	case "down", "j":
 		if m.cursor < len(m.themes)-1 {
 			m.cursor++
 			m.previewCurrentTheme()
 		}
 		return m, nil
 
-	case tea.KeyEnter:
+	case "enter":
 		m.confirmSelection()
 		return m, nil
 
-	case tea.KeyEsc:
+	case "esc", "q":
 		return m, tea.Quit
-
-	case tea.KeyRunes:
-		switch string(msg.Runes) {
-		case "j":
-			if m.cursor < len(m.themes)-1 {
-				m.cursor++
-				m.previewCurrentTheme()
-			}
-			return m, nil
-		case "k":
-			if m.cursor > 0 {
-				m.cursor--
-				m.previewCurrentTheme()
-			}
-			return m, nil
-		case "q":
-			return m, tea.Quit
-		}
 	}
 
 	return m, nil

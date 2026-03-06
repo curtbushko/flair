@@ -5,7 +5,7 @@ import (
 	"strings"
 	"testing"
 
-	charmLipgloss "github.com/charmbracelet/lipgloss"
+	charmLipgloss "charm.land/lipgloss/v2"
 
 	"github.com/curtbushko/flair/pkg/charm/lipgloss"
 	"github.com/curtbushko/flair/pkg/flair"

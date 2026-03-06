@@ -29,7 +29,7 @@ func TestView_TextStatusPage(t *testing.T) {
 	view := m.View()
 
 	// Should contain the page title.
-	if !strings.Contains(view, "Text & Status") {
+	if !strings.Contains(view.Content, "Text & Status") {
 		t.Error("text status page missing title")
 	}
 
@@ -41,7 +41,7 @@ func TestView_TextStatusPage(t *testing.T) {
 		"Muted text",
 	}
 	for _, phrase := range textPhrases {
-		if !strings.Contains(view, phrase) {
+		if !strings.Contains(view.Content, phrase) {
 			t.Errorf("text status page missing phrase %q", phrase)
 		}
 	}
@@ -49,7 +49,7 @@ func TestView_TextStatusPage(t *testing.T) {
 	// Should contain status message labels.
 	statusLabels := []string{"Error:", "Warning:", "Success:", "Info:"}
 	for _, label := range statusLabels {
-		if !strings.Contains(view, label) {
+		if !strings.Contains(view.Content, label) {
 			t.Errorf("text status page missing status label %q", label)
 		}
 	}
@@ -77,25 +77,25 @@ func TestView_InteractivePage(t *testing.T) {
 	view := m.View()
 
 	// Should contain the page title.
-	if !strings.Contains(view, "Interactive Components") {
+	if !strings.Contains(view.Content, "Interactive Components") {
 		t.Error("interactive page missing title")
 	}
 
 	// Should contain button examples.
 	buttonLabels := []string{"Submit", "Cancel", "Disabled"}
 	for _, label := range buttonLabels {
-		if !strings.Contains(view, label) {
+		if !strings.Contains(view.Content, label) {
 			t.Errorf("interactive page missing button %q", label)
 		}
 	}
 
 	// Should contain input field section.
-	if !strings.Contains(view, "Input Fields") {
+	if !strings.Contains(view.Content, "Input Fields") {
 		t.Error("interactive page missing Input Fields section")
 	}
 
 	// Should contain selection list section.
-	if !strings.Contains(view, "Selection List") {
+	if !strings.Contains(view.Content, "Selection List") {
 		t.Error("interactive page missing Selection List section")
 	}
 }
@@ -122,30 +122,30 @@ func TestView_DataDisplayPage(t *testing.T) {
 	view := m.View()
 
 	// Should contain the page title.
-	if !strings.Contains(view, "Data Display") {
+	if !strings.Contains(view.Content, "Data Display") {
 		t.Error("data display page missing title")
 	}
 
 	// Should contain table section with headers.
-	if !strings.Contains(view, "Table") {
+	if !strings.Contains(view.Content, "Table") {
 		t.Error("data display page missing Table section")
 	}
 
 	// Should contain column headers for sample table.
 	tableHeaders := []string{"Name", "Status", "Progress"}
 	for _, header := range tableHeaders {
-		if !strings.Contains(view, header) {
+		if !strings.Contains(view.Content, header) {
 			t.Errorf("data display page missing table header %q", header)
 		}
 	}
 
 	// Should contain dialog section.
-	if !strings.Contains(view, "Dialog") {
+	if !strings.Contains(view.Content, "Dialog") {
 		t.Error("data display page missing Dialog section")
 	}
 
 	// Should contain code block section.
-	if !strings.Contains(view, "Code") {
+	if !strings.Contains(view.Content, "Code") {
 		t.Error("data display page missing Code section")
 	}
 }
@@ -165,18 +165,18 @@ func TestView_TwoPanelLayout(t *testing.T) {
 
 	// Should contain all theme names in the left panel.
 	for _, theme := range m.themes {
-		if !strings.Contains(view, theme) {
+		if !strings.Contains(view.Content, theme) {
 			t.Errorf("view missing theme %q", theme)
 		}
 	}
 
 	// Should contain "Styles" title for left panel.
-	if !strings.Contains(view, "Styles") {
+	if !strings.Contains(view.Content, "Styles") {
 		t.Error("view missing Styles title for left panel")
 	}
 
 	// Should contain the content page title on the right.
-	if !strings.Contains(view, "Text & Status") {
+	if !strings.Contains(view.Content, "Text & Status") {
 		t.Error("view missing content page title")
 	}
 }
@@ -195,7 +195,7 @@ func TestView_ThemeListShowsSelection(t *testing.T) {
 	view := m.View()
 
 	// The cursor indicator should appear.
-	if !strings.Contains(view, ">") {
+	if !strings.Contains(view.Content, ">") {
 		t.Error("view missing cursor indicator")
 	}
 }
@@ -211,7 +211,7 @@ func TestView_HelpFooter(t *testing.T) {
 	// Should contain navigation hints.
 	hints := []string{"Tab:", "↑/↓/j/k:", "Enter:", "q/Esc:"}
 	for _, hint := range hints {
-		if !strings.Contains(view, hint) {
+		if !strings.Contains(view.Content, hint) {
 			t.Errorf("help footer missing hint containing %q", hint)
 		}
 	}
@@ -228,7 +228,7 @@ func TestView_HelpFooterAtBottom(t *testing.T) {
 	view := m.View()
 
 	// Count lines in the view.
-	lines := strings.Split(view, "\n")
+	lines := strings.Split(view.Content, "\n")
 
 	// The view should use the full height (minus 1 for the help line).
 	// Last non-empty line should contain help hints.
@@ -278,17 +278,17 @@ func TestView_StatusBarSimulation(t *testing.T) {
 	view := m.View()
 
 	// Should contain status bar section.
-	if !strings.Contains(view, "Status Bar") {
+	if !strings.Contains(view.Content, "Status Bar") {
 		t.Error("interactive page missing Status Bar section")
 	}
 
 	// Should contain powerline separator characters.
-	if !strings.Contains(view, "") {
+	if !strings.Contains(view.Content, "") {
 		t.Error("status bar missing powerline separator")
 	}
 
 	// Should contain sample content like mode indicator.
-	if !strings.Contains(view, "NORMAL") || !strings.Contains(view, "main") {
+	if !strings.Contains(view.Content, "NORMAL") || !strings.Contains(view.Content, "main") {
 		t.Error("status bar missing sample content (NORMAL mode or main branch)")
 	}
 }

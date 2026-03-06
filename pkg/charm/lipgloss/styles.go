@@ -3,11 +3,11 @@
 // like surfaces, text, status indicators, borders, and components.
 //
 // This package is fully independent from flair's internal packages.
-// It only depends on pkg/flair and github.com/charmbracelet/lipgloss.
+// It only depends on pkg/flair and charm.land/lipgloss/v2.
 package lipgloss
 
 import (
-	"github.com/charmbracelet/lipgloss"
+	"charm.land/lipgloss/v2"
 
 	"github.com/curtbushko/flair/pkg/flair"
 )

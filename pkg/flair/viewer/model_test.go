@@ -3,7 +3,7 @@ package viewer
 import (
 	"testing"
 
-	tea "github.com/charmbracelet/bubbletea"
+	tea "charm.land/bubbletea/v2"
 )
 
 // TestModel_Init verifies model initializes with themes loaded.
@@ -51,21 +51,21 @@ func TestModel_TabSwitchesPages(t *testing.T) {
 	}
 
 	// Tab to interactive page.
-	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyTab})
+	updated, _ := m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
 	m = updated.(Model)
 	if m.currentPage != PageInteractive {
 		t.Errorf("after Tab: page = %v, want PageInteractive", m.currentPage)
 	}
 
 	// Tab to data display page.
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyTab})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
 	m = updated.(Model)
 	if m.currentPage != PageDataDisplay {
 		t.Errorf("after Tab: page = %v, want PageDataDisplay", m.currentPage)
 	}
 
 	// Tab wraps back to text status.
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyTab})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyTab})
 	m = updated.(Model)
 	if m.currentPage != PageTextStatus {
 		t.Errorf("after Tab (wrap): page = %v, want PageTextStatus", m.currentPage)
@@ -84,42 +84,42 @@ func TestModel_Navigation(t *testing.T) {
 	}
 
 	// Press 'j' to move down.
-	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
+	updated, _ := m.Update(tea.KeyPressMsg{Code: 'j'})
 	m = updated.(Model)
 	if m.cursor != 1 {
 		t.Errorf("after j: cursor = %d, want 1", m.cursor)
 	}
 
 	// Press 'j' again.
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: 'j'})
 	m = updated.(Model)
 	if m.cursor != 2 {
 		t.Errorf("after j: cursor = %d, want 2", m.cursor)
 	}
 
 	// Press 'j' at bottom (should stay at 2).
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: 'j'})
 	m = updated.(Model)
 	if m.cursor != 2 {
 		t.Errorf("after j at bottom: cursor = %d, want 2", m.cursor)
 	}
 
 	// Press 'k' to move up.
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'k'}})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: 'k'})
 	m = updated.(Model)
 	if m.cursor != 1 {
 		t.Errorf("after k: cursor = %d, want 1", m.cursor)
 	}
 
 	// Press 'k' again.
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'k'}})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: 'k'})
 	m = updated.(Model)
 	if m.cursor != 0 {
 		t.Errorf("after k: cursor = %d, want 0", m.cursor)
 	}
 
 	// Press 'k' at top (should stay at 0).
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'k'}})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: 'k'})
 	m = updated.(Model)
 	if m.cursor != 0 {
 		t.Errorf("after k at top: cursor = %d, want 0", m.cursor)
@@ -153,7 +153,7 @@ func TestModel_NavigationReloadsThemeData(t *testing.T) {
 	}
 
 	// Press 'j' to move to theme2 - preview data should reload immediately.
-	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
+	updated, _ := m.Update(tea.KeyPressMsg{Code: 'j'})
 	m = updated.(Model)
 
 	if m.cursor != 1 {
@@ -172,7 +172,7 @@ func TestModel_NavigationReloadsThemeData(t *testing.T) {
 	}
 
 	// Press 'j' again to move to theme3.
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: 'j'})
 	m = updated.(Model)
 
 	if m.palette.Colors[0] != "#333333" {
@@ -180,7 +180,7 @@ func TestModel_NavigationReloadsThemeData(t *testing.T) {
 	}
 
 	// Press 'k' to go back to theme2.
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'k'}})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: 'k'})
 	m = updated.(Model)
 
 	if m.palette.Colors[0] != "#222222" {
@@ -199,7 +199,7 @@ func TestModel_EnterConfirmsSelection(t *testing.T) {
 	})
 
 	// Navigate to theme2.
-	updated, _ := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'j'}})
+	updated, _ := m.Update(tea.KeyPressMsg{Code: 'j'})
 	m = updated.(Model)
 
 	// selectedTheme should still be empty (no initial theme, no Enter pressed).
@@ -211,7 +211,7 @@ func TestModel_EnterConfirmsSelection(t *testing.T) {
 	}
 
 	// Press Enter to confirm selection.
-	updated, _ = m.Update(tea.KeyMsg{Type: tea.KeyEnter})
+	updated, _ = m.Update(tea.KeyPressMsg{Code: tea.KeyEnter})
 	m = updated.(Model)
 
 	if m.selectedTheme != "theme2" {
@@ -231,7 +231,7 @@ func TestModel_QuitOnQ(t *testing.T) {
 		Themes: []string{"theme1"},
 	})
 
-	_, cmd := m.Update(tea.KeyMsg{Type: tea.KeyRunes, Runes: []rune{'q'}})
+	_, cmd := m.Update(tea.KeyPressMsg{Code: 'q'})
 
 	// cmd should be tea.Quit.
 	if cmd == nil {

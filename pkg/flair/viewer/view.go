@@ -3,11 +3,12 @@ package viewer
 import (
 	"strings"
 
-	"github.com/charmbracelet/lipgloss"
+	tea "charm.land/bubbletea/v2"
+	"charm.land/lipgloss/v2"
 )
 
 // View implements tea.Model and renders the 2-panel layout.
-func (m Model) View() string {
+func (m Model) View() tea.View {
 	// Render left panel (theme list).
 	leftPanel := m.renderThemeList()
 
@@ -58,7 +59,12 @@ func (m Model) View() string {
 
 	// Add help footer pinned at bottom.
 	help := m.renderHelp()
-	return layout + "\n" + help
+	content := layout + "\n" + help
+
+	// Create view with alt screen enabled for full-screen mode.
+	v := tea.NewView(content)
+	v.AltScreen = m.altScreen
+	return v
 }
 
 // renderThemeList renders the theme list for the left panel with scrolling.
