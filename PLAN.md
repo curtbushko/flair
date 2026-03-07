@@ -333,41 +333,41 @@ overrides:
 
 #### Implementation Checklist
 
-- [ ] 8.1 — Domain: Token override types
+- [x] 8.1 — Domain: Token override types
   - [x] 8.1a — Define `TokenOverride` struct (color, bold, italic, underline, etc.)
   - [x] 8.1b — Add `Overrides map[string]TokenOverride` field to `domain.Palette`
   - [x] 8.1c — Unit tests for override parsing and application
 
-- [ ] 8.2 — Adapter: YAML parser updates
+- [x] 8.2 — Adapter: YAML parser updates
   - [x] 8.2a — Update `adapters/yaml/parser.go` to parse `overrides` section
   - [x] 8.2b — Validate override token paths against known token paths
   - [x] 8.2c — Validate override colors (hex format)
   - [x] 8.2d — Unit tests for override YAML parsing
 
-- [ ] 8.3 — Adapter: Tokenizer override application
+- [x] 8.3 — Adapter: Tokenizer override application
   - [x] 8.3a — Update `Tokenizer.Tokenize()` to accept optional overrides
   - [x] 8.3b — Apply overrides after default derivation
   - [x] 8.3c — Merge override styles with derived styles (override wins)
   - [x] 8.3d — Unit tests for override application
 
-- [ ] 8.4 — Adapter: Palette writer updates
+- [x] 8.4 — Adapter: Palette writer updates
   - [x] 8.4a — Update `fileio.WritePalette()` to include overrides section
   - [x] 8.4b — Preserve user overrides during regeneration
   - [x] 8.4c — Unit tests for round-trip (parse → write → parse)
 
-- [ ] 8.5 — Application: Use case updates
+- [x] 8.5 — Application: Use case updates
   - [x] 8.5a — Update `GenerateThemeUseCase` to pass overrides to tokenizer
   - [x] 8.5b — Update `RegenerateThemeUseCase` to preserve overrides
   - [x] 8.5c — Update `PreviewThemeUseCase` to display overridden tokens
   - [x] 8.5d — Integration tests for override flow
 
-- [ ] 8.6 — CLI: Override-related commands
+- [x] 8.6 — CLI: Override-related commands
   - [x] 8.6a — `flair override <theme> <token> <color>` — Add/update override
   - [x] 8.6b — `flair override <theme> --list` — List current overrides
   - [x] 8.6c — `flair override <theme> --remove <token>` — Remove override
   - [x] 8.6d — Help text and documentation
 
-- [ ] 8.7 — Validation
+- [x] 8.7 — Validation
   - [x] 8.7a — Validate override token paths exist in token inventory
   - [x] 8.7b — Warning for overrides that shadow derived values
   - [x] 8.7c — Update `validate` command to check overrides
@@ -575,7 +575,7 @@ self-contained. Built-in palettes, tokenization, and storage become public APIs.
 
 - [x] 10.2 — Public Palette and Tokenizer in `pkg/flair`
   - [x] 10.2a — Create `pkg/flair/palette.go` — public Palette type (base24 colors)
-  - [ ] 10.2b — Create `pkg/flair/color.go` — public Color type with hex parsing
+  - [x] 10.2b — Create `pkg/flair/color.go` — public Color type with hex parsing
   - [x] 10.2c — Create `pkg/flair/tokenizer.go` — derive tokens from palette
   - [x] 10.2d — Create `pkg/flair/parse.go` — parse palette YAML from `io.Reader`
   - [x] 10.2e — Unit tests for palette parsing and tokenization
