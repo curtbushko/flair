@@ -560,7 +560,7 @@ func mapPlugins(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["BufferLineBackground"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
 	hl["BufferLineBuffer"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
 	hl["BufferLineBufferVisible"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineBufferSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
+	hl["BufferLineBufferSelected"] = ports.VimHighlight{Fg: fg("accent.primary"), Bg: bg("statusline.b.bg"), Bold: true}
 	hl["BufferLineTab"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
 	hl["BufferLineTabSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
 	hl["BufferLineFill"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}

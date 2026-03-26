@@ -593,67 +593,68 @@ func mapBufferline(theme *domain.ResolvedTheme) *ports.BufferlineTheme {
 	fg := func(path string) *domain.Color { return colorOf(theme, path) }
 	bg := func(path string) *domain.Color { return colorOf(theme, path) }
 
+	bgBase := bg("surface.background")
+	bgRaised := bg("surface.background.raised")
+	bgSelected := bg("statusline.a.bg")
+
 	return &ports.BufferlineTheme{
-		// Fill: the empty space in the bufferline
-		Fill: ports.BufferlineColors{
-			Fg: fg("text.muted"),
-			Bg: bg("surface.background"),
-		},
-		// Background: inactive/hidden buffers (slightly raised for contrast)
-		Background: ports.BufferlineColors{
-			Fg: fg("text.muted"),
-			Bg: bg("surface.background.raised"),
-		},
-		// BufferVisible: visible but not selected buffers
-		BufferVisible: ports.BufferlineColors{
-			Fg: fg("text.secondary"),
-			Bg: bg("surface.background.raised"),
-		},
-		// BufferSelected: currently active buffer (highlighted)
-		BufferSelected: ports.BufferlineColors{
-			Fg:   fg("statusline.a.fg"),
-			Bg:   bg("statusline.a.bg"),
-			Bold: true,
-		},
-		// Separator: between background buffers (triangle: buffer -> fill)
-		Separator: ports.BufferlineColors{
-			Fg: fg("surface.background.raised"),
-			Bg: bg("surface.background"),
-		},
-		// SeparatorVisible: between visible buffers
-		SeparatorVisible: ports.BufferlineColors{
-			Fg: fg("surface.background.raised"),
-			Bg: bg("surface.background"),
-		},
-		// SeparatorSelected: adjacent to selected buffer (triangle from selected)
-		SeparatorSelected: ports.BufferlineColors{
-			Fg: fg("statusline.a.bg"),
-			Bg: bg("surface.background"),
-		},
-		// IndicatorSelected: active buffer indicator
-		IndicatorSelected: ports.BufferlineColors{
-			Fg: fg("accent.primary"),
-			Bg: bg("statusline.a.bg"),
-		},
-		// Modified: modified background buffer
-		Modified: ports.BufferlineColors{
-			Fg: fg("status.warning"),
-			Bg: bg("surface.background"),
-		},
-		// ModifiedVisible: modified visible buffer
-		ModifiedVisible: ports.BufferlineColors{
-			Fg: fg("status.warning"),
-			Bg: bg("surface.background"),
-		},
-		// ModifiedSelected: modified selected buffer (highlighted)
-		ModifiedSelected: ports.BufferlineColors{
-			Fg: fg("status.warning"),
-			Bg: bg("statusline.a.bg"),
-		},
-		// Diagnostic colors
-		Error:   ports.BufferlineColors{Fg: fg("status.error"), Bg: bg("surface.background")},
-		Warning: ports.BufferlineColors{Fg: fg("status.warning"), Bg: bg("surface.background")},
-		Info:    ports.BufferlineColors{Fg: fg("status.info"), Bg: bg("surface.background")},
-		Hint:    ports.BufferlineColors{Fg: fg("status.hint"), Bg: bg("surface.background")},
+		Background:                ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgRaised},
+		Fill:                      ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgBase},
+		BufferSelected:            ports.BufferlineColors{Fg: fg("accent.primary"), Bg: bgSelected, Bold: true},
+		BufferVisible:             ports.BufferlineColors{Fg: fg("text.secondary"), Bg: bgRaised},
+		CloseButton:               ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgRaised},
+		CloseButtonSelected:       ports.BufferlineColors{Fg: fg("accent.primary"), Bg: bgSelected},
+		CloseButtonVisible:        ports.BufferlineColors{Fg: fg("text.secondary"), Bg: bgRaised},
+		Diagnostic:                ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgRaised},
+		DiagnosticSelected:        ports.BufferlineColors{Fg: fg("accent.primary"), Bg: bgSelected},
+		DiagnosticVisible:         ports.BufferlineColors{Fg: fg("text.secondary"), Bg: bgRaised},
+		Duplicate:                 ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgRaised, Italic: true},
+		DuplicateSelected:         ports.BufferlineColors{Fg: fg("accent.primary"), Bg: bgSelected, Italic: true},
+		DuplicateVisible:          ports.BufferlineColors{Fg: fg("text.secondary"), Bg: bgRaised, Italic: true},
+		Error:                     ports.BufferlineColors{Fg: fg("status.error"), Bg: bgRaised},
+		ErrorSelected:             ports.BufferlineColors{Fg: fg("status.error"), Bg: bgSelected},
+		ErrorVisible:              ports.BufferlineColors{Fg: fg("status.error"), Bg: bgRaised},
+		ErrorDiagnostic:           ports.BufferlineColors{Fg: fg("status.error"), Bg: bgRaised},
+		ErrorDiagnosticSelected:   ports.BufferlineColors{Fg: fg("status.error"), Bg: bgSelected},
+		ErrorDiagnosticVisible:    ports.BufferlineColors{Fg: fg("status.error"), Bg: bgRaised},
+		Hint:                      ports.BufferlineColors{Fg: fg("status.hint"), Bg: bgRaised},
+		HintSelected:              ports.BufferlineColors{Fg: fg("status.hint"), Bg: bgSelected},
+		HintVisible:               ports.BufferlineColors{Fg: fg("status.hint"), Bg: bgRaised},
+		HintDiagnostic:            ports.BufferlineColors{Fg: fg("status.hint"), Bg: bgRaised},
+		HintDiagnosticSelected:    ports.BufferlineColors{Fg: fg("status.hint"), Bg: bgSelected},
+		HintDiagnosticVisible:     ports.BufferlineColors{Fg: fg("status.hint"), Bg: bgRaised},
+		IndicatorSelected:         ports.BufferlineColors{Fg: fg("accent.primary"), Bg: bgSelected},
+		IndicatorVisible:          ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgRaised},
+		Info:                      ports.BufferlineColors{Fg: fg("status.info"), Bg: bgRaised},
+		InfoSelected:              ports.BufferlineColors{Fg: fg("status.info"), Bg: bgSelected},
+		InfoVisible:               ports.BufferlineColors{Fg: fg("status.info"), Bg: bgRaised},
+		InfoDiagnostic:            ports.BufferlineColors{Fg: fg("status.info"), Bg: bgRaised},
+		InfoDiagnosticSelected:    ports.BufferlineColors{Fg: fg("status.info"), Bg: bgSelected},
+		InfoDiagnosticVisible:     ports.BufferlineColors{Fg: fg("status.info"), Bg: bgRaised},
+		Modified:                  ports.BufferlineColors{Fg: fg("status.warning"), Bg: bgBase},
+		ModifiedSelected:          ports.BufferlineColors{Fg: fg("status.warning"), Bg: bgSelected},
+		ModifiedVisible:           ports.BufferlineColors{Fg: fg("status.warning"), Bg: bgBase},
+		Numbers:                   ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgRaised},
+		NumbersSelected:           ports.BufferlineColors{Fg: fg("accent.primary"), Bg: bgSelected},
+		NumbersVisible:            ports.BufferlineColors{Fg: fg("text.secondary"), Bg: bgRaised},
+		OffsetSeparator:           ports.BufferlineColors{Fg: bgBase, Bg: bgBase},
+		Pick:                      ports.BufferlineColors{Fg: fg("accent.secondary"), Bg: bgRaised, Bold: true},
+		PickSelected:              ports.BufferlineColors{Fg: fg("accent.secondary"), Bg: bgSelected, Bold: true},
+		PickVisible:               ports.BufferlineColors{Fg: fg("accent.secondary"), Bg: bgRaised, Bold: true},
+		Separator:                 ports.BufferlineColors{Fg: bgRaised, Bg: bgBase},
+		SeparatorSelected:         ports.BufferlineColors{Fg: bgSelected, Bg: bgBase},
+		SeparatorVisible:          ports.BufferlineColors{Fg: bgRaised, Bg: bgBase},
+		Tab:                       ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgRaised},
+		TabClose:                  ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgBase},
+		TabSelected:               ports.BufferlineColors{Fg: fg("accent.primary"), Bg: bgSelected, Bold: true},
+		TabSeparator:              ports.BufferlineColors{Fg: bgRaised, Bg: bgBase},
+		TabSeparatorSelected:      ports.BufferlineColors{Fg: bgSelected, Bg: bgBase},
+		TruncMarker:               ports.BufferlineColors{Fg: fg("text.muted"), Bg: bgBase},
+		Warning:                   ports.BufferlineColors{Fg: fg("status.warning"), Bg: bgRaised},
+		WarningSelected:           ports.BufferlineColors{Fg: fg("status.warning"), Bg: bgSelected},
+		WarningVisible:            ports.BufferlineColors{Fg: fg("status.warning"), Bg: bgRaised},
+		WarningDiagnostic:         ports.BufferlineColors{Fg: fg("status.warning"), Bg: bgRaised},
+		WarningDiagnosticSelected: ports.BufferlineColors{Fg: fg("status.warning"), Bg: bgSelected},
+		WarningDiagnosticVisible:  ports.BufferlineColors{Fg: fg("status.warning"), Bg: bgRaised},
 	}
 }

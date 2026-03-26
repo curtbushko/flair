@@ -706,10 +706,10 @@ func TestVimMapper_BufferlineTheme(t *testing.T) {
 		return &c
 	}
 
-	// Verify BufferSelected uses statusline.a.* tokens with bold
+	// Verify BufferSelected uses accent.primary fg with statusline.a.bg and bold
 	t.Run("BufferSelected", func(t *testing.T) {
-		// From tokenizer: statusline.a.fg = base00 (#1a1b26), statusline.a.bg = base04 (#a9b1d6)
-		wantFg := colorPtr("#1a1b26")
+		// From tokenizer: accent.primary = base0D (#7aa2f7), statusline.a.bg = base04 (#a9b1d6)
+		wantFg := colorPtr("#7aa2f7")
 		wantBg := colorPtr("#a9b1d6")
 
 		if bl.BufferSelected.Fg == nil {

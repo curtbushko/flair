@@ -93,6 +93,17 @@ func (v *Vim) Generate(w io.Writer, mapped ports.MappedTheme) error {
 		}
 	}
 
+	// Write bufferline theme setup
+	if theme.Bufferline != nil {
+		if err := writeBufferlineSetup(w, theme.Bufferline); err != nil {
+			return &domain.GenerateError{
+				Target:  "vim",
+				Message: "failed to write bufferline setup",
+				Cause:   err,
+			}
+		}
+	}
+
 	return nil
 }
 
@@ -484,6 +495,205 @@ func writeLualineSection(w io.Writer, name string, colors ports.LualineModeColor
 	}
 
 	if _, err := fmt.Fprint(w, " },\n"); err != nil {
+		return err
+	}
+
+	return nil
+}
+
+// writeBufferlineSetup writes the bufferline.setup() configuration with all highlights.
+func writeBufferlineSetup(w io.Writer, theme *ports.BufferlineTheme) error {
+	if _, err := fmt.Fprint(w, "\n-- Bufferline theme configuration\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "local bufferline_highlights = {\n"); err != nil {
+		return err
+	}
+
+	// Helper to format a highlight group
+	writeGroup := func(name string, colors ports.BufferlineColors) error {
+		if _, err := fmt.Fprintf(w, "  %s = { ", name); err != nil {
+			return err
+		}
+
+		var parts []string
+		if colors.Bg != nil {
+			parts = append(parts, fmt.Sprintf("bg = '%s'", colors.Bg.Hex()))
+		}
+		if colors.Fg != nil {
+			parts = append(parts, fmt.Sprintf("fg = '%s'", colors.Fg.Hex()))
+		}
+		if colors.Bold {
+			parts = append(parts, "bold = true")
+		}
+		if colors.Italic {
+			parts = append(parts, "italic = true")
+		}
+
+		if _, err := fmt.Fprint(w, strings.Join(parts, ", ")); err != nil {
+			return err
+		}
+		if _, err := fmt.Fprint(w, " },\n"); err != nil {
+			return err
+		}
+		return nil
+	}
+
+	// Write all highlight groups in alphabetical order
+	groups := []struct {
+		name   string
+		colors ports.BufferlineColors
+	}{
+		{"background", theme.Background},
+		{"buffer_selected", theme.BufferSelected},
+		{"buffer_visible", theme.BufferVisible},
+		{"close_button", theme.CloseButton},
+		{"close_button_selected", theme.CloseButtonSelected},
+		{"close_button_visible", theme.CloseButtonVisible},
+		{"diagnostic", theme.Diagnostic},
+		{"diagnostic_selected", theme.DiagnosticSelected},
+		{"diagnostic_visible", theme.DiagnosticVisible},
+		{"duplicate", theme.Duplicate},
+		{"duplicate_selected", theme.DuplicateSelected},
+		{"duplicate_visible", theme.DuplicateVisible},
+		{"error", theme.Error},
+		{"error_diagnostic", theme.ErrorDiagnostic},
+		{"error_diagnostic_selected", theme.ErrorDiagnosticSelected},
+		{"error_diagnostic_visible", theme.ErrorDiagnosticVisible},
+		{"error_selected", theme.ErrorSelected},
+		{"error_visible", theme.ErrorVisible},
+		{"fill", theme.Fill},
+		{"hint", theme.Hint},
+		{"hint_diagnostic", theme.HintDiagnostic},
+		{"hint_diagnostic_selected", theme.HintDiagnosticSelected},
+		{"hint_diagnostic_visible", theme.HintDiagnosticVisible},
+		{"hint_selected", theme.HintSelected},
+		{"hint_visible", theme.HintVisible},
+		{"indicator_selected", theme.IndicatorSelected},
+		{"indicator_visible", theme.IndicatorVisible},
+		{"info", theme.Info},
+		{"info_diagnostic", theme.InfoDiagnostic},
+		{"info_diagnostic_selected", theme.InfoDiagnosticSelected},
+		{"info_diagnostic_visible", theme.InfoDiagnosticVisible},
+		{"info_selected", theme.InfoSelected},
+		{"info_visible", theme.InfoVisible},
+		{"modified", theme.Modified},
+		{"modified_selected", theme.ModifiedSelected},
+		{"modified_visible", theme.ModifiedVisible},
+		{"numbers", theme.Numbers},
+		{"numbers_selected", theme.NumbersSelected},
+		{"numbers_visible", theme.NumbersVisible},
+		{"offset_separator", theme.OffsetSeparator},
+		{"pick", theme.Pick},
+		{"pick_selected", theme.PickSelected},
+		{"pick_visible", theme.PickVisible},
+		{"separator", theme.Separator},
+		{"separator_selected", theme.SeparatorSelected},
+		{"separator_visible", theme.SeparatorVisible},
+		{"tab", theme.Tab},
+		{"tab_close", theme.TabClose},
+		{"tab_selected", theme.TabSelected},
+		{"tab_separator", theme.TabSeparator},
+		{"tab_separator_selected", theme.TabSeparatorSelected},
+		{"trunc_marker", theme.TruncMarker},
+		{"warning", theme.Warning},
+		{"warning_diagnostic", theme.WarningDiagnostic},
+		{"warning_diagnostic_selected", theme.WarningDiagnosticSelected},
+		{"warning_diagnostic_visible", theme.WarningDiagnosticVisible},
+		{"warning_selected", theme.WarningSelected},
+		{"warning_visible", theme.WarningVisible},
+	}
+
+	for _, g := range groups {
+		if err := writeGroup(g.name, g.colors); err != nil {
+			return err
+		}
+	}
+
+	if _, err := fmt.Fprint(w, "}\n\n"); err != nil {
+		return err
+	}
+
+	// Register globally for user access
+	if _, err := fmt.Fprint(w, "-- Register bufferline highlights globally\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "_G.flair_bufferline_highlights = bufferline_highlights\n\n"); err != nil {
+		return err
+	}
+
+	// Apply highlights by merging with existing bufferline config
+	if _, err := fmt.Fprint(w, "-- Apply bufferline highlights (merges with your existing config)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "local function apply_bufferline_highlights()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  local ok, bufferline = pcall(require, 'bufferline')\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  if not ok then return end\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  local state = require('bufferline.state')\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  if state and state.current_element_hl then\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    -- Bufferline already configured, merge highlights\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    local cfg = bufferline.get_config and bufferline.get_config() or {}\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    cfg.highlights = vim.tbl_deep_extend('force', cfg.highlights or {}, bufferline_highlights)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    bufferline.setup(cfg)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  end\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "end\n\n"); err != nil {
+		return err
+	}
+
+	// Apply after a delay to let user's bufferline config load first
+	if _, err := fmt.Fprint(w, "vim.api.nvim_create_autocmd('User', {\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  pattern = 'LazyDone',\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  callback = function()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    vim.defer_fn(apply_bufferline_highlights, 50)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  end,\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "})\n\n"); err != nil {
+		return err
+	}
+
+	// Also try on VimEnter for non-lazy setups
+	if _, err := fmt.Fprint(w, "vim.api.nvim_create_autocmd('VimEnter', {\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  callback = function()\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "    vim.defer_fn(apply_bufferline_highlights, 100)\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "  end,\n"); err != nil {
+		return err
+	}
+	if _, err := fmt.Fprint(w, "})\n"); err != nil {
 		return err
 	}
 
