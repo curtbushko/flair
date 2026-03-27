@@ -103,7 +103,7 @@ func TestVimMapper_BaseHighlights(t *testing.T) {
 		"Normal", "Comment", "Visual", "CursorLine", "LineNr",
 		"SignColumn", "StatusLine", "StatusLineNC", "Pmenu",
 		"PmenuSel", "PmenuSbar", "PmenuThumb", "TabLine",
-		"TabLineSel", "TabLineFill", "Search", "IncSearch",
+		"TabLineSel", "TabLineFill", "TabLineFile", "Search", "IncSearch",
 		"MatchParen", "Folded", "FoldColumn", "DiffAdd",
 		"DiffChange", "DiffDelete", "DiffText", "ErrorMsg",
 		"WarningMsg", "VertSplit", "WinSeparator", "NonText",
@@ -117,6 +117,32 @@ func TestVimMapper_BaseHighlights(t *testing.T) {
 		if _, ok := vt.Highlights[group]; !ok {
 			t.Errorf("missing required base highlight group %q", group)
 		}
+	}
+}
+
+// TestVimMapper_TabLineFileBgNone verifies that TabLineFile has bg = 'none'.
+func TestVimMapper_TabLineFileBgNone(t *testing.T) {
+	theme := buildResolvedTheme(t)
+	m := mapper.NewVim()
+
+	result, err := m.Map(theme)
+	if err != nil {
+		t.Fatalf("Map() error: %v", err)
+	}
+
+	vt := result.(*ports.VimTheme)
+
+	hl, ok := vt.Highlights["TabLineFile"]
+	if !ok {
+		t.Fatal("TabLineFile highlight group not found")
+	}
+
+	if hl.Bg == nil {
+		t.Fatal("TabLineFile Bg is nil, expected IsNone color")
+	}
+
+	if !hl.Bg.IsNone {
+		t.Errorf("TabLineFile Bg.IsNone = %v, want true", hl.Bg.IsNone)
 	}
 }
 

@@ -557,24 +557,24 @@ func mapPlugins(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	// --- BufferLine additional ---
 	// Uses statusline.c for inactive/fill, statusline.b for selected
 	// For slope separators: fg draws the slope, bg is behind it
-	hl["BufferLineBackground"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineBuffer"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineBackground"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: noneColor()}
+	hl["BufferLineBuffer"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: noneColor()}
 	hl["BufferLineBufferVisible"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
 	hl["BufferLineBufferSelected"] = ports.VimHighlight{Fg: fg("accent.primary"), Bg: bg("statusline.b.bg"), Bold: true}
-	hl["BufferLineTab"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineTab"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: noneColor()}
 	hl["BufferLineTabSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
-	hl["BufferLineFill"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineFill"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: noneColor()}
+	hl["BufferLineSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: noneColor()}
 	hl["BufferLineSeparatorSelected"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.b.bg")}
-	hl["BufferLineSeparatorVisible"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineSeparatorVisible"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: noneColor()}
 	hl["BufferLineIndicatorSelected"] = ports.VimHighlight{Fg: fg("statusline.b.bg"), Bg: bg("statusline.b.bg")}
 	hl["BufferLineModified"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("statusline.c.bg")}
 	hl["BufferLineModifiedSelected"] = ports.VimHighlight{Fg: fg("statusline.b.bg"), Bg: bg("statusline.b.bg")}
 	hl["BufferLineModifiedVisible"] = ports.VimHighlight{Fg: fg("status.warning"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineOffsetSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineOffsetSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: noneColor()}
 	hl["BufferLineDuplicate"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
 	hl["BufferLineDuplicateSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
 	hl["BufferLineDuplicateVisible"] = ports.VimHighlight{Fg: fg("statusline.c.fg"), Bg: bg("statusline.c.bg")}
-	hl["BufferLineTabSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: bg("statusline.c.bg")}
+	hl["BufferLineTabSeparator"] = ports.VimHighlight{Fg: fg("statusline.c.bg"), Bg: noneColor()}
 	hl["BufferLineTabSeparatorSelected"] = ports.VimHighlight{Fg: fg("statusline.b.fg"), Bg: bg("statusline.b.bg")}
 }

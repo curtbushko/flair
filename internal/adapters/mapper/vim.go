@@ -69,6 +69,12 @@ func colorOf(theme *domain.ResolvedTheme, path string) *domain.Color {
 	return &c
 }
 
+// noneColor returns a pointer to a Color with IsNone set to true.
+// This produces bg = 'none' or fg = 'none' in the output.
+func noneColor() *domain.Color {
+	return &domain.Color{IsNone: true}
+}
+
 // mapBase adds standard Vim editor highlight groups to the highlights map.
 //
 //nolint:funlen // Large mapping table is intentionally in one function for clarity.
@@ -117,13 +123,14 @@ func mapBase(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["FloatTitle"] = ports.VimHighlight{Fg: fg("status.hint")}
 
 	// --- Tab line ---
-	hl["TabLine"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background.raised")}
+	hl["TabLine"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: noneColor()}
 	hl["TabLineSel"] = ports.VimHighlight{Fg: fg("text.primary"), Bg: bg("surface.background"), Bold: true}
-	hl["TabLineFill"] = ports.VimHighlight{Bg: bg("surface.background.sunken")}
+	hl["TabLineFill"] = ports.VimHighlight{Bg: noneColor()}
+	hl["TabLineFile"] = ports.VimHighlight{Fg: fg("text.secondary"), Bg: noneColor()}
 
 	// --- Status line ---
-	hl["StatusLine"] = ports.VimHighlight{Fg: fg("text.secondary"), Bg: bg("surface.background.statusbar")}
-	hl["StatusLineNC"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: bg("surface.background.statusbar")}
+	hl["StatusLine"] = ports.VimHighlight{Fg: fg("text.secondary"), Bg: noneColor()}
+	hl["StatusLineNC"] = ports.VimHighlight{Fg: fg("text.muted"), Bg: noneColor()}
 	hl["WildMenu"] = ports.VimHighlight{Fg: fg("text.inverse"), Bg: bg("accent.primary")}
 
 	// --- Messages ---

@@ -151,13 +151,25 @@ func formatSetHl(name string, hl ports.VimHighlight) string {
 	var attrs []string
 
 	if hl.Fg != nil {
-		attrs = append(attrs, fmt.Sprintf("fg = '%s'", hl.Fg.Hex()))
+		if hl.Fg.IsNone {
+			attrs = append(attrs, "fg = 'none'")
+		} else {
+			attrs = append(attrs, fmt.Sprintf("fg = '%s'", hl.Fg.Hex()))
+		}
 	}
 	if hl.Bg != nil {
-		attrs = append(attrs, fmt.Sprintf("bg = '%s'", hl.Bg.Hex()))
+		if hl.Bg.IsNone {
+			attrs = append(attrs, "bg = 'none'")
+		} else {
+			attrs = append(attrs, fmt.Sprintf("bg = '%s'", hl.Bg.Hex()))
+		}
 	}
 	if hl.Sp != nil {
-		attrs = append(attrs, fmt.Sprintf("sp = '%s'", hl.Sp.Hex()))
+		if hl.Sp.IsNone {
+			attrs = append(attrs, "sp = 'none'")
+		} else {
+			attrs = append(attrs, fmt.Sprintf("sp = '%s'", hl.Sp.Hex()))
+		}
 	}
 	if hl.Bold {
 		attrs = append(attrs, "bold = true")

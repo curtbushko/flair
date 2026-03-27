@@ -363,3 +363,38 @@ func TestVimGenerator_BufferlineHighlightGroups(t *testing.T) {
 		t.Error("output should not contain 'bufferline_theme'")
 	}
 }
+
+// TestVimGenerator_BgNone verifies that a highlight with IsNone=true for Bg
+// outputs bg = 'none' instead of a hex color.
+func TestVimGenerator_BgNone(t *testing.T) {
+	g := generator.NewVim()
+
+	fgColor := domain.Color{R: 0xc0, G: 0xca, B: 0xf5}
+	bgNone := domain.Color{IsNone: true}
+
+	theme := &ports.VimTheme{
+		Name: "test",
+		Highlights: map[string]ports.VimHighlight{
+			"TabLineFile": {Fg: &fgColor, Bg: &bgNone},
+		},
+		TerminalColors: [16]domain.Color{},
+	}
+
+	var buf bytes.Buffer
+	if err := g.Generate(&buf, theme); err != nil {
+		t.Fatalf("Generate() error: %v", err)
+	}
+
+	output := buf.String()
+
+	// Should contain bg = 'none'
+	if !strings.Contains(output, "bg = 'none'") {
+		t.Error("output does not contain \"bg = 'none'\"")
+		t.Logf("output:\n%s", output)
+	}
+
+	// Should not contain bg = '#000000' (the zero value hex)
+	if strings.Contains(output, "bg = '#000000'") {
+		t.Error("output should not contain \"bg = '#000000'\" for IsNone color")
+	}
+}
