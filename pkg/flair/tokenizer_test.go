@@ -295,16 +295,16 @@ func TestTokenize_DiffTokens(t *testing.T) {
 		token   string
 		wantHex string
 	}{
-		// diff.added.fg = base14 = "afd67a"
-		{"diff.added.fg", "#afd67a"},
+		// diff.added.fg = base05 = "c0caf5" (regular text)
+		{"diff.added.fg", "#c0caf5"},
 		// diff.added.sign = base14 = "afd67a"
 		{"diff.added.sign", "#afd67a"},
-		// diff.deleted.fg = base12 = "ff899d"
-		{"diff.deleted.fg", "#ff899d"},
+		// diff.deleted.fg = base05 = "c0caf5" (regular text)
+		{"diff.deleted.fg", "#c0caf5"},
 		// diff.deleted.sign = base12 = "ff899d"
 		{"diff.deleted.sign", "#ff899d"},
-		// diff.changed.fg = base16 = "8db6fa"
-		{"diff.changed.fg", "#8db6fa"},
+		// diff.changed.fg = base05 = "c0caf5" (regular text)
+		{"diff.changed.fg", "#c0caf5"},
 		// diff.ignored = base03 = "565f89"
 		{"diff.ignored", "#565f89"},
 	}

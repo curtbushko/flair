@@ -108,21 +108,20 @@ func deriveStatus(p *Palette, colors map[string]Color) {
 func deriveDiff(p *Palette, colors map[string]Color) {
 	base00 := *p.Base(0x00)
 	base03 := *p.Base(0x03)
-	base08 := *p.Base(0x08)
-	base0B := *p.Base(0x0B)
-	base0D := *p.Base(0x0D)
+	base05 := *p.Base(0x05)
 	base12 := *p.Base(0x12)
 	base14 := *p.Base(0x14)
 	base16 := *p.Base(0x16)
 
-	colors["diff.added.fg"] = base14
-	colors["diff.added.bg"] = BlendBg(base0B, base00, 0.25)
+	colors["diff.added.fg"] = base05
+	colors["diff.added.bg"] = BlendBg(base14, base00, 0.25)
 	colors["diff.added.sign"] = base14
-	colors["diff.deleted.fg"] = base12
-	colors["diff.deleted.bg"] = BlendBg(base08, base00, 0.25)
+	colors["diff.deleted.fg"] = base05
+	colors["diff.deleted.bg"] = BlendBg(base12, base00, 0.25)
 	colors["diff.deleted.sign"] = base12
-	colors["diff.changed.fg"] = base16
-	colors["diff.changed.bg"] = BlendBg(base0D, base00, 0.15)
+	colors["diff.changed.fg"] = base05
+	colors["diff.changed.bg"] = BlendBg(base16, base00, 0.15)
+	colors["diff.changed.sign"] = base16
 	colors["diff.ignored"] = base03
 }
 

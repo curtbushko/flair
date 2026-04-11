@@ -106,22 +106,23 @@ func deriveStatus(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("status.todo", domain.Token{Color: p.Base(0x0D)})
 }
 
-// deriveDiff derives the 9 diff tokens from the palette.
+// deriveDiff derives the 10 diff tokens from the palette.
 func deriveDiff(p *domain.Palette, ts *domain.TokenSet) {
-	ts.Set("diff.added.fg", domain.Token{Color: p.Base(0x14)})
+	ts.Set("diff.added.fg", domain.Token{Color: p.Base(0x05)})
 	ts.Set("diff.added.bg", domain.Token{
-		Color: domain.BlendBg(p.Base(0x0B), p.Base(0x00), 0.25),
+		Color: domain.BlendBg(p.Base(0x14), p.Base(0x00), 0.25),
 	})
 	ts.Set("diff.added.sign", domain.Token{Color: p.Base(0x14)})
-	ts.Set("diff.deleted.fg", domain.Token{Color: p.Base(0x12)})
+	ts.Set("diff.deleted.fg", domain.Token{Color: p.Base(0x05)})
 	ts.Set("diff.deleted.bg", domain.Token{
-		Color: domain.BlendBg(p.Base(0x08), p.Base(0x00), 0.25),
+		Color: domain.BlendBg(p.Base(0x12), p.Base(0x00), 0.25),
 	})
 	ts.Set("diff.deleted.sign", domain.Token{Color: p.Base(0x12)})
-	ts.Set("diff.changed.fg", domain.Token{Color: p.Base(0x16)})
+	ts.Set("diff.changed.fg", domain.Token{Color: p.Base(0x05)})
 	ts.Set("diff.changed.bg", domain.Token{
-		Color: domain.BlendBg(p.Base(0x0D), p.Base(0x00), 0.15),
+		Color: domain.BlendBg(p.Base(0x16), p.Base(0x00), 0.15),
 	})
+	ts.Set("diff.changed.sign", domain.Token{Color: p.Base(0x16)})
 	ts.Set("diff.ignored", domain.Token{Color: p.Base(0x03)})
 }
 

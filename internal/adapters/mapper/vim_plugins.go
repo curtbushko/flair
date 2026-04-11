@@ -92,13 +92,13 @@ func mapPlugins(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["CmpItemMenu"] = ports.VimHighlight{Fg: fg("text.muted")}
 
 	// --- gitsigns.nvim ---
-	hl["GitSignsAdd"] = ports.VimHighlight{Fg: fg("diff.added.fg")}
-	hl["GitSignsChange"] = ports.VimHighlight{Fg: fg("diff.changed.fg")}
-	hl["GitSignsDelete"] = ports.VimHighlight{Fg: fg("diff.deleted.fg")}
+	hl["GitSignsAdd"] = ports.VimHighlight{Fg: fg("diff.added.sign")}
+	hl["GitSignsChange"] = ports.VimHighlight{Fg: fg("diff.changed.sign")}
+	hl["GitSignsDelete"] = ports.VimHighlight{Fg: fg("diff.deleted.sign")}
 	hl["GitSignsCurrentLineBlame"] = ports.VimHighlight{Fg: fg("text.subtle"), Italic: true}
-	hl["GitSignsAddNr"] = ports.VimHighlight{Fg: fg("diff.added.fg")}
-	hl["GitSignsChangeNr"] = ports.VimHighlight{Fg: fg("diff.changed.fg")}
-	hl["GitSignsDeleteNr"] = ports.VimHighlight{Fg: fg("diff.deleted.fg")}
+	hl["GitSignsAddNr"] = ports.VimHighlight{Fg: fg("diff.added.sign")}
+	hl["GitSignsChangeNr"] = ports.VimHighlight{Fg: fg("diff.changed.sign")}
+	hl["GitSignsDeleteNr"] = ports.VimHighlight{Fg: fg("diff.deleted.sign")}
 	hl["GitSignsAddLn"] = ports.VimHighlight{Bg: bg("diff.added.bg")}
 	hl["GitSignsChangeLn"] = ports.VimHighlight{Bg: bg("diff.changed.bg")}
 	hl["GitSignsDeleteLn"] = ports.VimHighlight{Bg: bg("diff.deleted.bg")}

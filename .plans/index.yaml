@@ -1,0 +1,53 @@
+project: "Flair"
+current_phase: 10
+phases:
+  - id: 1
+    name: "Foundation"
+    file: "phase-01-foundation.md"
+    status: completed
+    progress: "18/18"
+  - id: 2
+    name: "Layer B — Token Derivation"
+    file: "phase-02-layer-b-token-derivation.md"
+    status: completed
+    progress: "5/5"
+  - id: 3
+    name: "Layer C+D — Mapping + Generation"
+    file: "phase-03-layer-cd-mapping-generation.md"
+    status: completed
+    progress: "6/6"
+  - id: 4
+    name: "CLI (Composition Root)"
+    file: "phase-04-cli-composition-root.md"
+    status: completed
+    progress: "8/8"
+  - id: 5
+    name: "Polish"
+    file: "phase-05-polish.md"
+    status: completed
+    progress: "8/8"
+  - id: 6
+    name: "Charm Integration & Style Viewer"
+    file: "phase-06-charm-integration-style-viewer.md"
+    status: completed
+    progress: "34/34"
+  - id: 7
+    name: "Extended Charm Support"
+    file: "phase-07-extended-charm-support.md"
+    status: completed
+    progress: "4/4"
+  - id: 8
+    name: "Token Overrides"
+    file: "phase-08-token-overrides.md"
+    status: completed
+    progress: "8/8"
+  - id: 9
+    name: "Lualine & Bufferline Statusline Integration"
+    file: "phase-09-lualine-bufferline-statusline-integration.md"
+    status: completed
+    progress: "6/6"
+  - id: 10
+    name: "Embeddable Library"
+    file: "phase-10-embeddable-library.md"
+    status: completed
+    progress: "7/7"

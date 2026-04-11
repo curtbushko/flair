@@ -492,7 +492,7 @@ func TestTokenizeDiff_AddedFg(t *testing.T) {
 		t.Fatal("diff.added.fg not found in token set")
 	}
 
-	want := mustParseHex(t, "#afd67a") // base14
+	want := mustParseHex(t, "#c0caf5") // base05 (regular text)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.added.fg = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -508,8 +508,8 @@ func TestTokenizeDiff_AddedBg(t *testing.T) {
 		t.Fatal("diff.added.bg not found in token set")
 	}
 
-	// BlendBg(base0B, base00, 0.25)
-	want := domain.BlendBg(pal.Base(0x0B), pal.Base(0x00), 0.25)
+	// BlendBg(base14, base00, 0.25) - green background
+	want := domain.BlendBg(pal.Base(0x14), pal.Base(0x00), 0.25)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.added.bg = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -541,7 +541,7 @@ func TestTokenizeDiff_DeletedFg(t *testing.T) {
 		t.Fatal("diff.deleted.fg not found in token set")
 	}
 
-	want := mustParseHex(t, "#ff899d") // base12
+	want := mustParseHex(t, "#c0caf5") // base05 (regular text)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.deleted.fg = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -557,8 +557,8 @@ func TestTokenizeDiff_DeletedBg(t *testing.T) {
 		t.Fatal("diff.deleted.bg not found in token set")
 	}
 
-	// BlendBg(base08, base00, 0.25)
-	want := domain.BlendBg(pal.Base(0x08), pal.Base(0x00), 0.25)
+	// BlendBg(base12, base00, 0.25) - red background
+	want := domain.BlendBg(pal.Base(0x12), pal.Base(0x00), 0.25)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.deleted.bg = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -590,7 +590,7 @@ func TestTokenizeDiff_ChangedFg(t *testing.T) {
 		t.Fatal("diff.changed.fg not found in token set")
 	}
 
-	want := mustParseHex(t, "#8db6fa") // base16
+	want := mustParseHex(t, "#c0caf5") // base05 (regular text)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.changed.fg = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -606,10 +606,26 @@ func TestTokenizeDiff_ChangedBg(t *testing.T) {
 		t.Fatal("diff.changed.bg not found in token set")
 	}
 
-	// BlendBg(base0D, base00, 0.15)
-	want := domain.BlendBg(pal.Base(0x0D), pal.Base(0x00), 0.15)
+	// BlendBg(base16, base00, 0.15) - blue background
+	want := domain.BlendBg(pal.Base(0x16), pal.Base(0x00), 0.15)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.changed.bg = %s, want %s", tok.Color.Hex(), want.Hex())
+	}
+}
+
+func TestTokenizeDiff_ChangedSign(t *testing.T) {
+	pal := tokyoNightDarkPalette(t)
+	d := tokenizer.New()
+	ts := d.Tokenize(pal)
+
+	tok, ok := ts.Get("diff.changed.sign")
+	if !ok {
+		t.Fatal("diff.changed.sign not found in token set")
+	}
+
+	want := mustParseHex(t, "#8db6fa") // base16 (blue)
+	if !tok.Color.Equal(want) {
+		t.Errorf("diff.changed.sign = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
 }
 
@@ -657,6 +673,7 @@ func TestTokenizeStatusDiff_AllPresent(t *testing.T) {
 		"diff.deleted.sign",
 		"diff.changed.fg",
 		"diff.changed.bg",
+		"diff.changed.sign",
 		"diff.ignored",
 	}
 	for _, path := range diffPaths {
@@ -679,8 +696,8 @@ func TestTokenizeStatusDiff_AllPresent(t *testing.T) {
 	if statusCount != 6 {
 		t.Errorf("expected 6 status tokens, got %d", statusCount)
 	}
-	if diffCount != 9 {
-		t.Errorf("expected 9 diff tokens, got %d", diffCount)
+	if diffCount != 10 {
+		t.Errorf("expected 10 diff tokens, got %d", diffCount)
 	}
 }
 
@@ -1821,9 +1838,9 @@ func TestFullTokenization_BlendedValues(t *testing.T) {
 		{"border.focus", 0x0D, 0x00, 0.70},
 		{"scrollbar.thumb", 0x03, 0x00, 0.40},
 		{"state.active", 0x0D, 0x00, 0.20},
-		{"diff.added.bg", 0x0B, 0x00, 0.25},
-		{"diff.deleted.bg", 0x08, 0x00, 0.25},
-		{"diff.changed.bg", 0x0D, 0x00, 0.15},
+		{"diff.added.bg", 0x14, 0x00, 0.25},
+		{"diff.deleted.bg", 0x12, 0x00, 0.25},
+		{"diff.changed.bg", 0x16, 0x00, 0.15},
 	}
 
 	for _, tt := range tests {
