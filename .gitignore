@@ -37,6 +37,7 @@ go.work.sum
 /flair
 .claude/settings.local.json
 .tasks
+.trash
 
 # Nix-managed config files (from golang-shared-configs flake)
 .golangci.yml
