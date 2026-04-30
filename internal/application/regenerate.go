@@ -3,22 +3,19 @@ package application
 import (
 	"fmt"
 	"strings"
-	"time"
 
 	"github.com/curtbushko/flair/internal/domain"
 	"github.com/curtbushko/flair/internal/ports"
 )
 
-// RegenerateThemeUseCase inspects modification times to determine which
-// downstream files need re-tokenization, then regenerates only the stale ones.
+// RegenerateThemeUseCase regenerates all theme files from the palette.
 //
 // Dependency chain:
 //
 //	palette.yaml -> tokens.yaml -> mapping files -> output files
 //
-// If palette is newer than tokens, everything downstream is regenerated.
-// If tokens is newer than mappings, all mappings + outputs are regenerated.
-// If a mapping is newer than its output, only that output is regenerated.
+// All files in the dependency chain are always regenerated to ensure
+// consistency when mapper code or tokenizer logic changes.
 type RegenerateThemeUseCase struct {
 	store        ports.ThemeStore
 	parser       ports.PaletteParser
@@ -57,7 +54,7 @@ func NewRegenerateThemeUseCase(
 	return uc
 }
 
-// Execute inspects mtimes in the theme directory and regenerates stale files.
+// Execute regenerates all theme files from the palette.
 // If targetFilter is non-empty, only that target is considered.
 // Returns a human-readable message and any error.
 func (uc *RegenerateThemeUseCase) Execute(themeName, targetFilter string) (string, error) {
@@ -66,25 +63,11 @@ func (uc *RegenerateThemeUseCase) Execute(themeName, targetFilter string) (strin
 		return "", fmt.Errorf("theme %q not found (missing palette.yaml)", themeName)
 	}
 
-	// Read palette for potential re-derivation.
+	// Read palette for re-derivation.
 	palette, err := uc.readPalette(themeName)
 	if err != nil {
 		return "", fmt.Errorf("read palette: %w", err)
 	}
-
-	// Get mtimes.
-	paletteMtime, err := uc.store.FileMtime(themeName, "palette.yaml")
-	if err != nil {
-		return "", fmt.Errorf("palette mtime: %w", err)
-	}
-
-	tokensMtime, tokensErr := uc.store.FileMtime(themeName, "tokens.yaml")
-
-	// Determine what needs regeneration.
-	// If tokens.yaml is missing (error from FileMtime), force full regeneration
-	// from palette rather than relying on zero-time coincidence.
-	paletteEdited := tokensErr != nil || paletteMtime.After(tokensMtime)
-	tokensEdited := !paletteEdited && uc.isTokensNewerThanMappings(themeName, tokensMtime, targetFilter)
 
 	// Resolve the theme for downstream operations.
 	tokens := uc.tokenizer.Tokenize(palette)
@@ -95,33 +78,15 @@ func (uc *RegenerateThemeUseCase) Execute(themeName, targetFilter string) (strin
 		Tokens:  tokens,
 	}
 
-	regenerated, err := uc.applyRegeneration(resolved, themeName, targetFilter, paletteEdited, tokensEdited)
+	// Always regenerate everything from palette.
+	regenerated, err := uc.regenFromPalette(resolved, themeName, targetFilter)
 	if err != nil {
 		return "", err
-	}
-
-	if len(regenerated) == 0 {
-		return "nothing to do", nil
 	}
 
 	return fmt.Sprintf("regenerated %d files: %s", len(regenerated), strings.Join(regenerated, ", ")), nil
 }
 
-// applyRegeneration dispatches to the appropriate regeneration strategy based
-// on which upstream file was edited.
-func (uc *RegenerateThemeUseCase) applyRegeneration(
-	resolved *domain.ResolvedTheme, themeName, targetFilter string,
-	paletteEdited, tokensEdited bool,
-) ([]string, error) {
-	switch {
-	case paletteEdited:
-		return uc.regenFromPalette(resolved, themeName, targetFilter)
-	case tokensEdited:
-		return uc.regenerateTargets(resolved, themeName, targetFilter)
-	default:
-		return uc.regenerateStaleMappings(resolved, themeName, targetFilter)
-	}
-}
 
 // regenFromPalette re-derives tokens.yaml and all targets.
 func (uc *RegenerateThemeUseCase) regenFromPalette(
@@ -141,23 +106,6 @@ func (uc *RegenerateThemeUseCase) regenFromPalette(
 	return append(regenerated, regen...), nil
 }
 
-// isTokensNewerThanMappings checks if tokens.yaml is newer than any mapping file.
-func (uc *RegenerateThemeUseCase) isTokensNewerThanMappings(themeName string, tokensMtime time.Time, targetFilter string) bool {
-	for _, tgt := range uc.targets {
-		if targetFilter != "" && tgt.Mapper.Name() != targetFilter {
-			continue
-		}
-		mappingMtime, err := uc.store.FileMtime(themeName, tgt.MappingFile)
-		if err != nil {
-			// File missing -> needs regen.
-			return true
-		}
-		if tokensMtime.After(mappingMtime) {
-			return true
-		}
-	}
-	return false
-}
 
 // regenerateTargets maps and generates all (filtered) targets.
 func (uc *RegenerateThemeUseCase) regenerateTargets(resolved *domain.ResolvedTheme, themeName, targetFilter string) ([]string, error) {
@@ -183,48 +131,6 @@ func (uc *RegenerateThemeUseCase) regenerateTargets(resolved *domain.ResolvedThe
 	return regenerated, nil
 }
 
-// regenerateStaleMappings checks individual mapping->output pairs and only
-// regenerates outputs whose mapping is newer.
-func (uc *RegenerateThemeUseCase) regenerateStaleMappings(resolved *domain.ResolvedTheme, themeName, targetFilter string) ([]string, error) {
-	var regenerated []string
-	var targetErrors []string
-
-	for _, target := range uc.targets {
-		if targetFilter != "" && target.Mapper.Name() != targetFilter {
-			continue
-		}
-
-		mappingMtime, err := uc.store.FileMtime(themeName, target.MappingFile)
-		if err != nil {
-			continue
-		}
-
-		outputMtime, err := uc.store.FileMtime(themeName, target.Generator.DefaultFilename())
-		if err != nil {
-			// Output missing -> needs regen.
-			if err := uc.processTarget(target, resolved, themeName); err != nil {
-				targetErrors = append(targetErrors, fmt.Sprintf("%s: %v", target.Mapper.Name(), err))
-				continue
-			}
-			regenerated = append(regenerated, target.Generator.DefaultFilename())
-			continue
-		}
-
-		if mappingMtime.After(outputMtime) {
-			if err := uc.processTarget(target, resolved, themeName); err != nil {
-				targetErrors = append(targetErrors, fmt.Sprintf("%s: %v", target.Mapper.Name(), err))
-				continue
-			}
-			regenerated = append(regenerated, target.Generator.DefaultFilename())
-		}
-	}
-
-	if len(targetErrors) > 0 {
-		return regenerated, fmt.Errorf("target errors: %s", strings.Join(targetErrors, "; "))
-	}
-
-	return regenerated, nil
-}
 
 // processTarget runs the map -> write mapping -> generate pipeline for a single target.
 func (uc *RegenerateThemeUseCase) processTarget(target ports.Target, resolved *domain.ResolvedTheme, themeName string) error {

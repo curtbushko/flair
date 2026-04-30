@@ -10,9 +10,9 @@ import (
 
 const regenerateUsage = `Usage: flair regenerate <theme-name> [options]
 
-Re-derive downstream files by inspecting modification times. Only stale
-files are regenerated: palette edits re-derive everything, tokens edits
-re-map all targets, and mapping edits re-generate only that output.
+Regenerate all theme files from the palette. This ensures all downstream
+files (tokens, mappings, outputs) are consistent with the current theme
+definition and mapper code.
 
 Options:
   --dir <path>     Config directory (default: ~/.config/flair)

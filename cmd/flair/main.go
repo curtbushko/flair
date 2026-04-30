@@ -19,7 +19,7 @@ Commands:
   list        List available built-in palettes
   override    Manage token color and style overrides
   preview     Preview a theme with ANSI colors
-  regenerate  Re-derive stale downstream files
+  regenerate  Regenerate all theme files from palette
   select      Select a theme or launch style viewer
   validate    Validate a theme directory
 

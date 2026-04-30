@@ -2,7 +2,6 @@ package application_test
 
 import (
 	"io"
-	"strings"
 	"testing"
 	"time"
 
@@ -242,14 +241,14 @@ func TestRegenerateThemeUseCase_MappingEdited(t *testing.T) {
 	}
 }
 
-func TestRegenerateThemeUseCase_NoEdits(t *testing.T) {
+func TestRegenerateThemeUseCase_AlwaysRegenerates(t *testing.T) {
 	pal := makeGenPalette(t)
 	ts := makeGenTokenSet(t, pal)
 	store := newMtimeStubStore()
 	targets := makeRegenTargets()
 
 	now := time.Now()
-	// All downstream files are newer than their upstream -> nothing to do.
+	// Even if all downstream files are newer, regenerate everything.
 	store.setMtime(regenTestTheme, "palette.yaml", now.Add(-10*time.Second))
 	store.setMtime(regenTestTheme, "tokens.yaml", now.Add(-5*time.Second))
 	for _, tgt := range targets {
@@ -273,8 +272,21 @@ func TestRegenerateThemeUseCase_NoEdits(t *testing.T) {
 		t.Fatalf("unexpected error: %v", err)
 	}
 
-	if !strings.Contains(msg, "nothing to do") {
-		t.Errorf("expected 'nothing to do' message, got %q", msg)
+	// Should always regenerate everything regardless of mtimes.
+	if !store.hasFile(regenTestTheme, "tokens.yaml") {
+		t.Error("expected tokens.yaml to be regenerated")
+	}
+	for _, tgt := range targets {
+		if !store.hasFile(regenTestTheme, tgt.MappingFile) {
+			t.Errorf("expected %s to be regenerated", tgt.MappingFile)
+		}
+		if !store.hasFile(regenTestTheme, tgt.Generator.DefaultFilename()) {
+			t.Errorf("expected %s to be regenerated", tgt.Generator.DefaultFilename())
+		}
+	}
+
+	if msg == "" {
+		t.Error("expected non-empty message")
 	}
 }
 

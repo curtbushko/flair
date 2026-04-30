@@ -1,0 +1,29 @@
+system: "base24"
+name: "Nordic"
+author: "Alexander van Zyl (base24 by curtbushko)"
+variant: "dark"
+palette:
+  base00: "2E3440"  # gray1 - main background
+  base01: "3B4252"  # gray2 - lighter background
+  base02: "434C5E"  # gray3 - selection background
+  base03: "4C566A"  # gray4 - comments, invisibles
+  base04: "D8DEE9"  # white1 - dark foreground
+  base05: "E5E9F0"  # white2 - default foreground
+  base06: "ECEFF4"  # white3 - light foreground
+  base07: "ECEFF4"  # white3 - lightest foreground
+  base08: "BF616A"  # red.base - variables, errors
+  base09: "D08770"  # orange.base - integers, constants
+  base0A: "EBCB8B"  # yellow.base - classes, search
+  base0B: "A3BE8C"  # green.base - strings, additions
+  base0C: "88C0D0"  # blue2 (frost) - support, regex
+  base0D: "81A1C1"  # blue1 - functions, methods
+  base0E: "B48EAD"  # magenta.base - keywords, tags
+  base0F: "5E81AC"  # blue0 - deprecated, embedded
+  base10: "191D24"  # black0 - darkest background
+  base11: "1E222A"  # black1 - darker background
+  base12: "C5727A"  # red.bright - bright red
+  base13: "D79784"  # orange.bright - bright orange
+  base14: "B1C89D"  # green.bright - bright green
+  base15: "9FC6C5"  # cyan.bright - bright cyan
+  base16: "8FBCBB"  # cyan.base - base cyan
+  base17: "BE9DB8"  # magenta.bright - bright magenta

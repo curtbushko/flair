@@ -184,15 +184,16 @@ func mapPlugins(theme *domain.ResolvedTheme, hl map[string]ports.VimHighlight) {
 	hl["NvimTreeWinSeparator"] = ports.VimHighlight{Fg: fg("border.default")}
 
 	// --- telescope.nvim ---
-	hl["TelescopeNormal"] = ports.VimHighlight{Fg: fg("text.primary")}
-	hl["TelescopeBorder"] = ports.VimHighlight{Fg: fg("border.default")}
-	hl["TelescopePromptNormal"] = ports.VimHighlight{Fg: fg("text.primary")}
-	hl["TelescopePromptBorder"] = ports.VimHighlight{Fg: fg("border.default")}
+	// Telescope uses main background with matching borders
+	hl["TelescopeNormal"] = ports.VimHighlight{Fg: fg("text.primary"), Bg: bg("surface.background")}
+	hl["TelescopeBorder"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
+	hl["TelescopePromptNormal"] = ports.VimHighlight{Fg: fg("text.primary"), Bg: bg("surface.background")}
+	hl["TelescopePromptBorder"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
 	hl["TelescopePromptTitle"] = ports.VimHighlight{Fg: fg("accent.primary"), Bold: true}
 	hl["TelescopePromptPrefix"] = ports.VimHighlight{Fg: fg("accent.primary")}
 	hl["TelescopePreviewTitle"] = ports.VimHighlight{Fg: fg("status.success"), Bold: true}
-	hl["TelescopePreviewNormal"] = ports.VimHighlight{}
-	hl["TelescopePreviewBorder"] = ports.VimHighlight{Fg: fg("border.default")}
+	hl["TelescopePreviewNormal"] = ports.VimHighlight{Bg: bg("surface.background")}
+	hl["TelescopePreviewBorder"] = ports.VimHighlight{Fg: fg("surface.background"), Bg: bg("surface.background")}
 	hl["TelescopeResultsTitle"] = ports.VimHighlight{Fg: fg("accent.secondary"), Bold: true}
 	hl["TelescopeSelection"] = ports.VimHighlight{Fg: fg("text.primary"), Bg: bg("surface.background.selection")}
 	hl["TelescopeSelectionCaret"] = ports.VimHighlight{Fg: fg("accent.primary")}

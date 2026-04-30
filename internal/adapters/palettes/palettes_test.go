@@ -136,6 +136,7 @@ func TestSource_List(t *testing.T) {
 		"night-lion-v2",
 		"night-owlish-light",
 		"nocturnal-winter",
+		"nordic",
 		"obsidian",
 		"ocean",
 		"oceanic-material",

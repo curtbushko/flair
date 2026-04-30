@@ -536,6 +536,31 @@ func TestVimMapper_PluginHighlights(t *testing.T) {
 			t.Errorf("TelescopeMatching: Fg = %s, want %s", hl.Fg.Hex(), wantFg.Hex())
 		}
 	}
+
+	// TelescopeNormal should have main background (surface.background = base00).
+	if hl, ok := vt.Highlights["TelescopeNormal"]; ok {
+		wantBg := colorPtr("#1a1b26") // surface.background = base00
+		if hl.Bg == nil {
+			t.Errorf("TelescopeNormal: Bg is nil, want %s", wantBg.Hex())
+		} else if !hl.Bg.Equal(*wantBg) {
+			t.Errorf("TelescopeNormal: Bg = %s, want %s", hl.Bg.Hex(), wantBg.Hex())
+		}
+	}
+
+	// TelescopeBorder should match background color for both fg and bg.
+	if hl, ok := vt.Highlights["TelescopeBorder"]; ok {
+		wantColor := colorPtr("#1a1b26") // surface.background = base00
+		if hl.Fg == nil {
+			t.Errorf("TelescopeBorder: Fg is nil, want %s", wantColor.Hex())
+		} else if !hl.Fg.Equal(*wantColor) {
+			t.Errorf("TelescopeBorder: Fg = %s, want %s", hl.Fg.Hex(), wantColor.Hex())
+		}
+		if hl.Bg == nil {
+			t.Errorf("TelescopeBorder: Bg is nil, want %s", wantColor.Hex())
+		} else if !hl.Bg.Equal(*wantColor) {
+			t.Errorf("TelescopeBorder: Bg = %s, want %s", hl.Bg.Hex(), wantColor.Hex())
+		}
+	}
 }
 
 // TestVimMapper_MarkupHighlights verifies that the Vim mapper produces

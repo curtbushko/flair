@@ -116,8 +116,8 @@ func TestStore_InstallAll(t *testing.T) {
 		}
 	}
 
-	if count != 189 {
-		t.Errorf("InstallAll() installed %d themes, want 189", count)
+	if count != 190 {
+		t.Errorf("InstallAll() installed %d themes, want 190", count)
 	}
 }
 

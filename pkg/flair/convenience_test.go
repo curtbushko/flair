@@ -250,9 +250,9 @@ func TestEnsureInstalled_Empty(t *testing.T) {
 		}
 	}
 
-	// Should have all 189 built-in themes.
-	if count != 189 {
-		t.Errorf("EnsureInstalled() installed %d themes, want 189", count)
+	// Should have all 190 built-in themes.
+	if count != 190 {
+		t.Errorf("EnsureInstalled() installed %d themes, want 190", count)
 	}
 }
 
