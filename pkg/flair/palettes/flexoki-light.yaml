@@ -28,3 +28,16 @@ palette:
   base15: "879A39" # green-400 - bright green
   base16: "3AA99F" # cyan-400 - bright cyan
   base17: "4385BE" # blue-400 - bright blue
+overrides:
+  statusline_a_bg: # base03
+    color: "CECDC3"
+  statusline_a_fg: # base00
+    color: "FFFCF0"
+  statusline_b_bg: # base10
+    color: "F2F0E5"
+  statusline_b_fg: # base05
+    color: "403E3C"
+  statusline_c_bg: # base01
+    color: "F2F0E5"
+  statusline_c_fg: # base05
+    color: "403E3C"

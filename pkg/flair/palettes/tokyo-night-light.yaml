@@ -27,3 +27,16 @@ palette:
   base15: "3e6968" # Bright cyan
   base16: "34548a" # Bright blue
   base17: "5a4a78" # Bright magenta
+overrides:
+  statusline_a_bg: # base03
+    color: "9699a3"
+  statusline_a_fg: # base00
+    color: "d5d6db"
+  statusline_b_bg: # base10
+    color: "e9e9ed"
+  statusline_b_fg: # base05
+    color: "343b59"
+  statusline_c_bg: # base01
+    color: "cbccd1"
+  statusline_c_fg: # base05
+    color: "343b59"

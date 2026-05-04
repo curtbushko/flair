@@ -27,3 +27,16 @@ palette:
   base15: "b1e7dd"
   base16: "a1bdce"
   base17: "d7beda"
+overrides:
+  statusline_a_bg: # base03
+    color: "6b6a67"
+  statusline_a_fg: # base00
+    color: "1c1c1c"
+  statusline_b_bg: # base10
+    color: "31302e"
+  statusline_b_fg: # base05
+    color: "aeaead"
+  statusline_c_bg: # base01
+    color: "2f2e2d"
+  statusline_c_fg: # base05
+    color: "aeaead"

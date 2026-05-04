@@ -4,39 +4,39 @@ author: "Curt Bushko (customized from https://github.com/sainnhe/gruvbox-materia
 variant: "dark"
 palette:
   base00: "282828"  # bg_dark
-  base01: "1d2021"  # bg
-  base02: "3c3836"  # dark3/bg_float
+  base01: "1D2021"  # bg
+  base02: "3C3836"  # dark3/bg_float
   base03: "504945"  # dark5/fg_gutter (muted text)
   base04: "504945"  # bg_highlight
-  base05: "d4be98"  # fg
-  base06: "dbe0cd"  # fg_dark
-  base07: "fff8e3"  # fg_sidebar
-  base08: "ea6962"  # red
-  base09: "e78a4e"  # orange/hint
-  base0A: "d8a657"  # yellow
+  base05: "EBDBB2"
+  base06: "DBE0CD"  # fg_dark
+  base07: "FFF8E3"  # fg_sidebar
+  base08: "EA6962"  # red
+  base09: "E78A4E"  # orange/hint
+  base0A: "D8A657"  # yellow
   base0B: "9FC975"  # green1
-  base0C: "89b482"  # cyan/teal
-  base0D: "7daea3"  # blue
-  base0E: "9d7cd8"  # purple (keywords)
-  base0F: "a9b665"  # green
-  base10: "32302f"  # sunken surface
-  base11: "1d2021"  # darkest
-  base12: "ea6952"  # bright red
-  base13: "d8a657"  # bright yellow
-  base14: "a9b665"  # bright green
+  base0C: "89B482"  # cyan/teal
+  base0D: "7DAEA3"  # blue
+  base0E: "9D7CD8"  # purple (keywords)
+  base0F: "A9B665"  # green
+  base10: "32302F"  # sunken surface
+  base11: "1D2021"  # darkest
+  base12: "EA6952"  # bright red
+  base13: "D8A657"  # bright yellow
+  base14: "A9B665"  # bright green
   base15: "6CBDAA"  # bright cyan
   base16: "89BCAE"  # bright blue
-  base17: "bb9af7"  # magenta
+  base17: "BB9AF7"  # magenta
 overrides:
-  statusline_a_bg:
+  statusline_a_bg: # base03
     color: "504945"
-  statusline_a_fg:
+  statusline_a_fg: # base00
     color: "282828"
-  statusline_b_bg:
-    color: "32302f"
-  statusline_b_fg:
-    color: "d4be98"
-  statusline_c_bg:
-    color: "1d2021"
+  statusline_b_bg: # base10
+    color: "32302F"
+  statusline_b_fg: # base05
+    color: "D4BE98"
+  statusline_c_bg: # base01
+    color: "1D2021"
   statusline_c_fg:
-    color: "d4be98"
+    color: "D4BE98" # base05

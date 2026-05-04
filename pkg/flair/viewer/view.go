@@ -164,65 +164,201 @@ func itoa(n int) string {
 	return string(digits)
 }
 
-// renderTextStatus renders the Text & Status page with realistic content.
+// renderTextStatus renders the Text & Status page as a simulated vim window.
+// It displays text content with line numbers inside a bordered window with
+// base01 background and a status bar at the bottom inside the window.
 func (m Model) renderTextStatus() string {
+	// Get base01 for background (fallback to dark gray).
+	base01 := "#3c3836"
+	if len(m.palette.Colors[1]) > 0 {
+		base01 = m.palette.Colors[1]
+	}
+
+	// Get base00 for the tabline/title background.
+	base00 := "#282828" //nolint:goconst // fallback color
+	if len(m.palette.Colors[0]) > 0 {
+		base00 = m.palette.Colors[0]
+	}
+
+	// Get colors for content.
+	primaryHex := m.getTextColor("text.primary", "#c0caf5")
+	secondaryHex := m.getTextColor("text.secondary", "#a9b1d6")
+	mutedHex := m.getTextColor("text.muted", "#565f89")
+	errorHex := m.getStatusColor("status.error", "#f7768e")
+	warningHex := m.getStatusColor("status.warning", "#e0af68")
+	successHex := m.getStatusColor("status.success", "#9ece6a")
+	infoHex := m.getStatusColor("status.info", "#7dcfff")
+	accentHex := m.getStatuslineColor("statusline.a.bg", "#7aa2f7")
+
+	// Window dimensions - wider for better vim appearance.
+	windowWidth := 80
+	windowHeight := 16 // Just bigger than content + status bar
+
+	// Build vim-style tabline/title bar.
+	tabStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(accentHex)).
+		Foreground(lipgloss.Color(base00)).
+		Bold(true).
+		Padding(0, 1)
+
+	tabContent := tabStyle.Render(" Text & Status")
+	// Calculate fill width for the rest of the tabline.
+	tabLen := 16 // " Text & Status" with padding
+	fillWidth := windowWidth + 2 - tabLen
+	if fillWidth < 0 {
+		fillWidth = 0
+	}
+	tabFill := lipgloss.NewStyle().
+		Background(lipgloss.Color(base00)).
+		Width(fillWidth).
+		Render("")
+
+	titleBar := tabContent + tabFill
+
+	// Line number style (muted, right-aligned).
+	// Line number style (muted, right-aligned) - uses base01 background.
+	lineNumStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color(mutedHex)).
+		Background(lipgloss.Color(base01)).
+		Width(3).
+		Align(lipgloss.Right)
+
+	// Content styles - all use base01 background to match window.
+	bgColor := lipgloss.Color(base01)
+	primaryStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(primaryHex)).Background(bgColor)
+	secondaryStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(secondaryHex)).Background(bgColor)
+	mutedStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(mutedHex)).Background(bgColor)
+	sectionStyle := m.sectionStyle().Background(bgColor)
+	errorStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(errorHex)).Background(bgColor).Bold(true)
+	warningStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(warningHex)).Background(bgColor).Bold(true)
+	successStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(successHex)).Background(bgColor).Bold(true)
+	infoStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(infoHex)).Background(bgColor).Bold(true)
+
+	// Build content lines with line numbers.
+	lines := []string{
+		sectionStyle.Render("Text Styles"),
+		"",
+		primaryStyle.Render("Primary text: Lorem ipsum dolor sit amet, consectetur adipiscing elit."),
+		"",
+		secondaryStyle.Render("Secondary text: Sed do eiusmod tempor incididunt ut labore."),
+		"",
+		mutedStyle.Render("Muted text: Ut enim ad minim veniam, quis nostrud exercitation."),
+		"",
+		sectionStyle.Render("Status Messages"),
+		"",
+		errorStyle.Render("Error: Failed to connect to the server. Please check your network."),
+		warningStyle.Render("Warning: Your session will expire in 5 minutes."),
+		successStyle.Render("Success: File uploaded successfully."),
+		infoStyle.Render("Info: Press Ctrl+C to cancel the operation."),
+	}
+
+	// Build the vim-style content with line numbers.
+	// Style the separator space with same background.
+	spaceStyle := lipgloss.NewStyle().Background(bgColor)
+	var content strings.Builder
+	for i, line := range lines {
+		lineNum := lineNumStyle.Render(itoa(i + 1))
+		content.WriteString(lineNum)
+		content.WriteString(spaceStyle.Render(" "))
+		content.WriteString(line)
+		content.WriteString("\n")
+	}
+
+	// Add the status bar inside the window (at the bottom).
+	content.WriteString("   ") // 3 space indent
+	statusBar := m.renderVimStatusBar(windowWidth - 3)
+	content.WriteString(statusBar)
+
+	// Create the vim window style with border and base01 background.
+	// Fixed height for square appearance, background fills empty space.
+	borderColor := lipgloss.Color(mutedHex)
+	windowStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(base01)).
+		Border(lipgloss.NormalBorder()).
+		BorderForeground(borderColor).
+		BorderBackground(lipgloss.Color(base01)).
+		Width(windowWidth).
+		Height(windowHeight).
+		Padding(0, 1)
+
+	// Render the content inside the window.
+	windowContent := windowStyle.Render(content.String())
+
+	// Combine title bar and window.
+	return titleBar + "\n" + windowContent
+}
+
+// renderVimStatusBar renders a vim-style status bar for the simulated window.
+func (m Model) renderVimStatusBar(width int) string {
 	var b strings.Builder
 
-	titleStyle := m.titleStyle()
-	sectionStyle := m.sectionStyle()
+	// Get statusline colors with fallbacks.
+	aBg := m.getStatuslineColor("statusline.a.bg", "#7aa2f7")
+	aFg := m.getStatuslineColor("statusline.a.fg", "#1a1b26")
+	bBg := m.getStatuslineColor("statusline.b.bg", "#3b4261")
+	bFg := m.getStatuslineColor("statusline.b.fg", "#c0caf5")
+	cBg := m.getStatuslineColor("statusline.c.bg", "#24283b")
+	cFg := m.getStatuslineColor("statusline.c.fg", "#a9b1d6")
 
-	b.WriteString(titleStyle.Render("Text & Status"))
-	b.WriteString("\n\n")
+	// Powerline separator character.
+	sep := ""
 
-	// Text styles section.
-	b.WriteString(sectionStyle.Render("Text Styles"))
-	b.WriteString("\n\n")
+	// Section A: Mode indicator (bold background).
+	aStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(aBg)).
+		Foreground(lipgloss.Color(aFg)).
+		Bold(true).
+		Padding(0, 1)
 
-	// Primary text.
-	primaryHex := m.getTextColor("text.primary", "#c0caf5")
-	primaryStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(primaryHex))
-	b.WriteString(primaryStyle.Render("Primary text: Lorem ipsum dolor sit amet, consectetur adipiscing elit."))
-	b.WriteString("\n\n")
+	// Separator A->B.
+	sepABStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(bBg)).
+		Foreground(lipgloss.Color(aBg))
 
-	// Secondary text.
-	secondaryHex := m.getTextColor("text.secondary", "#a9b1d6")
-	secondaryStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(secondaryHex))
-	b.WriteString(secondaryStyle.Render("Secondary text: Sed do eiusmod tempor incididunt ut labore."))
-	b.WriteString("\n\n")
+	// Section B: Branch info.
+	bStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(bBg)).
+		Foreground(lipgloss.Color(bFg)).
+		Padding(0, 1)
 
-	// Muted text.
-	mutedHex := m.getTextColor("text.muted", "#565f89")
-	mutedStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(mutedHex))
-	b.WriteString(mutedStyle.Render("Muted text: Ut enim ad minim veniam, quis nostrud exercitation."))
-	b.WriteString("\n\n")
+	// Separator B->C.
+	sepBCStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(cBg)).
+		Foreground(lipgloss.Color(bBg))
 
-	// Status messages section.
-	b.WriteString(sectionStyle.Render("Status Messages"))
-	b.WriteString("\n\n")
+	// Right side separator.
+	sepRightStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(cBg)).
+		Foreground(lipgloss.Color(bBg))
 
-	// Error message.
-	errorHex := m.getStatusColor("status.error", "#f7768e")
-	errorStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(errorHex)).Bold(true)
-	b.WriteString(errorStyle.Render("Error: Failed to connect to the server. Please check your network."))
-	b.WriteString("\n")
+	// Right separator character.
+	sepRight := ""
 
-	// Warning message.
-	warningHex := m.getStatusColor("status.warning", "#e0af68")
-	warningStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(warningHex)).Bold(true)
-	b.WriteString(warningStyle.Render("Warning: Your session will expire in 5 minutes."))
-	b.WriteString("\n")
+	// Build left side.
+	b.WriteString(aStyle.Render(" NORMAL"))
+	b.WriteString(sepABStyle.Render(sep))
+	b.WriteString(bStyle.Render(" main"))
+	b.WriteString(sepBCStyle.Render(sep))
 
-	// Success message.
-	successHex := m.getStatusColor("status.success", "#9ece6a")
-	successStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(successHex)).Bold(true)
-	b.WriteString(successStyle.Render("Success: File uploaded successfully."))
-	b.WriteString("\n")
+	// Middle section (file path).
+	leftLen := 9 + 7 + 2 // NORMAL + main + separators approx
+	rightLen := 8 + 7    // position + encoding approx
+	middleWidth := width - leftLen - rightLen - 4 + 4 // +4 for wider middle
+	if middleWidth < 10 {
+		middleWidth = 10
+	}
 
-	// Info message.
-	infoHex := m.getStatusColor("status.info", "#7dcfff")
-	infoStyle := lipgloss.NewStyle().Foreground(lipgloss.Color(infoHex)).Bold(true)
-	b.WriteString(infoStyle.Render("Info: Press Ctrl+C to cancel the operation."))
-	b.WriteString("\n")
+	fileStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(cBg)).
+		Foreground(lipgloss.Color(cFg)).
+		Width(middleWidth)
+	b.WriteString(fileStyle.Render(" src/main.go"))
+
+	// Right side: position info.
+	b.WriteString(sepRightStyle.Render(sepRight))
+	b.WriteString(bStyle.Render("utf-8"))
+	b.WriteString(sepRightStyle.Render(sepRight))
+	b.WriteString(aStyle.Render("1:1"))
 
 	return b.String()
 }

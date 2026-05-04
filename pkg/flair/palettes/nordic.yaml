@@ -3,27 +3,40 @@ name: "Nordic"
 author: "Alexander van Zyl (base24 by curtbushko)"
 variant: "dark"
 palette:
-  base00: "2E3440"  # gray1 - main background
-  base01: "3B4252"  # gray2 - lighter background
-  base02: "434C5E"  # gray3 - selection background
-  base03: "4C566A"  # gray4 - comments, invisibles
-  base04: "D8DEE9"  # white1 - dark foreground
-  base05: "E5E9F0"  # white2 - default foreground
-  base06: "ECEFF4"  # white3 - light foreground
-  base07: "ECEFF4"  # white3 - lightest foreground
+  base00: "222630"  # black2
+  base01: "1E222A"  # black1 - bg
+  base02: "242933"  # gray0 - slightly darker
+  base03: "3B4252"  # gray2 - comments, invisibles, muted
+  base04: "434C5E"  # gray3 - bg_highlight
+  base05: "BBC3D4"  # white0 - light foreground
+  base06: "C0C8D8"  # white_alt - default foreground
+  base07: "D8DEE9"  # white1 - lightest foreground
   base08: "BF616A"  # red.base - variables, errors
   base09: "D08770"  # orange.base - integers, constants
   base0A: "EBCB8B"  # yellow.base - classes, search
   base0B: "A3BE8C"  # green.base - strings, additions
   base0C: "88C0D0"  # blue2 (frost) - support, regex
   base0D: "81A1C1"  # blue1 - functions, methods
-  base0E: "B48EAD"  # magenta.base - keywords, tags
+  base0E: "B48EAD"  # magenta - keywords, tags - taken from tokyo-night-neon
   base0F: "5E81AC"  # blue0 - deprecated, embedded
   base10: "191D24"  # black0 - darkest background
   base11: "1E222A"  # black1 - darker background
-  base12: "C5727A"  # red.bright - bright red
-  base13: "D79784"  # orange.bright - bright orange
-  base14: "B1C89D"  # green.bright - bright green
-  base15: "9FC6C5"  # cyan.bright - bright cyan
+  base12: "B74E58"  # red.bright - bright red
+  base13: "CB775D"  # orange.bright - bright orange
+  base14: "97B67C"  # green.bright - bright green
+  base15: "80B3B2"  # cyan.bright - bright cyan
   base16: "8FBCBB"  # cyan.base - base cyan
-  base17: "BE9DB8"  # magenta.bright - bright magenta
+  base17: "A97EA1"  # magenta - bright magenta - taken from tokyo-night-neon
+overrides:
+  statusline_a_bg: # base03
+    color: "3B4252"
+  statusline_a_fg: # base00
+    color: "222630"
+  statusline_b_bg: # base02
+    color: "242933"
+  statusline_b_fg: # base0F
+    color: "5E81AC"
+  statusline_c_bg: # base01
+    color: "1E222A"
+  statusline_c_fg: # base0F
+    color: "5E81AC"

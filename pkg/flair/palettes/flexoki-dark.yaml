@@ -28,3 +28,16 @@ palette:
   base15: "66800B" # green-600 - darker green
   base16: "24837B" # cyan-600 - darker cyan
   base17: "205EA6" # blue-600 - darker blue
+overrides:
+  statusline_a_bg: # base03
+    color: "575653"
+  statusline_a_fg: # base00
+    color: "100F0F"
+  statusline_b_bg: # base10
+    color: "1C1B1A"
+  statusline_b_fg: # base05
+    color: "CECDC3"
+  statusline_c_bg: # base01
+    color: "1C1B1A"
+  statusline_c_fg: # base05
+    color: "CECDC3"

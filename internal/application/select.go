@@ -19,27 +19,48 @@ var outputFiles = []string{
 // SelectThemeUseCase verifies that a theme directory exists and contains
 // all required output files, then activates it via store.Select().
 // When a theme is not on disk but matches a built-in palette, it is
-// auto-generated before selection.
+// auto-generated before selection. All theme files are regenerated before
+// selection to ensure they are in sync with the palette.
 type SelectThemeUseCase struct {
-	store     ports.ThemeStore
-	builtins  ports.PaletteSource
-	generator *GenerateThemeUseCase
+	store       ports.ThemeStore
+	builtins    ports.PaletteSource
+	generator   *GenerateThemeUseCase
+	regenerator *RegenerateThemeUseCase
 }
 
 // NewSelectThemeUseCase returns a new SelectThemeUseCase wired to the given
-// store, builtins source, and generator. builtins and generator may be nil
-// if auto-generation of built-in themes is not needed.
-func NewSelectThemeUseCase(store ports.ThemeStore, builtins ports.PaletteSource, generator *GenerateThemeUseCase) *SelectThemeUseCase {
-	return &SelectThemeUseCase{store: store, builtins: builtins, generator: generator}
+// store, builtins source, generator, and regenerator. builtins and generator
+// may be nil if auto-generation of built-in themes is not needed.
+// regenerator may be nil to skip auto-regeneration.
+func NewSelectThemeUseCase(
+	store ports.ThemeStore,
+	builtins ports.PaletteSource,
+	generator *GenerateThemeUseCase,
+	regenerator *RegenerateThemeUseCase,
+) *SelectThemeUseCase {
+	return &SelectThemeUseCase{
+		store:       store,
+		builtins:    builtins,
+		generator:   generator,
+		regenerator: regenerator,
+	}
 }
 
 // Execute verifies the theme is complete and selects it as active.
 // If the theme does not exist on disk but matches a built-in palette,
-// it is auto-generated first.
+// it is auto-generated first. All theme files are regenerated before
+// selection to ensure they are in sync with the palette.
 func (uc *SelectThemeUseCase) Execute(themeName string) error {
 	if !uc.themeExists(themeName) {
 		if err := uc.autoGenerate(themeName); err != nil {
 			return err
+		}
+	}
+
+	// Always regenerate all files to ensure they're in sync with the palette.
+	if uc.regenerator != nil {
+		if _, err := uc.regenerator.Execute(themeName, ""); err != nil {
+			return fmt.Errorf("regenerate theme %q: %w", themeName, err)
 		}
 	}
 

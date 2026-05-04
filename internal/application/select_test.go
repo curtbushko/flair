@@ -25,7 +25,7 @@ func TestSelectThemeUseCase_Success(t *testing.T) {
 		_ = w.Close()
 	}
 
-	uc := application.NewSelectThemeUseCase(store, nil, nil)
+	uc := application.NewSelectThemeUseCase(store, nil, nil, nil)
 
 	err := uc.Execute(theme)
 	if err != nil {
@@ -45,7 +45,7 @@ func TestSelectThemeUseCase_Success(t *testing.T) {
 func TestSelectThemeUseCase_ThemeNotFound(t *testing.T) {
 	store := newStubThemeStore()
 
-	uc := application.NewSelectThemeUseCase(store, nil, nil)
+	uc := application.NewSelectThemeUseCase(store, nil, nil, nil)
 
 	err := uc.Execute("nonexistent")
 	if err == nil {
@@ -73,7 +73,7 @@ func TestSelectThemeUseCase_IncompleteTheme(t *testing.T) {
 		_ = w.Close()
 	}
 
-	uc := application.NewSelectThemeUseCase(store, nil, nil)
+	uc := application.NewSelectThemeUseCase(store, nil, nil, nil)
 
 	err := uc.Execute(theme)
 	if err == nil {
@@ -109,7 +109,7 @@ func TestSelectThemeUseCase_AutoGeneratesBuiltin(t *testing.T) {
 		builtins,
 	)
 
-	uc := application.NewSelectThemeUseCase(store, builtins, generateUC)
+	uc := application.NewSelectThemeUseCase(store, builtins, generateUC, nil)
 
 	// Theme does not exist on disk yet — select should auto-generate it.
 	err := uc.Execute("catppuccin-mocha")
@@ -138,7 +138,7 @@ func TestSelectThemeUseCase_NonBuiltinStillFails(t *testing.T) {
 	store := newStubThemeStore()
 	builtins := newStubPaletteSource() // empty — no built-ins
 
-	uc := application.NewSelectThemeUseCase(store, builtins, nil)
+	uc := application.NewSelectThemeUseCase(store, builtins, nil, nil)
 
 	err := uc.Execute("nonexistent")
 	if err == nil {

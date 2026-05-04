@@ -90,16 +90,16 @@ func Wire(configDir string) *App {
 			return fileio.WriteTokens(w, ts)
 		}),
 	)
-	selectUC := application.NewSelectThemeUseCase(fsStore, builtins, generateUC)
-	listUC := application.NewListThemesUseCase(fsStore, builtins)
-	validateUC := application.NewValidateThemeUseCase(fsStore, parser, schemaValidatorFunc())
-	previewUC := application.NewPreviewThemeUseCase(fsStore, parser, fileio.ReadTokens, tok, builtins)
 	regenerateUC := application.NewRegenerateThemeUseCase(
 		fsStore, parser, tok, targets,
 		application.WithRegenTokensWriter(func(w io.Writer, ts *domain.TokenSet) error {
 			return fileio.WriteTokens(w, ts)
 		}),
 	)
+	selectUC := application.NewSelectThemeUseCase(fsStore, builtins, generateUC, regenerateUC)
+	listUC := application.NewListThemesUseCase(fsStore, builtins)
+	validateUC := application.NewValidateThemeUseCase(fsStore, parser, schemaValidatorFunc())
+	previewUC := application.NewPreviewThemeUseCase(fsStore, parser, fileio.ReadTokens, tok, builtins)
 
 	return &App{
 		Targets:    targets,
