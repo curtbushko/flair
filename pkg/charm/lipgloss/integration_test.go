@@ -13,67 +13,69 @@ import (
 
 // createMockTokyoNightTheme creates a mock theme matching Tokyo Night Dark colors.
 // This is a complete theme with all required tokens for integration testing.
-func createMockTokyoNightTheme() *flair.Theme {
+func createMockTokyoNightTheme(t *testing.T) *flair.Theme {
+	t.Helper()
 	colors := map[string]flair.Color{
 		// Surface tokens
-		"surface.background":           mustParseHex("#1a1b26"),
-		"surface.background.raised":    mustParseHex("#1f2335"),
-		"surface.background.sunken":    mustParseHex("#16161e"),
-		"surface.background.overlay":   mustParseHex("#24283b"),
-		"surface.background.popup":     mustParseHex("#1f2335"),
-		"surface.background.highlight": mustParseHex("#292e42"),
-		"surface.background.selection": mustParseHex("#364a82"),
+		"surface.background":           mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":    mustParseHex(t, "#1f2335"),
+		"surface.background.sunken":    mustParseHex(t, "#16161e"),
+		"surface.background.overlay":   mustParseHex(t, "#24283b"),
+		"surface.background.popup":     mustParseHex(t, "#1f2335"),
+		"surface.background.highlight": mustParseHex(t, "#292e42"),
+		"surface.background.selection": mustParseHex(t, "#364a82"),
 
 		// Text tokens
-		"text.primary":   mustParseHex("#c0caf5"),
-		"text.secondary": mustParseHex("#a9b1d6"),
-		"text.muted":     mustParseHex("#565f89"),
-		"text.inverse":   mustParseHex("#1a1b26"),
+		"text.primary":   mustParseHex(t, "#c0caf5"),
+		"text.secondary": mustParseHex(t, "#a9b1d6"),
+		"text.muted":     mustParseHex(t, "#565f89"),
+		"text.inverse":   mustParseHex(t, "#1a1b26"),
 
 		// Status tokens
-		"status.error":   mustParseHex("#f7768e"),
-		"status.warning": mustParseHex("#e0af68"),
-		"status.success": mustParseHex("#9ece6a"),
-		"status.info":    mustParseHex("#7dcfff"),
+		"status.error":   mustParseHex(t, "#f7768e"),
+		"status.warning": mustParseHex(t, "#e0af68"),
+		"status.success": mustParseHex(t, "#9ece6a"),
+		"status.info":    mustParseHex(t, "#7dcfff"),
 
 		// Accent tokens
-		"accent.primary":    mustParseHex("#7aa2f7"),
-		"accent.foreground": mustParseHex("#1a1b26"),
+		"accent.primary":    mustParseHex(t, "#7aa2f7"),
+		"accent.foreground": mustParseHex(t, "#1a1b26"),
 
 		// Border tokens
-		"border.default": mustParseHex("#565f89"),
-		"border.focus":   mustParseHex("#7aa2f7"),
-		"border.muted":   mustParseHex("#3b4261"),
+		"border.default": mustParseHex(t, "#565f89"),
+		"border.focus":   mustParseHex(t, "#7aa2f7"),
+		"border.muted":   mustParseHex(t, "#3b4261"),
 	}
 	return flair.NewTheme("tokyo-night-dark", "dark", colors)
 }
 
 // createMinimalTheme creates a theme with only surface.background and text.primary.
 // Used to test fallback behavior for missing tokens.
-func createMinimalTheme() *flair.Theme {
+func createMinimalTheme(t *testing.T) *flair.Theme {
+	t.Helper()
 	colors := map[string]flair.Color{
-		"surface.background":           mustParseHex("#1a1b26"),
-		"surface.background.raised":    mustParseHex("#1a1b26"),
-		"surface.background.sunken":    mustParseHex("#1a1b26"),
-		"surface.background.overlay":   mustParseHex("#1a1b26"),
-		"surface.background.popup":     mustParseHex("#1a1b26"),
-		"surface.background.highlight": mustParseHex("#1a1b26"),
-		"surface.background.selection": mustParseHex("#1a1b26"),
-		"text.primary":                 mustParseHex("#c0caf5"),
-		"text.secondary":               mustParseHex("#c0caf5"),
-		"text.muted":                   mustParseHex("#c0caf5"),
-		"text.inverse":                 mustParseHex("#c0caf5"),
-		"status.error":                 mustParseHex("#c0caf5"),
-		"status.warning":               mustParseHex("#c0caf5"),
-		"status.success":               mustParseHex("#c0caf5"),
-		"status.info":                  mustParseHex("#c0caf5"),
+		"surface.background":           mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":    mustParseHex(t, "#1a1b26"),
+		"surface.background.sunken":    mustParseHex(t, "#1a1b26"),
+		"surface.background.overlay":   mustParseHex(t, "#1a1b26"),
+		"surface.background.popup":     mustParseHex(t, "#1a1b26"),
+		"surface.background.highlight": mustParseHex(t, "#1a1b26"),
+		"surface.background.selection": mustParseHex(t, "#1a1b26"),
+		"text.primary":                 mustParseHex(t, "#c0caf5"),
+		"text.secondary":               mustParseHex(t, "#c0caf5"),
+		"text.muted":                   mustParseHex(t, "#c0caf5"),
+		"text.inverse":                 mustParseHex(t, "#c0caf5"),
+		"status.error":                 mustParseHex(t, "#c0caf5"),
+		"status.warning":               mustParseHex(t, "#c0caf5"),
+		"status.success":               mustParseHex(t, "#c0caf5"),
+		"status.info":                  mustParseHex(t, "#c0caf5"),
 	}
 	return flair.NewTheme("minimal", "dark", colors)
 }
 
 func TestIntegration_TokyoNightStyles(t *testing.T) {
 	// Given: A mock theme matching Tokyo Night Dark colors
-	theme := createMockTokyoNightTheme()
+	theme := createMockTokyoNightTheme(t)
 
 	// When: Create Styles via NewStyles()
 	styles := lipgloss.NewStyles(theme)
@@ -206,7 +208,7 @@ func TestIntegration_TokyoNightStyles(t *testing.T) {
 
 func TestStyles_RenderOutput(t *testing.T) {
 	// Given: Styles from NewStyles()
-	theme := createMockTokyoNightTheme()
+	theme := createMockTokyoNightTheme(t)
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
@@ -231,7 +233,7 @@ func TestStyles_RenderOutput(t *testing.T) {
 
 func TestStyles_RenderOutput_AllStyles(t *testing.T) {
 	// Given: Styles from NewStyles()
-	theme := createMockTokyoNightTheme()
+	theme := createMockTokyoNightTheme(t)
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
@@ -273,7 +275,7 @@ func TestStyles_RenderOutput_AllStyles(t *testing.T) {
 
 func TestNewStyles_MissingTokensFallback(t *testing.T) {
 	// Given: Theme with only minimal tokens (missing border, accent tokens)
-	theme := createMinimalTheme()
+	theme := createMinimalTheme(t)
 
 	// When: Create Styles
 	styles := lipgloss.NewStyles(theme)
@@ -326,7 +328,7 @@ func TestNewStyles_NilTheme(t *testing.T) {
 
 func TestStyles_AllNonZero(t *testing.T) {
 	// Given: Complete theme
-	theme := createMockTokyoNightTheme()
+	theme := createMockTokyoNightTheme(t)
 	styles := lipgloss.NewStyles(theme)
 	if styles == nil {
 		t.Fatal("NewStyles returned nil")
@@ -371,7 +373,7 @@ func TestStyles_AllNonZero(t *testing.T) {
 
 func TestStyles_EndToEnd_ThemeLoadToRender(t *testing.T) {
 	// Given: A theme with complete tokens
-	theme := createMockTokyoNightTheme()
+	theme := createMockTokyoNightTheme(t)
 
 	// When: Create full style chain
 	styles := lipgloss.NewStyles(theme)

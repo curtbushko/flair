@@ -6,6 +6,8 @@ import (
 	tea "charm.land/bubbletea/v2"
 )
 
+const testColorGruvboxBg = "#282828"
+
 // TestModel_Init verifies model initializes with themes loaded.
 func TestModel_Init(t *testing.T) {
 	themes := []string{"tokyo-night-dark", "gruvbox-dark", "catppuccin-mocha"}
@@ -367,10 +369,10 @@ func (m *mockThemeLoader) LoadTokens(name string) (TokenData, error) {
 func TestModel_InitialThemeLoadsData(t *testing.T) {
 	loader := &mockThemeLoader{
 		palettes: map[string]PaletteData{
-			"gruvbox": {Colors: [24]string{"#282828", "#cc241d"}},
+			"gruvbox": {Colors: [24]string{testColorGruvboxBg, "#cc241d"}},
 		},
 		tokens: map[string]TokenData{
-			"gruvbox": {Surface: map[string]string{"surface.background": "#282828"}},
+			"gruvbox": {Surface: map[string]string{"surface.background": testColorGruvboxBg}},
 		},
 	}
 
@@ -381,10 +383,10 @@ func TestModel_InitialThemeLoadsData(t *testing.T) {
 	})
 
 	// Verify data was loaded.
-	if m.palette.Colors[0] != "#282828" {
-		t.Errorf("palette[0] = %q, want #282828", m.palette.Colors[0])
+	if m.palette.Colors[0] != testColorGruvboxBg {
+		t.Errorf("palette[0] = %q, want %s", m.palette.Colors[0], testColorGruvboxBg)
 	}
-	if m.tokens.Surface["surface.background"] != "#282828" {
-		t.Errorf("surface.background = %q, want #282828", m.tokens.Surface["surface.background"])
+	if m.tokens.Surface["surface.background"] != testColorGruvboxBg {
+		t.Errorf("surface.background = %q, want %s", m.tokens.Surface["surface.background"], testColorGruvboxBg)
 	}
 }

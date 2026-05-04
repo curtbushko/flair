@@ -41,5 +41,4 @@ go.work.sum
 
 # Nix-managed config files (from golang-shared-configs flake)
 .golangci.yml
-.go-arch-lint.yml
 .go-ai-lint.yml

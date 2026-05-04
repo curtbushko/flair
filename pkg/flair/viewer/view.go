@@ -341,8 +341,8 @@ func (m Model) renderVimStatusBar(width int) string {
 	b.WriteString(sepBCStyle.Render(sep))
 
 	// Middle section (file path).
-	leftLen := 9 + 7 + 2 // NORMAL + main + separators approx
-	rightLen := 8 + 7    // position + encoding approx
+	leftLen := 9 + 7 + 2                              // NORMAL + main + separators approx
+	rightLen := 8 + 7                                 // position + encoding approx
 	middleWidth := width - leftLen - rightLen - 4 + 4 // +4 for wider middle
 	if middleWidth < 10 {
 		middleWidth = 10

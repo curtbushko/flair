@@ -234,6 +234,8 @@ func isPluginHighlight(name string) bool {
 // writePluginHighlightAutocmd writes autocmds that re-apply plugin highlights
 // after plugins have loaded. Uses multiple events and delays to ensure highlights
 // are applied after plugins like bufferline initialize.
+//
+//nolint:gocyclo // Generator functions have inherent complexity from handling many highlight groups.
 func writePluginHighlightAutocmd(w io.Writer, highlights map[string]ports.VimHighlight) error {
 	// Collect plugin highlights
 	var pluginNames []string
@@ -352,6 +354,8 @@ func writePluginHighlightAutocmd(w io.Writer, highlights map[string]ports.VimHig
 // writeLualineSetup writes the lualine theme configuration.
 // This sets up lualine with the theme colors so it uses the colorscheme's
 // statusline tokens instead of its default colors.
+//
+//nolint:gocyclo // Generator functions have inherent complexity from handling many mode sections.
 func writeLualineSetup(w io.Writer, theme *ports.LualineTheme) error {
 	if _, err := fmt.Fprint(w, "\n-- Lualine theme configuration\n"); err != nil {
 		return err
@@ -514,6 +518,8 @@ func writeLualineSection(w io.Writer, name string, colors ports.LualineModeColor
 }
 
 // writeBufferlineSetup writes the bufferline.setup() configuration with all highlights.
+//
+//nolint:gocyclo // Generator functions have inherent complexity from handling many buffer states.
 func writeBufferlineSetup(w io.Writer, theme *ports.BufferlineTheme) error {
 	if _, err := fmt.Fprint(w, "\n-- Bufferline theme configuration\n"); err != nil {
 		return err

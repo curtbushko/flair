@@ -112,7 +112,7 @@ func TestSource_List(t *testing.T) {
 		"jackie-brown",
 		"japanesque",
 		"jellybeans",
-		"jet-brains-darcula",
+		"jet-brains-darcula", //nolint:misspell // Darcula is the actual JetBrains theme name
 		"kanagawa-dragon",
 		"kibble",
 		"lab-fox",

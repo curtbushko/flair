@@ -87,7 +87,6 @@ func (uc *RegenerateThemeUseCase) Execute(themeName, targetFilter string) (strin
 	return fmt.Sprintf("regenerated %d files: %s", len(regenerated), strings.Join(regenerated, ", ")), nil
 }
 
-
 // regenFromPalette re-derives tokens.yaml and all targets.
 func (uc *RegenerateThemeUseCase) regenFromPalette(
 	resolved *domain.ResolvedTheme, themeName, targetFilter string,
@@ -105,7 +104,6 @@ func (uc *RegenerateThemeUseCase) regenFromPalette(
 
 	return append(regenerated, regen...), nil
 }
-
 
 // regenerateTargets maps and generates all (filtered) targets.
 func (uc *RegenerateThemeUseCase) regenerateTargets(resolved *domain.ResolvedTheme, themeName, targetFilter string) ([]string, error) {
@@ -130,7 +128,6 @@ func (uc *RegenerateThemeUseCase) regenerateTargets(resolved *domain.ResolvedThe
 
 	return regenerated, nil
 }
-
 
 // processTarget runs the map -> write mapping -> generate pipeline for a single target.
 func (uc *RegenerateThemeUseCase) processTarget(target ports.Target, resolved *domain.ResolvedTheme, themeName string) error {

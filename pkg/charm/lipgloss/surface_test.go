@@ -10,19 +10,19 @@ import (
 func TestSurface_Background(t *testing.T) {
 	// Given: Theme with surface.background = #1a1b26
 	colors := map[string]flair.Color{
-		"surface.background":         mustParseHex("#1a1b26"),
-		"surface.background.raised":  mustParseHex("#1f2335"),
-		"surface.background.sunken":  mustParseHex("#16161e"),
-		"surface.background.overlay": mustParseHex("#16161e"),
-		"surface.background.popup":   mustParseHex("#16161e"),
-		"text.primary":               mustParseHex("#c0caf5"),
-		"text.secondary":             mustParseHex("#a9b1d6"),
-		"text.muted":                 mustParseHex("#565f89"),
-		"text.inverse":               mustParseHex("#1a1b26"),
-		"status.error":               mustParseHex("#f7768e"),
-		"status.warning":             mustParseHex("#e0af68"),
-		"status.success":             mustParseHex("#9ece6a"),
-		"status.info":                mustParseHex("#7dcfff"),
+		"surface.background":         mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":  mustParseHex(t, "#1f2335"),
+		"surface.background.sunken":  mustParseHex(t, "#16161e"),
+		"surface.background.overlay": mustParseHex(t, "#16161e"),
+		"surface.background.popup":   mustParseHex(t, "#16161e"),
+		"text.primary":               mustParseHex(t, "#c0caf5"),
+		"text.secondary":             mustParseHex(t, "#a9b1d6"),
+		"text.muted":                 mustParseHex(t, "#565f89"),
+		"text.inverse":               mustParseHex(t, "#1a1b26"),
+		"status.error":               mustParseHex(t, "#f7768e"),
+		"status.warning":             mustParseHex(t, "#e0af68"),
+		"status.success":             mustParseHex(t, "#9ece6a"),
+		"status.info":                mustParseHex(t, "#7dcfff"),
 	}
 	theme := flair.NewTheme("tokyo-night-dark", "dark", colors)
 
@@ -52,19 +52,19 @@ func TestSurface_Background(t *testing.T) {
 func TestSurface_Raised(t *testing.T) {
 	// Given: Theme with surface.background.raised = #1f2335
 	colors := map[string]flair.Color{
-		"surface.background":         mustParseHex("#1a1b26"),
-		"surface.background.raised":  mustParseHex("#1f2335"),
-		"surface.background.sunken":  mustParseHex("#16161e"),
-		"surface.background.overlay": mustParseHex("#16161e"),
-		"surface.background.popup":   mustParseHex("#16161e"),
-		"text.primary":               mustParseHex("#c0caf5"),
-		"text.secondary":             mustParseHex("#a9b1d6"),
-		"text.muted":                 mustParseHex("#565f89"),
-		"text.inverse":               mustParseHex("#1a1b26"),
-		"status.error":               mustParseHex("#f7768e"),
-		"status.warning":             mustParseHex("#e0af68"),
-		"status.success":             mustParseHex("#9ece6a"),
-		"status.info":                mustParseHex("#7dcfff"),
+		"surface.background":         mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":  mustParseHex(t, "#1f2335"),
+		"surface.background.sunken":  mustParseHex(t, "#16161e"),
+		"surface.background.overlay": mustParseHex(t, "#16161e"),
+		"surface.background.popup":   mustParseHex(t, "#16161e"),
+		"text.primary":               mustParseHex(t, "#c0caf5"),
+		"text.secondary":             mustParseHex(t, "#a9b1d6"),
+		"text.muted":                 mustParseHex(t, "#565f89"),
+		"text.inverse":               mustParseHex(t, "#1a1b26"),
+		"status.error":               mustParseHex(t, "#f7768e"),
+		"status.warning":             mustParseHex(t, "#e0af68"),
+		"status.success":             mustParseHex(t, "#9ece6a"),
+		"status.info":                mustParseHex(t, "#7dcfff"),
 	}
 	theme := flair.NewTheme("tokyo-night-dark", "dark", colors)
 
@@ -94,19 +94,19 @@ func TestSurface_Raised(t *testing.T) {
 func TestSurface_Sunken(t *testing.T) {
 	// Given: Theme with surface colors
 	colors := map[string]flair.Color{
-		"surface.background":         mustParseHex("#1a1b26"),
-		"surface.background.raised":  mustParseHex("#1f2335"),
-		"surface.background.sunken":  mustParseHex("#16161e"),
-		"surface.background.overlay": mustParseHex("#16161e"),
-		"surface.background.popup":   mustParseHex("#16161e"),
-		"text.primary":               mustParseHex("#c0caf5"),
-		"text.secondary":             mustParseHex("#a9b1d6"),
-		"text.muted":                 mustParseHex("#565f89"),
-		"text.inverse":               mustParseHex("#1a1b26"),
-		"status.error":               mustParseHex("#f7768e"),
-		"status.warning":             mustParseHex("#e0af68"),
-		"status.success":             mustParseHex("#9ece6a"),
-		"status.info":                mustParseHex("#7dcfff"),
+		"surface.background":         mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":  mustParseHex(t, "#1f2335"),
+		"surface.background.sunken":  mustParseHex(t, "#16161e"),
+		"surface.background.overlay": mustParseHex(t, "#16161e"),
+		"surface.background.popup":   mustParseHex(t, "#16161e"),
+		"text.primary":               mustParseHex(t, "#c0caf5"),
+		"text.secondary":             mustParseHex(t, "#a9b1d6"),
+		"text.muted":                 mustParseHex(t, "#565f89"),
+		"text.inverse":               mustParseHex(t, "#1a1b26"),
+		"status.error":               mustParseHex(t, "#f7768e"),
+		"status.warning":             mustParseHex(t, "#e0af68"),
+		"status.success":             mustParseHex(t, "#9ece6a"),
+		"status.info":                mustParseHex(t, "#7dcfff"),
 	}
 	theme := flair.NewTheme("tokyo-night-dark", "dark", colors)
 
@@ -123,19 +123,19 @@ func TestSurface_Sunken(t *testing.T) {
 func TestSurface_Overlay(t *testing.T) {
 	// Given: Theme with surface colors
 	colors := map[string]flair.Color{
-		"surface.background":         mustParseHex("#1a1b26"),
-		"surface.background.raised":  mustParseHex("#1f2335"),
-		"surface.background.sunken":  mustParseHex("#16161e"),
-		"surface.background.overlay": mustParseHex("#24283b"),
-		"surface.background.popup":   mustParseHex("#16161e"),
-		"text.primary":               mustParseHex("#c0caf5"),
-		"text.secondary":             mustParseHex("#a9b1d6"),
-		"text.muted":                 mustParseHex("#565f89"),
-		"text.inverse":               mustParseHex("#1a1b26"),
-		"status.error":               mustParseHex("#f7768e"),
-		"status.warning":             mustParseHex("#e0af68"),
-		"status.success":             mustParseHex("#9ece6a"),
-		"status.info":                mustParseHex("#7dcfff"),
+		"surface.background":         mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":  mustParseHex(t, "#1f2335"),
+		"surface.background.sunken":  mustParseHex(t, "#16161e"),
+		"surface.background.overlay": mustParseHex(t, "#24283b"),
+		"surface.background.popup":   mustParseHex(t, "#16161e"),
+		"text.primary":               mustParseHex(t, "#c0caf5"),
+		"text.secondary":             mustParseHex(t, "#a9b1d6"),
+		"text.muted":                 mustParseHex(t, "#565f89"),
+		"text.inverse":               mustParseHex(t, "#1a1b26"),
+		"status.error":               mustParseHex(t, "#f7768e"),
+		"status.warning":             mustParseHex(t, "#e0af68"),
+		"status.success":             mustParseHex(t, "#9ece6a"),
+		"status.info":                mustParseHex(t, "#7dcfff"),
 	}
 	theme := flair.NewTheme("tokyo-night-dark", "dark", colors)
 
@@ -152,19 +152,19 @@ func TestSurface_Overlay(t *testing.T) {
 func TestSurface_Popup(t *testing.T) {
 	// Given: Theme with surface colors
 	colors := map[string]flair.Color{
-		"surface.background":         mustParseHex("#1a1b26"),
-		"surface.background.raised":  mustParseHex("#1f2335"),
-		"surface.background.sunken":  mustParseHex("#16161e"),
-		"surface.background.overlay": mustParseHex("#16161e"),
-		"surface.background.popup":   mustParseHex("#1f2335"),
-		"text.primary":               mustParseHex("#c0caf5"),
-		"text.secondary":             mustParseHex("#a9b1d6"),
-		"text.muted":                 mustParseHex("#565f89"),
-		"text.inverse":               mustParseHex("#1a1b26"),
-		"status.error":               mustParseHex("#f7768e"),
-		"status.warning":             mustParseHex("#e0af68"),
-		"status.success":             mustParseHex("#9ece6a"),
-		"status.info":                mustParseHex("#7dcfff"),
+		"surface.background":         mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":  mustParseHex(t, "#1f2335"),
+		"surface.background.sunken":  mustParseHex(t, "#16161e"),
+		"surface.background.overlay": mustParseHex(t, "#16161e"),
+		"surface.background.popup":   mustParseHex(t, "#1f2335"),
+		"text.primary":               mustParseHex(t, "#c0caf5"),
+		"text.secondary":             mustParseHex(t, "#a9b1d6"),
+		"text.muted":                 mustParseHex(t, "#565f89"),
+		"text.inverse":               mustParseHex(t, "#1a1b26"),
+		"status.error":               mustParseHex(t, "#f7768e"),
+		"status.warning":             mustParseHex(t, "#e0af68"),
+		"status.success":             mustParseHex(t, "#9ece6a"),
+		"status.info":                mustParseHex(t, "#7dcfff"),
 	}
 	theme := flair.NewTheme("tokyo-night-dark", "dark", colors)
 
@@ -183,21 +183,21 @@ func TestSurface_Popup(t *testing.T) {
 func TestSurface_EmptyContent(t *testing.T) {
 	// Given: Theme with surface colors
 	colors := map[string]flair.Color{
-		"surface.background":           mustParseHex("#1a1b26"),
-		"surface.background.raised":    mustParseHex("#1f2335"),
-		"surface.background.sunken":    mustParseHex("#16161e"),
-		"surface.background.overlay":   mustParseHex("#16161e"),
-		"surface.background.popup":     mustParseHex("#16161e"),
-		"surface.background.highlight": mustParseHex("#292e42"),
-		"surface.background.selection": mustParseHex("#364a82"),
-		"text.primary":                 mustParseHex("#c0caf5"),
-		"text.secondary":               mustParseHex("#a9b1d6"),
-		"text.muted":                   mustParseHex("#565f89"),
-		"text.inverse":                 mustParseHex("#1a1b26"),
-		"status.error":                 mustParseHex("#f7768e"),
-		"status.warning":               mustParseHex("#e0af68"),
-		"status.success":               mustParseHex("#9ece6a"),
-		"status.info":                  mustParseHex("#7dcfff"),
+		"surface.background":           mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":    mustParseHex(t, "#1f2335"),
+		"surface.background.sunken":    mustParseHex(t, "#16161e"),
+		"surface.background.overlay":   mustParseHex(t, "#16161e"),
+		"surface.background.popup":     mustParseHex(t, "#16161e"),
+		"surface.background.highlight": mustParseHex(t, "#292e42"),
+		"surface.background.selection": mustParseHex(t, "#364a82"),
+		"text.primary":                 mustParseHex(t, "#c0caf5"),
+		"text.secondary":               mustParseHex(t, "#a9b1d6"),
+		"text.muted":                   mustParseHex(t, "#565f89"),
+		"text.inverse":                 mustParseHex(t, "#1a1b26"),
+		"status.error":                 mustParseHex(t, "#f7768e"),
+		"status.warning":               mustParseHex(t, "#e0af68"),
+		"status.success":               mustParseHex(t, "#9ece6a"),
+		"status.info":                  mustParseHex(t, "#7dcfff"),
 	}
 	theme := flair.NewTheme("tokyo-night-dark", "dark", colors)
 
@@ -228,21 +228,21 @@ func TestSurface_EmptyContent(t *testing.T) {
 func TestSurface_MultilineContent(t *testing.T) {
 	// Given: Theme with surface colors
 	colors := map[string]flair.Color{
-		"surface.background":           mustParseHex("#1a1b26"),
-		"surface.background.raised":    mustParseHex("#1f2335"),
-		"surface.background.sunken":    mustParseHex("#16161e"),
-		"surface.background.overlay":   mustParseHex("#16161e"),
-		"surface.background.popup":     mustParseHex("#16161e"),
-		"surface.background.highlight": mustParseHex("#292e42"),
-		"surface.background.selection": mustParseHex("#364a82"),
-		"text.primary":                 mustParseHex("#c0caf5"),
-		"text.secondary":               mustParseHex("#a9b1d6"),
-		"text.muted":                   mustParseHex("#565f89"),
-		"text.inverse":                 mustParseHex("#1a1b26"),
-		"status.error":                 mustParseHex("#f7768e"),
-		"status.warning":               mustParseHex("#e0af68"),
-		"status.success":               mustParseHex("#9ece6a"),
-		"status.info":                  mustParseHex("#7dcfff"),
+		"surface.background":           mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":    mustParseHex(t, "#1f2335"),
+		"surface.background.sunken":    mustParseHex(t, "#16161e"),
+		"surface.background.overlay":   mustParseHex(t, "#16161e"),
+		"surface.background.popup":     mustParseHex(t, "#16161e"),
+		"surface.background.highlight": mustParseHex(t, "#292e42"),
+		"surface.background.selection": mustParseHex(t, "#364a82"),
+		"text.primary":                 mustParseHex(t, "#c0caf5"),
+		"text.secondary":               mustParseHex(t, "#a9b1d6"),
+		"text.muted":                   mustParseHex(t, "#565f89"),
+		"text.inverse":                 mustParseHex(t, "#1a1b26"),
+		"status.error":                 mustParseHex(t, "#f7768e"),
+		"status.warning":               mustParseHex(t, "#e0af68"),
+		"status.success":               mustParseHex(t, "#9ece6a"),
+		"status.info":                  mustParseHex(t, "#7dcfff"),
 	}
 	theme := flair.NewTheme("tokyo-night-dark", "dark", colors)
 	multiline := "Line 1\nLine 2\nLine 3"
@@ -264,21 +264,21 @@ func TestSurface_MultilineContent(t *testing.T) {
 func TestSurface_SpecialCharacters(t *testing.T) {
 	// Given: Theme with surface colors
 	colors := map[string]flair.Color{
-		"surface.background":           mustParseHex("#1a1b26"),
-		"surface.background.raised":    mustParseHex("#1f2335"),
-		"surface.background.sunken":    mustParseHex("#16161e"),
-		"surface.background.overlay":   mustParseHex("#16161e"),
-		"surface.background.popup":     mustParseHex("#16161e"),
-		"surface.background.highlight": mustParseHex("#292e42"),
-		"surface.background.selection": mustParseHex("#364a82"),
-		"text.primary":                 mustParseHex("#c0caf5"),
-		"text.secondary":               mustParseHex("#a9b1d6"),
-		"text.muted":                   mustParseHex("#565f89"),
-		"text.inverse":                 mustParseHex("#1a1b26"),
-		"status.error":                 mustParseHex("#f7768e"),
-		"status.warning":               mustParseHex("#e0af68"),
-		"status.success":               mustParseHex("#9ece6a"),
-		"status.info":                  mustParseHex("#7dcfff"),
+		"surface.background":           mustParseHex(t, "#1a1b26"),
+		"surface.background.raised":    mustParseHex(t, "#1f2335"),
+		"surface.background.sunken":    mustParseHex(t, "#16161e"),
+		"surface.background.overlay":   mustParseHex(t, "#16161e"),
+		"surface.background.popup":     mustParseHex(t, "#16161e"),
+		"surface.background.highlight": mustParseHex(t, "#292e42"),
+		"surface.background.selection": mustParseHex(t, "#364a82"),
+		"text.primary":                 mustParseHex(t, "#c0caf5"),
+		"text.secondary":               mustParseHex(t, "#a9b1d6"),
+		"text.muted":                   mustParseHex(t, "#565f89"),
+		"text.inverse":                 mustParseHex(t, "#1a1b26"),
+		"status.error":                 mustParseHex(t, "#f7768e"),
+		"status.warning":               mustParseHex(t, "#e0af68"),
+		"status.success":               mustParseHex(t, "#9ece6a"),
+		"status.info":                  mustParseHex(t, "#7dcfff"),
 	}
 	theme := flair.NewTheme("tokyo-night-dark", "dark", colors)
 	specialChars := "Unicode: \u2603 \u2764 Tab:\t Emoji: \U0001F600"

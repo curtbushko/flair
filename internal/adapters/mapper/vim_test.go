@@ -8,6 +8,18 @@ import (
 	"github.com/curtbushko/flair/internal/ports"
 )
 
+// checkHighlightColor verifies a highlight color matches the expected value.
+func checkHighlightColor(t *testing.T, name, field string, got, want *domain.Color) {
+	t.Helper()
+	if got == nil {
+		t.Errorf("%s: %s is nil, want %s", name, field, want.Hex())
+		return
+	}
+	if !got.Equal(*want) {
+		t.Errorf("%s: %s = %s, want %s", name, field, got.Hex(), want.Hex())
+	}
+}
+
 // TestVimMapper_Interface verifies that the Vim mapper implements
 // ports.Mapper and Name() returns "vim".
 func TestVimMapper_Interface(t *testing.T) {
@@ -550,16 +562,8 @@ func TestVimMapper_PluginHighlights(t *testing.T) {
 	// TelescopeBorder should match background color for both fg and bg.
 	if hl, ok := vt.Highlights["TelescopeBorder"]; ok {
 		wantColor := colorPtr("#1a1b26") // surface.background = base00
-		if hl.Fg == nil {
-			t.Errorf("TelescopeBorder: Fg is nil, want %s", wantColor.Hex())
-		} else if !hl.Fg.Equal(*wantColor) {
-			t.Errorf("TelescopeBorder: Fg = %s, want %s", hl.Fg.Hex(), wantColor.Hex())
-		}
-		if hl.Bg == nil {
-			t.Errorf("TelescopeBorder: Bg is nil, want %s", wantColor.Hex())
-		} else if !hl.Bg.Equal(*wantColor) {
-			t.Errorf("TelescopeBorder: Bg = %s, want %s", hl.Bg.Hex(), wantColor.Hex())
-		}
+		checkHighlightColor(t, "TelescopeBorder", "Fg", hl.Fg, wantColor)
+		checkHighlightColor(t, "TelescopeBorder", "Bg", hl.Bg, wantColor)
 	}
 }
 

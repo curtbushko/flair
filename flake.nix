@@ -78,7 +78,6 @@
 
           shellHook = ''
             cp -f ${sharedConfigs}/.golangci.yml .golangci.yml
-            cp -f ${sharedConfigs}/.go-arch-lint.yml .go-arch-lint.yml
             cp -f ${sharedConfigs}/.go-ai-lint.yml .go-ai-lint.yml
           '';
         };
