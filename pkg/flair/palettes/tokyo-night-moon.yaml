@@ -4,39 +4,39 @@ author: "Michaël Ball, based on Tokyo Night by enkia (https://github.com/enkia/
 variant: "dark"
 palette:
   base00: "222436" # Background
-  base01: "1e2030" # Lighter background
-  base02: "2f334d" # Selection background
-  base03: "444a73" # Comments, invisibles
-  base04: "828bb8" # Dark foreground
-  base05: "c8d3f5" # Default foreground
-  base06: "b4c2f0" # Light foreground
-  base07: "c8d3f5" # Lightest foreground
-  base08: "c099ff" # Variables, XML tags
-  base09: "ffc777" # Integers, booleans
-  base0A: "ffc777" # Classes, search text bg
-  base0B: "c3e88d" # Strings
-  base0C: "86e1fc" # Regex, escape chars
-  base0D: "82aaff" # Functions, methods
-  base0E: "fca7ea" # Keywords, storage
-  base0F: "c53b53" # Deprecated, special
-  base10: "1e2030" # Darker background
-  base11: "1a1b2a" # Darkest background
-  base12: "ff757f" # Bright red
-  base13: "ffd793" # Bright orange/yellow
-  base14: "c3e88d" # Bright green
-  base15: "86e1fc" # Bright cyan
-  base16: "82aaff" # Bright blue
-  base17: "fca7ea" # Bright magenta
+  base01: "1E2030" # Lighter background
+  base02: "2F334D" # Selection background
+  base03: "444A73" # Comments, invisibles
+  base04: "828BB8" # Dark foreground
+  base05: "C8D3F5" # Default foreground
+  base06: "B4C2F0" # Light foreground
+  base07: "C8D3F5" # Lightest foreground
+  base08: "C099FF" # Variables, XML tags
+  base09: "FFC777" # Integers, booleans
+  base0A: "FFC777" # Classes, search text bg
+  base0B: "C3E88D" # Strings
+  base0C: "86E1FC" # Regex, escape chars
+  base0D: "82AAFF" # Functions, methods
+  base0E: "FCA7EA" # Keywords, storage
+  base0F: "C53B53" # Deprecated, special
+  base10: "1E2030" # Darker background
+  base11: "1A1B2A" # Darkest background
+  base12: "FF757F" # Bright red
+  base13: "FFD793" # Bright orange/yellow
+  base14: "C3E88D" # Bright green
+  base15: "86E1FC" # Bright cyan
+  base16: "82AAFF" # Bright blue
+  base17: "FCA7EA" # Bright magenta
 overrides:
   statusline_a_bg: # base03
-    color: "444a73"
+    color: "444A73"
   statusline_a_fg: # base00
     color: "222436"
   statusline_b_bg: # base10
-    color: "1e2030"
+    color: "1E2030"
   statusline_b_fg: # base05
-    color: "c8d3f5"
+    color: "C8D3F5"
   statusline_c_bg: # base01
-    color: "1e2030"
+    color: "1E2030"
   statusline_c_fg: # base05
-    color: "c8d3f5"
+    color: "C8D3F5"

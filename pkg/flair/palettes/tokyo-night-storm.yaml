@@ -3,40 +3,40 @@ name: "Tokyo Night Storm"
 author: "Michaël Ball, based on Tokyo Night by enkia (https://github.com/enkia/tokyo-night-vscode-theme)"
 variant: "dark"
 palette:
-  base00: "24283b" # Background
-  base01: "16161e" # Lighter background (terminal black)
-  base02: "343a52" # Selection background
-  base03: "444b6a" # Comments, invisibles
-  base04: "787c99" # Dark foreground
-  base05: "a9b1d6" # Default foreground
-  base06: "cbccd1" # Light foreground
-  base07: "d5d6db" # Lightest foreground
-  base08: "c0caf5" # Variables, XML tags
-  base09: "a9b1d6" # Integers, booleans
-  base0A: "0db9d7" # Classes, search text bg
-  base0B: "9ece6a" # Strings
-  base0C: "b4f9f8" # Regex, escape chars
-  base0D: "2ac3de" # Functions, methods
-  base0E: "bb9af7" # Keywords, storage
-  base0F: "f7768e" # Deprecated, special
-  base10: "1f2335" # Darker background
-  base11: "1a1b26" # Darkest background
-  base12: "ff7a93" # Bright red
-  base13: "ff9e64" # Bright orange
-  base14: "73daca" # Bright green/teal
-  base15: "7dcfff" # Bright cyan
-  base16: "89ddff" # Bright blue
-  base17: "bb9af7" # Bright magenta
+  base00: "24283B" # Background
+  base01: "16161E" # Lighter background (terminal black)
+  base02: "343A52" # Selection background
+  base03: "444B6A" # Comments, invisibles
+  base04: "787C99" # Dark foreground
+  base05: "A9B1D6" # Default foreground
+  base06: "CBCCD1" # Light foreground
+  base07: "D5D6DB" # Lightest foreground
+  base08: "C0CAF5" # Variables, XML tags
+  base09: "A9B1D6" # Integers, booleans
+  base0A: "0DB9D7" # Classes, search text bg
+  base0B: "9ECE6A" # Strings
+  base0C: "B4F9F8" # Regex, escape chars
+  base0D: "2AC3DE" # Functions, methods
+  base0E: "BB9AF7" # Keywords, storage
+  base0F: "F7768E" # Deprecated, special
+  base10: "1F2335" # Darker background
+  base11: "1A1B26" # Darkest background
+  base12: "FF7A93" # Bright red
+  base13: "FF9E64" # Bright orange
+  base14: "73DACA" # Bright green/teal
+  base15: "7DCFFF" # Bright cyan
+  base16: "89DDFF" # Bright blue
+  base17: "BB9AF7" # Bright magenta
 overrides:
   statusline_a_bg: # base03
-    color: "444b6a"
+    color: "444B6A"
   statusline_a_fg: # base00
-    color: "24283b"
+    color: "24283B"
   statusline_b_bg: # base10
-    color: "1f2335"
+    color: "1F2335"
   statusline_b_fg: # base05
-    color: "a9b1d6"
+    color: "A9B1D6"
   statusline_c_bg: # base01
-    color: "16161e"
+    color: "16161E"
   statusline_c_fg: # base05
-    color: "a9b1d6"
+    color: "A9B1D6"

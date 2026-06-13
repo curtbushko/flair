@@ -3,40 +3,40 @@ name: "PaperColor Light"
 author: "Nguyen Nguyen (https://github.com/NLKNguyen/papercolor-theme)"
 variant: "light"
 palette:
-  base00: "eeeeee" # Default Background
-  base01: "e4e4e4" # Lighter Background (CursorLine)
-  base02: "d0d0d0" # Selection Background (StatusLineNC)
+  base00: "EEEEEE" # Default Background
+  base01: "E4E4E4" # Lighter Background (CursorLine)
+  base02: "D0D0D0" # Selection Background (StatusLineNC)
   base03: "878787" # Comments, LineNumbers
-  base04: "b2b2b2" # Dark Foreground
+  base04: "B2B2B2" # Dark Foreground
   base05: "444444" # Default Foreground
-  base06: "005f87" # Light Foreground (Cursor bg, emphasis)
-  base07: "0087af" # Lightest Foreground
-  base08: "af0000" # Red - Variables, Errors
-  base09: "d70087" # Pink - Constants, Numbers
-  base0A: "5f8700" # Olive/Yellow - Classes, Strings
+  base06: "005F87" # Light Foreground (Cursor bg, emphasis)
+  base07: "0087AF" # Lightest Foreground
+  base08: "AF0000" # Red - Variables, Errors
+  base09: "D70087" # Pink - Constants, Numbers
+  base0A: "5F8700" # Olive/Yellow - Classes, Strings
   base0B: "008700" # Green - Strings, Diff Add
-  base0C: "d75f00" # Orange - Regex, Support
-  base0D: "0087af" # Blue - Functions
-  base0E: "8700af" # Purple - Keywords
-  base0F: "005faf" # Navy Blue - Deprecated, Special
-  base10: "f4f4f4" # Lighter background variant
-  base11: "ffffff" # Lightest background
-  base12: "d70000" # Bright Red
-  base13: "ff00af" # Bright Pink
-  base14: "87af00" # Bright Olive
-  base15: "00af00" # Bright Green
-  base16: "ff8700" # Bright Orange
-  base17: "5fafff" # Bright Blue
+  base0C: "D75F00" # Orange - Regex, Support
+  base0D: "0087AF" # Blue - Functions
+  base0E: "8700AF" # Purple - Keywords
+  base0F: "005FAF" # Navy Blue - Deprecated, Special
+  base10: "F4F4F4" # Lighter background variant
+  base11: "FFFFFF" # Lightest background
+  base12: "D70000" # Bright Red
+  base13: "FF00AF" # Bright Pink
+  base14: "87AF00" # Bright Olive
+  base15: "00AF00" # Bright Green
+  base16: "FF8700" # Bright Orange
+  base17: "5FAFFF" # Bright Blue
 overrides:
   statusline_a_bg: # base03
     color: "878787"
   statusline_a_fg: # base00
-    color: "eeeeee"
+    color: "EEEEEE"
   statusline_b_bg: # base10
-    color: "f4f4f4"
+    color: "F4F4F4"
   statusline_b_fg: # base05
     color: "444444"
   statusline_c_bg: # base01
-    color: "e4e4e4"
+    color: "E4E4E4"
   statusline_c_fg: # base05
     color: "444444"

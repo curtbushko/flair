@@ -3,40 +3,40 @@ name: "PaperColor Dark"
 author: "Nguyen Nguyen (https://github.com/NLKNguyen/papercolor-theme)"
 variant: "dark"
 palette:
-  base00: "1c1c1c" # Default Background
+  base00: "1C1C1C" # Default Background
   base01: "303030" # Lighter Background (CursorLine)
-  base02: "3a3a3a" # Selection Background (StatusLineNC)
+  base02: "3A3A3A" # Selection Background (StatusLineNC)
   base03: "808080" # Comments
   base04: "585858" # Dark Foreground (LineNumbers)
-  base05: "d0d0d0" # Default Foreground
-  base06: "bcbcbc" # Light Foreground
-  base07: "c6c6c6" # Lightest Foreground (Cursor)
-  base08: "af005f" # Red - Variables, Errors
-  base09: "5faf5f" # Bright Green - Numbers, Constants
-  base0A: "d7af5f" # Olive/Yellow - Classes
-  base0B: "5faf00" # Green - Strings, Diff Add
-  base0C: "ffaf00" # Orange - Regex, Support
-  base0D: "5fafd7" # Blue - Functions
-  base0E: "af87d7" # Purple - Keywords
-  base0F: "ff5faf" # Magenta - Deprecated, Special
+  base05: "D0D0D0" # Default Foreground
+  base06: "BCBCBC" # Light Foreground
+  base07: "C6C6C6" # Lightest Foreground (Cursor)
+  base08: "AF005F" # Red - Variables, Errors
+  base09: "5FAF5F" # Bright Green - Numbers, Constants
+  base0A: "D7AF5F" # Olive/Yellow - Classes
+  base0B: "5FAF00" # Green - Strings, Diff Add
+  base0C: "FFAF00" # Orange - Regex, Support
+  base0D: "5FAFD7" # Blue - Functions
+  base0E: "AF87D7" # Purple - Keywords
+  base0F: "FF5FAF" # Magenta - Deprecated, Special
   base10: "121212" # Darker background variant
   base11: "080808" # Darkest background
-  base12: "d7005f" # Bright Red
-  base13: "87d75f" # Brighter Green
-  base14: "ffd75f" # Bright Yellow
-  base15: "87d700" # Bright Green variant
-  base16: "ffd700" # Bright Orange/Yellow
-  base17: "87d7ff" # Bright Cyan/Blue
+  base12: "D7005F" # Bright Red
+  base13: "87D75F" # Brighter Green
+  base14: "FFD75F" # Bright Yellow
+  base15: "87D700" # Bright Green variant
+  base16: "FFD700" # Bright Orange/Yellow
+  base17: "87D7FF" # Bright Cyan/Blue
 overrides:
   statusline_a_bg: # base03
     color: "808080"
   statusline_a_fg: # base00
-    color: "1c1c1c"
+    color: "1C1C1C"
   statusline_b_bg: # base10
     color: "121212"
   statusline_b_fg: # base05
-    color: "d0d0d0"
+    color: "D0D0D0"
   statusline_c_bg: # base01
     color: "303030"
   statusline_c_fg: # base05
-    color: "d0d0d0"
+    color: "D0D0D0"

@@ -4,39 +4,39 @@ author: "https://github.com/catppuccin/catppuccin"
 variant: "dark"
 palette:
   base00: "303446" # base
-  base01: "292c3c" # mantle
+  base01: "292C3C" # mantle
   base02: "414559" # surface0
-  base03: "51576d" # surface1
+  base03: "51576D" # surface1
   base04: "626880" # surface2
-  base05: "c6d0f5" # text
-  base06: "f2d5cf" # rosewater
-  base07: "babbf1" # lavender
-  base08: "e78284" # red
-  base09: "ef9f76" # peach
-  base0A: "e5c890" # yellow
-  base0B: "a6d189" # green
-  base0C: "81c8be" # teal
-  base0D: "8caaee" # blue
-  base0E: "ca9ee6" # mauve
-  base0F: "eebebe" # flamingo
-  base10: "292c3c" # mantle - darker background
+  base05: "C6D0F5" # text
+  base06: "F2D5CF" # rosewater
+  base07: "BABBF1" # lavender
+  base08: "E78284" # red
+  base09: "EF9F76" # peach
+  base0A: "E5C890" # yellow
+  base0B: "A6D189" # green
+  base0C: "81C8BE" # teal
+  base0D: "8CAAEE" # blue
+  base0E: "CA9EE6" # mauve
+  base0F: "EEBEBE" # flamingo
+  base10: "292C3C" # mantle - darker background
   base11: "232634" # crust - darkest background
-  base12: "ea999c" # maroon - bright red
-  base13: "f2d5cf" # rosewater - bright yellow
-  base14: "a6d189" # green - bright green
-  base15: "99d1db" # sky - bright cyan
-  base16: "85c1dc" # sapphire - bright blue
-  base17: "f4b8e4" # pink - bright purple
+  base12: "EA999C" # maroon - bright red
+  base13: "F2D5CF" # rosewater - bright yellow
+  base14: "A6D189" # green - bright green
+  base15: "99D1DB" # sky - bright cyan
+  base16: "85C1DC" # sapphire - bright blue
+  base17: "F4B8E4" # pink - bright purple
 overrides:
   statusline_a_bg: # base03
-    color: "51576d"
+    color: "51576D"
   statusline_a_fg: # base00
     color: "303446"
   statusline_b_bg: # base10
-    color: "292c3c"
+    color: "292C3C"
   statusline_b_fg: # base05
-    color: "c6d0f5"
+    color: "C6D0F5"
   statusline_c_bg: # base01
-    color: "292c3c"
+    color: "292C3C"
   statusline_c_fg: # base05
-    color: "c6d0f5"
+    color: "C6D0F5"

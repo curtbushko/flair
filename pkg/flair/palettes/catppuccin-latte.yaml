@@ -3,40 +3,40 @@ name: "Catppuccin Latte"
 author: "https://github.com/catppuccin/catppuccin"
 variant: "light"
 palette:
-  base00: "eff1f5" # base
-  base01: "e6e9ef" # mantle
-  base02: "ccd0da" # surface0
-  base03: "bcc0cc" # surface1
-  base04: "acb0be" # surface2
-  base05: "4c4f69" # text
-  base06: "dc8a78" # rosewater
-  base07: "7287fd" # lavender
-  base08: "d20f39" # red
-  base09: "fe640b" # peach
-  base0A: "df8e1d" # yellow
-  base0B: "40a02b" # green
+  base00: "EFF1F5" # base
+  base01: "E6E9EF" # mantle
+  base02: "CCD0DA" # surface0
+  base03: "BCC0CC" # surface1
+  base04: "ACB0BE" # surface2
+  base05: "4C4F69" # text
+  base06: "DC8A78" # rosewater
+  base07: "7287FD" # lavender
+  base08: "D20F39" # red
+  base09: "FE640B" # peach
+  base0A: "DF8E1D" # yellow
+  base0B: "40A02B" # green
   base0C: "179299" # teal
-  base0D: "1e66f5" # blue
-  base0E: "8839ef" # mauve
-  base0F: "dd7878" # flamingo
-  base10: "e6e9ef" # mantle - darker background
-  base11: "dce0e8" # crust - darkest background
-  base12: "e64553" # maroon - bright red
-  base13: "dc8a78" # rosewater - bright yellow
-  base14: "40a02b" # green - bright green
-  base15: "04a5e5" # sky - bright cyan
-  base16: "209fb5" # sapphire - bright blue
-  base17: "ea76cb" # pink - bright purple
+  base0D: "1E66F5" # blue
+  base0E: "8839EF" # mauve
+  base0F: "DD7878" # flamingo
+  base10: "E6E9EF" # mantle - darker background
+  base11: "DCE0E8" # crust - darkest background
+  base12: "E64553" # maroon - bright red
+  base13: "DC8A78" # rosewater - bright yellow
+  base14: "40A02B" # green - bright green
+  base15: "04A5E5" # sky - bright cyan
+  base16: "209FB5" # sapphire - bright blue
+  base17: "EA76CB" # pink - bright purple
 overrides:
   statusline_a_bg: # base03
-    color: "bcc0cc"
+    color: "BCC0CC"
   statusline_a_fg: # base00
-    color: "eff1f5"
+    color: "EFF1F5"
   statusline_b_bg: # base10
-    color: "e6e9ef"
+    color: "E6E9EF"
   statusline_b_fg: # base05
-    color: "4c4f69"
+    color: "4C4F69"
   statusline_c_bg: # base01
-    color: "e6e9ef"
+    color: "E6E9EF"
   statusline_c_fg: # base05
-    color: "4c4f69"
+    color: "4C4F69"

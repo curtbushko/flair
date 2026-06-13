@@ -3,40 +3,40 @@ name: "Tokyo Night Light"
 author: "Michaël Ball, based on Tokyo Night by enkia (https://github.com/enkia/tokyo-night-vscode-theme)"
 variant: "light"
 palette:
-  base00: "d5d6db" # Background
-  base01: "cbccd1" # Lighter background
-  base02: "dfe0e5" # Selection background
-  base03: "9699a3" # Comments, invisibles
-  base04: "4c505e" # Dark foreground
-  base05: "343b59" # Default foreground
-  base06: "1a1b26" # Light foreground
-  base07: "1a1b26" # Lightest foreground
-  base08: "343b59" # Variables, XML tags
+  base00: "D5D6DB" # Background
+  base01: "CBCCD1" # Lighter background
+  base02: "DFE0E5" # Selection background
+  base03: "9699A3" # Comments, invisibles
+  base04: "4C505E" # Dark foreground
+  base05: "343B59" # Default foreground
+  base06: "1A1B26" # Light foreground
+  base07: "1A1B26" # Lightest foreground
+  base08: "343B59" # Variables, XML tags
   base09: "965027" # Integers, booleans
   base0A: "166775" # Classes, search text bg
-  base0B: "485e30" # Strings
-  base0C: "3e6968" # Regex, escape chars
-  base0D: "34548a" # Functions, methods
-  base0E: "5a4a78" # Keywords, storage
-  base0F: "8c4351" # Deprecated, special
-  base10: "e9e9ed" # Lighter background
-  base11: "f7f7f9" # Lightest background
-  base12: "8c4351" # Bright red
+  base0B: "485E30" # Strings
+  base0C: "3E6968" # Regex, escape chars
+  base0D: "34548A" # Functions, methods
+  base0E: "5A4A78" # Keywords, storage
+  base0F: "8C4351" # Deprecated, special
+  base10: "E9E9ED" # Lighter background
+  base11: "F7F7F9" # Lightest background
+  base12: "8C4351" # Bright red
   base13: "965027" # Bright orange
-  base14: "485e30" # Bright green
-  base15: "3e6968" # Bright cyan
-  base16: "34548a" # Bright blue
-  base17: "5a4a78" # Bright magenta
+  base14: "485E30" # Bright green
+  base15: "3E6968" # Bright cyan
+  base16: "34548A" # Bright blue
+  base17: "5A4A78" # Bright magenta
 overrides:
   statusline_a_bg: # base03
-    color: "9699a3"
+    color: "9699A3"
   statusline_a_fg: # base00
-    color: "d5d6db"
+    color: "D5D6DB"
   statusline_b_bg: # base10
-    color: "e9e9ed"
+    color: "E9E9ED"
   statusline_b_fg: # base05
-    color: "343b59"
+    color: "343B59"
   statusline_c_bg: # base01
-    color: "cbccd1"
+    color: "CBCCD1"
   statusline_c_fg: # base05
-    color: "343b59"
+    color: "343B59"
