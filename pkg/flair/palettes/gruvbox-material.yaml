@@ -35,8 +35,8 @@ overrides:
   statusline_b_bg: # base10
     color: "32302F"
   statusline_b_fg: # base05
-    color: "D4BE98"
+    color: "EBDBB2"
   statusline_c_bg: # base01
     color: "1D2021"
-  statusline_c_fg:
-    color: "D4BE98" # base05
+  statusline_c_fg: # base05
+    color: "EBDBB2"

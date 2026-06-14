@@ -1,0 +1,42 @@
+system: "base24"
+name: "Honey Light"
+author: "Curt Bushko (based on Honeystax.com palette)"
+variant: "light"
+palette:
+  base00: "FBF8F1"  # bg_dark (lightest cream)
+  base01: "F2EDE3"  # bg (light cream)
+  base02: "E2D2B4"  # dark3/bg_float (tan)
+  base03: "C9B48E"  # dark5/fg_gutter (muted tan text)
+  base04: "D8CBAE"  # bg_highlight (light beige)
+  base05: "3B362F"  # fg (dark brown text)
+  base06: "1E1C1A"  # fg_dark (darker text)
+  base07: "161412"  # fg_sidebar (darkest text)
+  base08: "FF5F57"  # red
+  base09: "E8913F"  # orange/hint
+  base0A: "FEBC2E"  # yellow
+  base0B: "7FC98A"  # green1 (lighter green)
+  base0C: "6366F1"  # cyan/teal (using indigo)
+  base0D: "6366F1"  # blue (indigo)
+  base0E: "C26F25"  # purple (using warm brown)
+  base0F: "28C840"  # green (bright green)
+  base10: "F4E9D4"  # sunken surface (light tan)
+  base11: "FFFFFF"  # lightest (white)
+  base12: "FF5F57"  # bright red
+  base13: "FEBC2E"  # bright yellow
+  base14: "28C840"  # bright green
+  base15: "6366F1"  # bright cyan (indigo)
+  base16: "6366F1"  # bright blue (indigo)
+  base17: "D97E33"  # magenta (warm orange)
+overrides:
+  statusline_a_bg: # base03
+    color: "C9B48E"
+  statusline_a_fg: # base00
+    color: "FBF8F1"
+  statusline_b_bg: # base10
+    color: "F4E9D4"
+  statusline_b_fg: # base05
+    color: "3B362F"
+  statusline_c_bg: # base01
+    color: "F2EDE3"
+  statusline_c_fg: # base05
+    color: "3B362F"

@@ -1,0 +1,42 @@
+system: "base24"
+name: "Everforest Light"
+author: "Curt Bushko (imported from https://github.com/sainnhe/everforest)"
+variant: "light"
+palette:
+  base00: "FDF6E3"  # bg0 (main background)
+  base01: "F4F0D9"  # bg1 (slightly darker bg)
+  base02: "EFEBD4"  # bg2 (bg_float)
+  base03: "939F91"  # grey1 (comment/muted text)
+  base04: "E6E2CC"  # bg3 (bg_highlight)
+  base05: "5C6A72"  # fg (main foreground)
+  base06: "829181"  # grey2 (darker foreground)
+  base07: "708089"  # statusline2 (darkest foreground)
+  base08: "F85552"  # red
+  base09: "F57D26"  # orange
+  base0A: "DFA000"  # yellow
+  base0B: "8DA101"  # green
+  base0C: "35A77C"  # aqua/cyan
+  base0D: "3A94C5"  # blue
+  base0E: "DF69BA"  # purple/magenta
+  base0F: "93B259"  # statusline1 (green accent)
+  base10: "EFEBD4"  # bg2 (sunken surface)
+  base11: "FDF6E3"  # bg0 (lightest)
+  base12: "F85552"  # bright red
+  base13: "DFA000"  # bright yellow
+  base14: "8DA101"  # bright green
+  base15: "35A77C"  # bright cyan/aqua
+  base16: "3A94C5"  # bright blue
+  base17: "DF69BA"  # magenta/purple
+overrides:
+  statusline_a_bg: # base03
+    color: "939F91"
+  statusline_a_fg: # base00
+    color: "FDF6E3"
+  statusline_b_bg: # base10
+    color: "EFEBD4"
+  statusline_b_fg: # base05
+    color: "5C6A72"
+  statusline_c_bg: # base01
+    color: "F4F0D9"
+  statusline_c_fg: # base05
+    color: "5C6A72"

@@ -1,0 +1,42 @@
+system: "base24"
+name: "Nightfox"
+author: "Curt Bushko (imported from https://github.com/EdenEast/nightfox.nvim)"
+variant: "dark"
+palette:
+  base00: "192330"  # bg (main background)
+  base01: "131A24"  # bg0 (darker background)
+  base02: "212E3F"  # bg2 (bg_float)
+  base03: "71839B"  # fg3 (muted text/comments)
+  base04: "29394F"  # bg3 (bg_highlight)
+  base05: "CDCECF"  # fg1 (main foreground)
+  base06: "D6D6D7"  # fg0 (brighter foreground)
+  base07: "DFDFE0"  # white (brightest foreground)
+  base08: "C94F6D"  # red
+  base09: "F4A261"  # orange/hint
+  base0A: "DBC074"  # yellow
+  base0B: "81B29A"  # green
+  base0C: "63CDCF"  # cyan
+  base0D: "719CD6"  # blue
+  base0E: "9D79D6"  # magenta (keywords)
+  base0F: "81B29A"  # green (alternate)
+  base10: "212E3F"  # bg2 (sunken surface)
+  base11: "131A24"  # bg0 (darkest)
+  base12: "C94F6D"  # bright red
+  base13: "DBC074"  # bright yellow
+  base14: "81B29A"  # bright green
+  base15: "63CDCF"  # bright cyan
+  base16: "719CD6"  # bright blue
+  base17: "D67AD2"  # pink/magenta
+overrides:
+  statusline_a_bg: # base03
+    color: "71839B"
+  statusline_a_fg: # base00
+    color: "192330"
+  statusline_b_bg: # base10
+    color: "212E3F"
+  statusline_b_fg: # base05
+    color: "CDCECF"
+  statusline_c_bg: # base01
+    color: "131A24"
+  statusline_c_fg: # base05
+    color: "CDCECF"

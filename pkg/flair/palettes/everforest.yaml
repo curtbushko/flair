@@ -17,7 +17,7 @@ palette:
   base0B: "9FC975"
   base0C: "8CAAB3"
   base0D: "7FBBB3"
-  base0E: "DEADC4"
+  base0E: "C689E0"
   base0F: "A7C080"
   base10: "2E383C"
   base11: "1E2326"
@@ -26,17 +26,17 @@ palette:
   base14: "A7C080"
   base15: "6CBDAA"
   base16: "89BCAE"
-  base17: "D699B6"
+  base17: "C699B6"
 overrides:
-  statusline_a_bg:
+  statusline_a_bg: # custom - base0F
     color: "A7C080"
-  statusline_a_fg:
-    color: "1E2326"
-  statusline_b_bg:
+  statusline_a_fg: # base00
+    color: "272E33"
+  statusline_b_bg: # base10
+    color: "2E383C"
+  statusline_b_fg: # custom - base0D
     color: "7FBBB3"
-  statusline_b_fg:
+  statusline_c_bg: # base01
     color: "1E2326"
-  statusline_c_bg:
-    color: "1E2326"
-  statusline_c_fg:
+  statusline_c_fg: # custom - base0D
     color: "7FBBB3"
