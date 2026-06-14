@@ -28,15 +28,15 @@ palette:
   base16: "94BFF3"
   base17: "EC93D3"
 overrides:
-  statusline_a_bg: # base03
-    color: "8BA393"
+  statusline_a_bg: # base0F
+    color: "382828"
   statusline_a_fg: # base00
-    color: "3F3F3F"
+    color: "3f3f3f"
   statusline_b_bg: # base10
-    color: "4A6055"
-  statusline_b_fg: # base05
-    color: "C1C9B9"
+    color: "4a6055"
+  statusline_b_fg: # base0D
+    color: "506070"
   statusline_c_bg: # base01
-    color: "4D4D4D"
-  statusline_c_fg: # base05
-    color: "C1C9B9"
+    color: "4d4d4d"
+  statusline_c_fg: # base0D
+    color: "506070"

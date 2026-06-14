@@ -28,15 +28,15 @@ palette:
   base16: "209FB5" # sapphire - bright blue
   base17: "EA76CB" # pink - bright purple
 overrides:
-  statusline_a_bg: # base03
-    color: "BCC0CC"
+  statusline_a_bg: # base0F
+    color: "dd7878"
   statusline_a_fg: # base00
-    color: "EFF1F5"
+    color: "eff1f5"
   statusline_b_bg: # base10
-    color: "E6E9EF"
-  statusline_b_fg: # base05
-    color: "4C4F69"
+    color: "e6e9ef"
+  statusline_b_fg: # base0D
+    color: "1e66f5"
   statusline_c_bg: # base01
-    color: "E6E9EF"
-  statusline_c_fg: # base05
-    color: "4C4F69"
+    color: "e6e9ef"
+  statusline_c_fg: # base0D
+    color: "1e66f5"

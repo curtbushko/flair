@@ -28,15 +28,15 @@ palette:
   base16: "FF8700" # Bright Orange
   base17: "5FAFFF" # Bright Blue
 overrides:
-  statusline_a_bg: # base03
-    color: "878787"
+  statusline_a_bg: # base0F
+    color: "005faf"
   statusline_a_fg: # base00
-    color: "EEEEEE"
+    color: "eeeeee"
   statusline_b_bg: # base10
-    color: "F4F4F4"
-  statusline_b_fg: # base05
-    color: "444444"
+    color: "f4f4f4"
+  statusline_b_fg: # base0D
+    color: "0087af"
   statusline_c_bg: # base01
-    color: "E4E4E4"
-  statusline_c_fg: # base05
-    color: "444444"
+    color: "e4e4e4"
+  statusline_c_fg: # base0D
+    color: "0087af"

@@ -28,15 +28,15 @@ palette:
   base16: "8FBCBB"  # cyan.base - base cyan
   base17: "A97EA1"  # magenta - bright magenta - taken from tokyo-night-neon
 overrides:
-  statusline_a_bg: # base03
-    color: "3B4252"
+  statusline_a_bg: # base0F
+    color: "5e81ac"
   statusline_a_fg: # base00
     color: "222630"
   statusline_b_bg: # base10
-    color: "191D24"
-  statusline_b_fg: # base05
-    color: "BBC3D4"
+    color: "191d24"
+  statusline_b_fg: # base0D
+    color: "81a1c1"
   statusline_c_bg: # base01
-    color: "1E222A"
-  statusline_c_fg: # base05
-    color: "BBC3D4"
+    color: "1e222a"
+  statusline_c_fg: # base0D
+    color: "81a1c1"

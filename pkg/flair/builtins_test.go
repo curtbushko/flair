@@ -140,8 +140,8 @@ func TestLoadBuiltin_NoFilesystem(t *testing.T) {
 func TestListBuiltins_Count(t *testing.T) {
 	names := ListBuiltins()
 
-	// We should have exactly 190 built-in palettes
-	if len(names) != 190 {
-		t.Errorf("ListBuiltins() returned %d palettes, want 190", len(names))
+	// We should have exactly 197 built-in palettes
+	if len(names) != 197 {
+		t.Errorf("ListBuiltins() returned %d palettes, want 197", len(names))
 	}
 }
