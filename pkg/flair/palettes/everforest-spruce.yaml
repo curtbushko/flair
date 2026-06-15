@@ -19,7 +19,7 @@ palette:
   base0D: "7fbbb3" # blue
   base0E: "d699b6" # purple
   base0F: "9da9a0" # grey - brown/accent
-  base10: "232a2e" # bg_dim - sunken surface
+  base10: "2d353b" # bg_dim - sunken surface
   base11: "232a2e" # bg_dim - darkest background
   base12: "f85552" # bright red
   base13: "dfa000" # bright yellow
