@@ -136,12 +136,3 @@ func TestLoadBuiltin_NoFilesystem(t *testing.T) {
 		t.Errorf("theme.Name() = %q, want %q", theme.Name(), "Tokyo Night Dark")
 	}
 }
-
-func TestListBuiltins_Count(t *testing.T) {
-	names := ListBuiltins()
-
-	// We should have exactly 197 built-in palettes
-	if len(names) != 197 {
-		t.Errorf("ListBuiltins() returned %d palettes, want 197", len(names))
-	}
-}

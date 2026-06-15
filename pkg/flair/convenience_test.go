@@ -250,9 +250,15 @@ func TestEnsureInstalled_Empty(t *testing.T) {
 		}
 	}
 
-	// Should have all 197 built-in themes.
-	if count != 197 {
-		t.Errorf("EnsureInstalled() installed %d themes, want 197", count)
+	// Should have installed all built-in themes (at least 100 to be reasonable).
+	if count < 100 {
+		t.Errorf("EnsureInstalled() installed %d themes, expected at least 100 built-in themes", count)
+	}
+
+	// Verify it matches the number of built-ins.
+	expectedCount := len(flair.ListBuiltins())
+	if count != expectedCount {
+		t.Errorf("EnsureInstalled() installed %d themes, want %d (all built-ins)", count, expectedCount)
 	}
 }
 

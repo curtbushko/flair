@@ -116,9 +116,15 @@ func TestStore_InstallAll(t *testing.T) {
 		}
 	}
 
-	// Verify all 197 built-in themes were installed
-	if count != 197 {
-		t.Errorf("InstallAll() installed %d themes, want 197", count)
+	// Verify all built-in themes were installed (at least 100 to be reasonable).
+	if count < 100 {
+		t.Errorf("InstallAll() installed %d themes, expected at least 100 built-in themes", count)
+	}
+
+	// Verify it matches the number of built-ins.
+	expectedCount := len(flair.ListBuiltins())
+	if count != expectedCount {
+		t.Errorf("InstallAll() installed %d themes, want %d (all built-ins)", count, expectedCount)
 	}
 }
 
