@@ -3,40 +3,40 @@ name: "Everforest"
 author: "https://github.com/sainnhe/everforest"
 variant: "dark"
 palette:
-  base00: "272E33"
-  base01: "1E2326"
-  base02: "2E383C"
-  base03: "DBE0CD"
-  base04: "374145"
-  base05: "E2D9C5"
-  base06: "DBE0CD"
-  base07: "FFF8E3"
-  base08: "E67E80"
-  base09: "E69875"
-  base0A: "DBBC7F"
-  base0B: "9FC975"
-  base0C: "8CAAB3"
-  base0D: "7FBBB3"
-  base0E: "C689E0"
-  base0F: "A7C080"
-  base10: "2E383C"
-  base11: "1E2326"
-  base12: "E67E70"
-  base13: "DBBC7F"
-  base14: "A7C080"
-  base15: "6CBDAA"
-  base16: "89BCAE"
-  base17: "C699B6"
+  base00: "2e383c" # bg_dark
+  base01: "272e33" # bg
+  base02: "414b50" # bg_float
+  base03: "859289" # fg_gutter + muted text
+  base04: "9da9a0" # bg_highlight
+  base05: "d3c6aa" # fg
+  base06: "e6e2cc" # fg_dark
+  base07: "fdf6e3" # fg_sidebar
+  base08: "e67e80" # red
+  base09: "e69875" # orange
+  base0A: "dbbc7f" # yellow
+  base0B: "a7c080" # green
+  base0C: "83c092" # cyan/teal
+  base0D: "7fbbb3" # blue
+  base0E: "d699b6" # purple
+  base0F: "9da9a0" # grey
+  base10: "2e383c" # sunken surface
+  base11: "1e2326" # darkest
+  base12: "f85552" # bright red
+  base13: "dfa000" # bright yellow
+  base14: "8da101" # bright green
+  base15: "35a77c" # bright cyan
+  base16: "3a94c5" # bright blue
+  base17: "df69ba" # magenta
 overrides:
-  statusline_a_bg: # base0F
+  statusline_a_bg: # base0B
     color: "a7c080"
   statusline_a_fg: # base00
-    color: "272e33"
-  statusline_b_bg: # base10
+    color: "2e383c"
+  statusline_b_bg: # base00
     color: "2e383c"
   statusline_b_fg: # base0D
     color: "7fbbb3"
   statusline_c_bg: # base01
-    color: "1e2326"
+    color: "272e33"
   statusline_c_fg: # base0D
     color: "7fbbb3"
