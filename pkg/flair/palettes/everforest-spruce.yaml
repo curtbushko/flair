@@ -23,7 +23,7 @@ palette:
   base11: "232a2e" # bg_dim - darkest background
   base12: "f85552" # bright red
   base13: "dfa000" # bright yellow
-  base14: "8da101" # bright green
+  base14: "6AC118" # custom bright green
   base15: "35a77c" # bright cyan
   base16: "3a94c5" # bright blue
   base17: "df69ba" # bright magenta

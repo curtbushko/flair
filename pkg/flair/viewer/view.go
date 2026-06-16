@@ -284,8 +284,11 @@ func (m Model) renderTextStatus() string {
 	// Render the content inside the window.
 	windowContent := windowStyle.Render(content.String())
 
-	// Combine title bar and window.
-	return titleBar + "\n" + windowContent
+	// Add palette colors section below the window.
+	paletteSection := m.renderPaletteColors()
+
+	// Combine title bar, window, and palette colors.
+	return titleBar + "\n" + windowContent + paletteSection
 }
 
 // renderVimStatusBar renders a vim-style status bar for the simulated window.
@@ -1119,4 +1122,130 @@ func (m Model) getStatuslineColor(key, fallback string) string {
 		return hex
 	}
 	return fallback
+}
+
+// renderPaletteColors renders a visual display of all palette colors and statusline overrides.
+// Each color is shown as a swatch with the hex value as text.
+func (m Model) renderPaletteColors() string {
+	var b strings.Builder
+
+	sectionStyle := m.sectionStyle()
+	b.WriteString("\n")
+	b.WriteString(sectionStyle.Render("Palette Colors"))
+	b.WriteString("\n\n")
+
+	// Base color names mapping: index -> display name
+	baseNames := []string{
+		"base00", "base01", "base02", "base03", "base04", "base05", "base06", "base07",
+		"base08", "base09", "base0A", "base0B", "base0C", "base0D", "base0E", "base0F",
+		"base10", "base11", "base12", "base13", "base14", "base15", "base16", "base17",
+	}
+
+	// Render base colors in 3 columns (8 rows each)
+	// Column layout: base00-07, base08-0F, base10-17
+	for row := range 8 {
+		for col := range 3 {
+			idx := col*8 + row
+			if idx < len(m.palette.Colors) && idx < len(baseNames) {
+				hex := m.palette.Colors[idx]
+				if hex == "" {
+					hex = "000000"
+				}
+				name := baseNames[idx]
+				b.WriteString(m.renderColorSwatch(name, hex))
+				b.WriteString("  ")
+			}
+		}
+		b.WriteString("\n")
+	}
+
+	// Render statusline colors
+	b.WriteString("\n")
+	b.WriteString(sectionStyle.Render("Statusline Colors"))
+	b.WriteString("\n\n")
+
+	// Statusline entries in order
+	statuslineEntries := []struct {
+		key   string
+		label string
+	}{
+		{"statusline.a.bg", "a_bg"},
+		{"statusline.a.fg", "a_fg"},
+		{"statusline.b.bg", "b_bg"},
+		{"statusline.b.fg", "b_fg"},
+		{"statusline.c.bg", "c_bg"},
+		{"statusline.c.fg", "c_fg"},
+	}
+
+	// Render 2 entries per row
+	for i := 0; i < len(statuslineEntries); i += 2 {
+		for j := range 2 {
+			if i+j < len(statuslineEntries) {
+				entry := statuslineEntries[i+j]
+				hex := m.getStatuslineColor(entry.key, "000000")
+				b.WriteString(m.renderColorSwatch(entry.label, hex))
+				b.WriteString("  ")
+			}
+		}
+		b.WriteString("\n")
+	}
+
+	return b.String()
+}
+
+// renderColorSwatch renders a single color swatch with label and hex value.
+// The label has no background, and the hex value has the color as its background.
+func (m Model) renderColorSwatch(label, hex string) string {
+	// Ensure hex has # prefix for lipgloss
+	bgHex := hex
+	if len(bgHex) > 0 && bgHex[0] != '#' {
+		bgHex = "#" + bgHex
+	}
+
+	// Calculate luminance to choose text color (simple formula)
+	textHex := "#ffffff" // default white text
+	if len(hex) >= 6 {
+		// Parse RGB values
+		r := hexToByte(hex[0:2])
+		g := hexToByte(hex[2:4])
+		b := hexToByte(hex[4:6])
+		// Relative luminance formula (simplified)
+		luminance := (0.299*float64(r) + 0.587*float64(g) + 0.114*float64(b)) / 255.0
+		if luminance > 0.5 {
+			textHex = "#000000" // dark text on light background
+		}
+	}
+
+	// Label style: no background
+	labelStyle := lipgloss.NewStyle().
+		Foreground(lipgloss.Color("#a9b1d6"))
+
+	// Hex value style: colored background with contrasting text
+	hexStyle := lipgloss.NewStyle().
+		Background(lipgloss.Color(bgHex)).
+		Foreground(lipgloss.Color(textHex)).
+		Padding(0, 1)
+
+	// Format: "label: " + styled hex value
+	return labelStyle.Render(label+": ") + hexStyle.Render(hex)
+}
+
+// hexToByte converts a 2-character hex string to a byte value.
+func hexToByte(s string) byte {
+	if len(s) != 2 {
+		return 0
+	}
+	var val byte
+	for _, c := range s {
+		val *= 16
+		switch {
+		case c >= '0' && c <= '9':
+			val += byte(c - '0')
+		case c >= 'a' && c <= 'f':
+			val += byte(c - 'a' + 10)
+		case c >= 'A' && c <= 'F':
+			val += byte(c - 'A' + 10)
+		}
+	}
+	return val
 }
