@@ -17,7 +17,7 @@ palette:
   base0B: "a7c080" # green
   base0C: "83c092" # aqua/cyan
   base0D: "7fbbb3" # blue
-  base0E: "d699b6" # purple
+  base0E: "d0a4de" # purple
   base0F: "9da9a0" # grey - brown/accent
   base10: "2d353b" # bg_dim - sunken surface
   base11: "232a2e" # bg_dim - darkest background
@@ -26,7 +26,7 @@ palette:
   base14: "6AC118" # custom bright green
   base15: "35a77c" # bright cyan
   base16: "3a94c5" # bright blue
-  base17: "df69ba" # bright magenta
+  base17: "bf91cc" # bright magenta
 overrides:
   statusline_a_bg: # base0B
     color: "a7c080"
