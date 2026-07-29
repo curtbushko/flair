@@ -531,7 +531,7 @@ func TestVimMapper_PluginHighlights(t *testing.T) {
 
 	// GitSignsAdd should use diff.added token color.
 	if hl, ok := vt.Highlights["GitSignsAdd"]; ok {
-		wantFg := colorPtr("#afd67a") // diff.added.fg = base14
+		wantFg := colorPtr("#afd67a") // diff.added.sign = base14
 		if hl.Fg == nil {
 			t.Errorf("GitSignsAdd: Fg is nil, want %s", wantFg.Hex())
 		} else if !hl.Fg.Equal(*wantFg) {

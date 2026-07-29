@@ -217,14 +217,14 @@ func TestTokenize_SyntaxTokens(t *testing.T) {
 		{"syntax.number", "#ff9e64"},
 		// syntax.tag = base08 = "f7768e"
 		{"syntax.tag", "#f7768e"},
-		// syntax.property = base14 = "afd67a"
-		{"syntax.property", "#afd67a"},
-		// syntax.parameter = base13 = "e9c582"
-		{"syntax.parameter", "#e9c582"},
+		// syntax.property = base15 = "97d8f8"
+		{"syntax.property", "#97d8f8"},
+		// syntax.parameter = base0A = "e0af68"
+		{"syntax.parameter", "#e0af68"},
 		// syntax.regexp = base0C = "7dcfff"
 		{"syntax.regexp", "#7dcfff"},
-		// syntax.escape = base0E = "bb9af7"
-		{"syntax.escape", "#bb9af7"},
+		// syntax.escape = base17 = "c8acf8"
+		{"syntax.escape", "#c8acf8"},
 		// syntax.constructor = base17 = "c8acf8"
 		{"syntax.constructor", "#c8acf8"},
 	}
@@ -261,10 +261,10 @@ func TestTokenize_StatusTokens(t *testing.T) {
 		{"status.warning", "#e9c582"},
 		// status.success = base14 = "afd67a"
 		{"status.success", "#afd67a"},
-		// status.info = base15 = "97d8f8"
-		{"status.info", "#97d8f8"},
-		// status.hint = base15 = "97d8f8"
-		{"status.hint", "#97d8f8"},
+		// status.info = base14 = "afd67a"
+		{"status.info", "#afd67a"},
+		// status.hint = base09 = "ff9e64"
+		{"status.hint", "#ff9e64"},
 		// status.todo = base0D = "7aa2f7"
 		{"status.todo", "#7aa2f7"},
 	}

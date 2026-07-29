@@ -6,6 +6,15 @@ import (
 	"github.com/curtbushko/flair/internal/domain"
 )
 
+// Diff background blend alphas. BlendBg(base00, color, alpha) mixes
+// (alpha * base00) + ((1 - alpha) * color), so higher values sit closer
+// to base00 and read as a fainter tint.
+const (
+	DiffAddedBgBlend   = 0.93
+	DiffDeletedBgBlend = 0.93
+	DiffChangedBgBlend = 0.93
+)
+
 // DefaultTokenizer implements ports.Tokenizer using the standard derivation
 // rules defined in the PLAN.md token inventory.
 type DefaultTokenizer struct{}
@@ -110,17 +119,17 @@ func deriveStatus(p *domain.Palette, ts *domain.TokenSet) {
 func deriveDiff(p *domain.Palette, ts *domain.TokenSet) {
 	ts.Set("diff.added.fg", domain.Token{Color: p.Base(0x05)})
 	ts.Set("diff.added.bg", domain.Token{
-		Color: domain.BlendBg(p.Base(0x14), p.Base(0x00), 0.25),
+		Color: domain.BlendBg(p.Base(0x00), p.Base(0x14), DiffAddedBgBlend),
 	})
 	ts.Set("diff.added.sign", domain.Token{Color: p.Base(0x14)})
 	ts.Set("diff.deleted.fg", domain.Token{Color: p.Base(0x05)})
 	ts.Set("diff.deleted.bg", domain.Token{
-		Color: domain.BlendBg(p.Base(0x12), p.Base(0x00), 0.25),
+		Color: domain.BlendBg(p.Base(0x00), p.Base(0x12), DiffDeletedBgBlend),
 	})
 	ts.Set("diff.deleted.sign", domain.Token{Color: p.Base(0x12)})
 	ts.Set("diff.changed.fg", domain.Token{Color: p.Base(0x05)})
 	ts.Set("diff.changed.bg", domain.Token{
-		Color: domain.BlendBg(p.Base(0x16), p.Base(0x00), 0.15),
+		Color: domain.BlendBg(p.Base(0x00), p.Base(0x16), DiffChangedBgBlend),
 	})
 	ts.Set("diff.changed.sign", domain.Token{Color: p.Base(0x16)})
 	ts.Set("diff.ignored", domain.Token{Color: p.Base(0x03)})

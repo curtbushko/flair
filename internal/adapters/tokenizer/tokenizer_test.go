@@ -508,8 +508,8 @@ func TestTokenizeDiff_AddedBg(t *testing.T) {
 		t.Fatal("diff.added.bg not found in token set")
 	}
 
-	// BlendBg(base14, base00, 0.25) - green background
-	want := domain.BlendBg(pal.Base(0x14), pal.Base(0x00), 0.25)
+	// background with green tint
+	want := domain.BlendBg(pal.Base(0x00), pal.Base(0x14), tokenizer.DiffAddedBgBlend)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.added.bg = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -557,8 +557,8 @@ func TestTokenizeDiff_DeletedBg(t *testing.T) {
 		t.Fatal("diff.deleted.bg not found in token set")
 	}
 
-	// BlendBg(base12, base00, 0.25) - red background
-	want := domain.BlendBg(pal.Base(0x12), pal.Base(0x00), 0.25)
+	// background with red tint
+	want := domain.BlendBg(pal.Base(0x00), pal.Base(0x12), tokenizer.DiffDeletedBgBlend)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.deleted.bg = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -606,8 +606,8 @@ func TestTokenizeDiff_ChangedBg(t *testing.T) {
 		t.Fatal("diff.changed.bg not found in token set")
 	}
 
-	// BlendBg(base16, base00, 0.15) - blue background
-	want := domain.BlendBg(pal.Base(0x16), pal.Base(0x00), 0.15)
+	// background with blue tint
+	want := domain.BlendBg(pal.Base(0x00), pal.Base(0x16), tokenizer.DiffChangedBgBlend)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.changed.bg = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -623,7 +623,7 @@ func TestTokenizeDiff_ChangedSign(t *testing.T) {
 		t.Fatal("diff.changed.sign not found in token set")
 	}
 
-	want := mustParseHex(t, "#8db6fa") // base16 (blue)
+	want := mustParseHex(t, "#8db6fa") // base16 (bright blue)
 	if !tok.Color.Equal(want) {
 		t.Errorf("diff.changed.sign = %s, want %s", tok.Color.Hex(), want.Hex())
 	}
@@ -1838,9 +1838,9 @@ func TestFullTokenization_BlendedValues(t *testing.T) {
 		{"border.focus", 0x0D, 0x00, 0.70},
 		{"scrollbar.thumb", 0x03, 0x00, 0.40},
 		{"state.active", 0x0D, 0x00, 0.20},
-		{"diff.added.bg", 0x14, 0x00, 0.25},
-		{"diff.deleted.bg", 0x12, 0x00, 0.25},
-		{"diff.changed.bg", 0x16, 0x00, 0.15},
+		{"diff.added.bg", 0x00, 0x14, tokenizer.DiffAddedBgBlend},
+		{"diff.deleted.bg", 0x00, 0x12, tokenizer.DiffDeletedBgBlend},
+		{"diff.changed.bg", 0x00, 0x16, tokenizer.DiffChangedBgBlend},
 	}
 
 	for _, tt := range tests {
