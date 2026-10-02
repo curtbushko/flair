@@ -1,42 +1,44 @@
-system: "base24"
-name: "Rebel Scum"
-author: "Curt Bushko"
-variant: "dark"
+system: base24
+name: Rebel Scum
+author: Curt Bushko
+variant: dark
+
 palette:
-  base00: "031B26"
-  base01: "06101E"
-  base02: "06364B"
-  base03: "DBE0CD"
-  base04: "08435E"
-  base05: "E2D9C5"
-  base06: "DBE0CD"
-  base07: "FFF8E3"
-  base08: "F74843"
-  base09: "FD5E3A"
-  base0A: "FD5E3A"
-  base0B: "66DEF9"
-  base0C: "71E8FF"
-  base0D: "66DEF9"
-  base0E: "FF6747"
-  base0F: "35B5FF"
-  base10: "052839"
-  base11: "06101E"
-  base12: "FF4934"
-  base13: "FD5E3A"
-  base14: "35B5FF"
-  base15: "A6E6FF"
-  base16: "13BECD"
-  base17: "3BABD6"
+  base00: "0B1014"
+  base01: "15191B"
+  base02: "242729"
+  base03: "6F6A62"
+  base04: "9B9488"
+  base05: "CFC3AF"
+  base06: "E1D2BC"
+  base07: "F1E1C8"
+  base08: "C75B3A"
+  base09: "D9783E"
+  base0A: "E0A04B"
+  base0B: "A49363"
+  base0C: "6C9E9C"
+  base0D: "4F7F9B"
+  base0E: "9A7C86"
+  base0F: "A85A3E"
+  base10: "070B0E"
+  base11: "040607"
+  base12: "DA6D4D"
+  base13: "E6AE5D"
+  base14: "B3A778"
+  base15: "82B2AF"
+  base16: "6896B0"
+  base17: "B0909A"
+
 overrides:
-  statusline_a_bg: # base0F
-    color: "35b5ff"
-  statusline_a_fg: # base00
-    color: "031b26"
-  statusline_b_bg: # base10
-    color: "052839"
-  statusline_b_fg: # base0D
-    color: "66def9"
-  statusline_c_bg: # base01
-    color: "06101e"
-  statusline_c_fg: # base0D
-    color: "66def9"
+  statusline_a_bg:
+    color: "D9783E"
+  statusline_a_fg:
+    color: "0B1014"
+  statusline_b_bg:
+    color: "070B0E"
+  statusline_b_fg:
+    color: "E0A04B"
+  statusline_c_bg:
+    color: "15191B"
+  statusline_c_fg:
+    color: "CFC3AF"
