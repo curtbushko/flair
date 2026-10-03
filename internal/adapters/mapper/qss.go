@@ -75,10 +75,10 @@ func buildQssWidgetRules(ts *domain.TokenSet) []ports.CSSRule {
 	borderDefault := tokenHex(ts, "border.default")
 	borderFocus := tokenHex(ts, "border.focus")
 	accentPrimary := tokenHex(ts, "accent.primary")
-	accentFg := tokenHex(ts, "accent.foreground")
 	scrollbarThumb := tokenHex(ts, "scrollbar.thumb")
 	scrollbarTrack := tokenHex(ts, "scrollbar.track")
-	bgHighlight := tokenHex(ts, "surface.background.highlight")
+	bgSelection := tokenHex(ts, "surface.background.selection")
+	bgStatusbar := tokenHex(ts, "surface.background.statusbar")
 	bgSidebar := tokenHex(ts, "surface.background.sidebar")
 	textSidebar := tokenHex(ts, "text.sidebar")
 
@@ -173,7 +173,7 @@ func buildQssWidgetRules(ts *domain.TokenSet) []ports.CSSRule {
 	rules = append(rules, ports.CSSRule{
 		Selector: "QMenu::item:selected",
 		Properties: []ports.CSSProperty{
-			{Property: "background-color", Value: bgHighlight},
+			{Property: "background-color", Value: bgSelection},
 			{Property: "color", Value: fg},
 		},
 	})
@@ -192,7 +192,7 @@ func buildQssWidgetRules(ts *domain.TokenSet) []ports.CSSRule {
 	rules = append(rules, ports.CSSRule{
 		Selector: "QStatusBar",
 		Properties: []ports.CSSProperty{
-			{Property: "background-color", Value: bgSunken},
+			{Property: "background-color", Value: bgStatusbar},
 			{Property: "color", Value: textSecondary},
 		},
 	})
@@ -339,13 +339,15 @@ func buildQssWidgetRules(ts *domain.TokenSet) []ports.CSSRule {
 	})
 
 	// Selected items in list/tree/table views
-	rules = append(rules, ports.CSSRule{
-		Selector: "QTreeView::item:selected",
-		Properties: []ports.CSSProperty{
-			{Property: "background-color", Value: accentPrimary},
-			{Property: "color", Value: accentFg},
-		},
-	})
+	for _, selector := range []string{"QTreeView::item:selected", "QListView::item:selected", "QTableView::item:selected"} {
+		rules = append(rules, ports.CSSRule{
+			Selector: selector,
+			Properties: []ports.CSSProperty{
+				{Property: "background-color", Value: bgSelection},
+				{Property: "color", Value: fg},
+			},
+		})
+	}
 
 	// QSpinBox
 	rules = append(rules, ports.CSSRule{
@@ -381,7 +383,7 @@ func buildQssWidgetRules(ts *domain.TokenSet) []ports.CSSRule {
 		},
 	})
 
-	// Focus border for QLineEdit and QTextEdit
+	// Focus borders for text inputs
 	rules = append(rules, ports.CSSRule{
 		Selector: "QLineEdit:focus",
 		Properties: []ports.CSSProperty{
@@ -391,6 +393,13 @@ func buildQssWidgetRules(ts *domain.TokenSet) []ports.CSSRule {
 
 	rules = append(rules, ports.CSSRule{
 		Selector: "QTextEdit:focus",
+		Properties: []ports.CSSProperty{
+			{Property: "border", Value: "1px solid " + borderFocus},
+		},
+	})
+
+	rules = append(rules, ports.CSSRule{
+		Selector: "QPlainTextEdit:focus",
 		Properties: []ports.CSSProperty{
 			{Property: "border", Value: "1px solid " + borderFocus},
 		},
@@ -461,6 +470,25 @@ func buildQssPseudoStateRules(ts *domain.TokenSet) []ports.CSSRule {
 			{Property: "color", Value: accentFg},
 		},
 	})
+
+	// Keep disabled foregrounds after interactive rules; compound states
+	// also override more-specific hover, pressed, checked and selected rules.
+	for _, selector := range []string{
+		"QWidget:disabled", "QPushButton:disabled",
+		"QPushButton:disabled:hover", "QPushButton:disabled:pressed",
+		"QMenu::item:disabled", "QMenu::item:selected:disabled",
+		"QTabBar::tab:disabled", "QTabBar::tab:selected:disabled",
+		"QTreeView::item:selected:disabled", "QListView::item:selected:disabled",
+		"QTableView::item:selected:disabled",
+		"QCheckBox::indicator:checked:disabled", "QRadioButton::indicator:checked:disabled",
+	} {
+		rules = append(rules, ports.CSSRule{
+			Selector: selector,
+			Properties: []ports.CSSProperty{
+				{Property: "color", Value: tokenHex(ts, "state.disabled.fg")},
+			},
+		})
+	}
 
 	return rules
 }

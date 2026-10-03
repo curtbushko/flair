@@ -121,6 +121,16 @@ var gtkColorMappings = func() []gtkColorMapping {
 		gtkColorMapping{"status.success", "success_color"},
 	)
 
+	// Interaction states and text selection
+	m = append(m,
+		gtkColorMapping{"state.hover", "hover_bg_color"},
+		gtkColorMapping{"state.active", "active_bg_color"},
+		gtkColorMapping{"state.disabled.fg", "disabled_fg_color"},
+		gtkColorMapping{"border.focus", "focus_border_color"},
+		gtkColorMapping{"surface.background.selection", "selection_bg_color"},
+		gtkColorMapping{"text.primary", "selection_fg_color"},
+	)
+
 	// Border and scrollbar
 	m = append(m,
 		gtkColorMapping{"border.default", "borders"},
@@ -154,7 +164,8 @@ func buildGtkColorDefinitions(ts *domain.TokenSet) []ports.GtkColorDef {
 // buildGtkWidgetRules creates the standard GTK widget CSS rules that reference
 // @define-color names. GTK CSS uses @name syntax to reference defined colors.
 func buildGtkWidgetRules() []ports.CSSRule {
-	return []ports.CSSRule{
+	rules := make([]ports.CSSRule, 0, 18)
+	rules = append(rules, []ports.CSSRule{
 		{
 			Selector: "window",
 			Properties: []ports.CSSProperty{
@@ -173,7 +184,7 @@ func buildGtkWidgetRules() []ports.CSSRule {
 			Selector: "button",
 			Properties: []ports.CSSProperty{
 				{Property: "background-color", Value: "@card_bg_color"},
-				{Property: "color", Value: "@window_fg_color"},
+				{Property: "color", Value: "@card_fg_color"},
 			},
 		},
 		{
@@ -204,5 +215,34 @@ func buildGtkWidgetRules() []ports.CSSRule {
 				{Property: "color", Value: "@popover_fg_color"},
 			},
 		},
+	}...)
+
+	for _, state := range []struct{ selector, property, value string }{
+		{"button:hover", "background-color", "@hover_bg_color"},
+		{"button:active", "background-color", "@active_bg_color"},
+		{"button:disabled", "color", "@disabled_fg_color"},
+		{"entry:disabled", "color", "@disabled_fg_color"},
+		{"textview:disabled", "color", "@disabled_fg_color"},
+		{"textview:disabled text", "color", "@disabled_fg_color"},
+		{"button:focus", "border-color", "@focus_border_color"},
+		{"entry:focus", "border-color", "@focus_border_color"},
+		{"textview:focus", "border-color", "@focus_border_color"},
+	} {
+		rules = append(rules, ports.CSSRule{
+			Selector:   state.selector,
+			Properties: []ports.CSSProperty{{Property: state.property, Value: state.value}},
+		})
 	}
+
+	// Selection is a child node, not a pseudo-state of the text widget.
+	for _, selector := range []string{"entry selection", "textview text selection"} {
+		rules = append(rules, ports.CSSRule{
+			Selector: selector,
+			Properties: []ports.CSSProperty{
+				{Property: "background-color", Value: "@selection_bg_color"},
+				{Property: "color", Value: "@selection_fg_color"},
+			},
+		})
+	}
+	return rules
 }

@@ -61,7 +61,7 @@ type cssPropertyMapping struct {
 //
 //nolint:dupl // Each mapper has its own naming convention; structural similarity is intentional.
 var cssPropertyMappings = func() []cssPropertyMapping {
-	m := make([]cssPropertyMapping, 0, 80)
+	m := make([]cssPropertyMapping, 0, 115)
 
 	// Surface tokens
 	m = append(m,
@@ -109,6 +109,7 @@ var cssPropertyMappings = func() []cssPropertyMapping {
 		cssPropertyMapping{"diff.deleted.sign", "--flair-diff-deleted-sign"},
 		cssPropertyMapping{"diff.changed.fg", "--flair-diff-changed-fg"},
 		cssPropertyMapping{"diff.changed.bg", "--flair-diff-changed-bg"},
+		cssPropertyMapping{"diff.changed.sign", "--flair-diff-changed-sign"},
 		cssPropertyMapping{"diff.ignored", "--flair-diff-ignored"},
 	)
 
@@ -129,17 +130,43 @@ var cssPropertyMappings = func() []cssPropertyMapping {
 		cssPropertyMapping{"syntax.regexp", "--flair-syntax-regexp"},
 		cssPropertyMapping{"syntax.escape", "--flair-syntax-escape"},
 		cssPropertyMapping{"syntax.constructor", "--flair-syntax-constructor"},
+		cssPropertyMapping{"syntax.boolean", "--flair-syntax-boolean"},
+		cssPropertyMapping{"syntax.function.builtin", "--flair-syntax-function-builtin"},
+		cssPropertyMapping{"syntax.type.builtin", "--flair-syntax-type-builtin"},
+		cssPropertyMapping{"syntax.module", "--flair-syntax-module"},
+		cssPropertyMapping{"syntax.module.builtin", "--flair-syntax-module-builtin"},
+		cssPropertyMapping{"syntax.string.documentation", "--flair-syntax-string-documentation"},
+		cssPropertyMapping{"syntax.label", "--flair-syntax-label"},
+		cssPropertyMapping{"syntax.punctuation", "--flair-syntax-punctuation"},
+		cssPropertyMapping{"syntax.deprecated", "--flair-syntax-deprecated"},
+		cssPropertyMapping{"syntax.macro", "--flair-syntax-macro"},
 	)
 
 	// Markup tokens (only those with colors)
 	m = append(m,
 		cssPropertyMapping{"markup.heading", "--flair-markup-heading"},
+		cssPropertyMapping{"markup.heading.1", "--flair-markup-heading-1"},
+		cssPropertyMapping{"markup.heading.2", "--flair-markup-heading-2"},
+		cssPropertyMapping{"markup.heading.3", "--flair-markup-heading-3"},
+		cssPropertyMapping{"markup.heading.4", "--flair-markup-heading-4"},
+		cssPropertyMapping{"markup.heading.5", "--flair-markup-heading-5"},
+		cssPropertyMapping{"markup.heading.6", "--flair-markup-heading-6"},
 		cssPropertyMapping{"markup.link", "--flair-markup-link"},
 		cssPropertyMapping{"markup.code", "--flair-markup-code"},
 		cssPropertyMapping{"markup.quote", "--flair-markup-quote"},
 		cssPropertyMapping{"markup.list.bullet", "--flair-markup-list-bullet"},
 		cssPropertyMapping{"markup.list.checked", "--flair-markup-list-checked"},
 		cssPropertyMapping{"markup.list.unchecked", "--flair-markup-list-unchecked"},
+	)
+
+	// Comment annotation tokens
+	m = append(m,
+		cssPropertyMapping{"comment.error", "--flair-comment-error"},
+		cssPropertyMapping{"comment.warning", "--flair-comment-warning"},
+		cssPropertyMapping{"comment.info", "--flair-comment-info"},
+		cssPropertyMapping{"comment.hint", "--flair-comment-hint"},
+		cssPropertyMapping{"comment.note", "--flair-comment-note"},
+		cssPropertyMapping{"comment.todo", "--flair-comment-todo"},
 	)
 
 	// Accent tokens
@@ -197,6 +224,16 @@ var cssPropertyMappings = func() []cssPropertyMapping {
 		cssPropertyMapping{"terminal.brwhite", "--flair-terminal-brwhite"},
 	)
 
+	// Statusline tokens
+	m = append(m,
+		cssPropertyMapping{"statusline.a.bg", "--flair-statusline-a-bg"},
+		cssPropertyMapping{"statusline.a.fg", "--flair-statusline-a-fg"},
+		cssPropertyMapping{"statusline.b.bg", "--flair-statusline-b-bg"},
+		cssPropertyMapping{"statusline.b.fg", "--flair-statusline-b-fg"},
+		cssPropertyMapping{"statusline.c.bg", "--flair-statusline-c-bg"},
+		cssPropertyMapping{"statusline.c.fg", "--flair-statusline-c-fg"},
+	)
+
 	return m
 }()
 
@@ -232,7 +269,7 @@ func buildCSSElementRules() []ports.CSSRule {
 		{
 			Selector: "a",
 			Properties: []ports.CSSProperty{
-				{Property: "color", Value: varRef("--flair-accent-primary")},
+				{Property: "color", Value: varRef("--flair-markup-link")},
 			},
 		},
 		{

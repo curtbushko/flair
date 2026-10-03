@@ -71,9 +71,8 @@ type semanticMapping struct {
 //nolint:dupl // Each mapper has its own naming convention; structural similarity is intentional.
 var semanticMappings = func() []semanticMapping {
 	// Build mappings grouped by category, matching the PLAN.md token inventory.
-	// 11 surface + 7 text + 6 status + 9 diff + 15 syntax + 7 markup +
-	// 3 accent + 3 border + 2 scrollbar + 3 state + 4 git + 16 terminal + 6 statusline = 92
-	m := make([]semanticMapping, 0, 92)
+	// Includes all existing color-bearing semantic tokens.
+	m := make([]semanticMapping, 0, 115)
 
 	// Surface tokens (11)
 	m = append(m,
@@ -111,7 +110,7 @@ var semanticMappings = func() []semanticMapping {
 		semanticMapping{"status.todo", "status-todo"},
 	)
 
-	// Diff tokens (9)
+	// Diff tokens (10)
 	m = append(m,
 		semanticMapping{"diff.added.fg", "diff-added-fg"},
 		semanticMapping{"diff.added.bg", "diff-added-bg"},
@@ -121,10 +120,11 @@ var semanticMappings = func() []semanticMapping {
 		semanticMapping{"diff.deleted.sign", "diff-deleted-sign"},
 		semanticMapping{"diff.changed.fg", "diff-changed-fg"},
 		semanticMapping{"diff.changed.bg", "diff-changed-bg"},
+		semanticMapping{"diff.changed.sign", "diff-changed-sign"},
 		semanticMapping{"diff.ignored", "diff-ignored"},
 	)
 
-	// Syntax tokens (15)
+	// Syntax tokens (25)
 	m = append(m,
 		semanticMapping{"syntax.keyword", "syntax-keyword"},
 		semanticMapping{"syntax.string", "syntax-string"},
@@ -141,17 +141,43 @@ var semanticMappings = func() []semanticMapping {
 		semanticMapping{"syntax.regexp", "syntax-regexp"},
 		semanticMapping{"syntax.escape", "syntax-escape"},
 		semanticMapping{"syntax.constructor", "syntax-constructor"},
+		semanticMapping{"syntax.boolean", "syntax-boolean"},
+		semanticMapping{"syntax.function.builtin", "syntax-function-builtin"},
+		semanticMapping{"syntax.type.builtin", "syntax-type-builtin"},
+		semanticMapping{"syntax.module", "syntax-module"},
+		semanticMapping{"syntax.module.builtin", "syntax-module-builtin"},
+		semanticMapping{"syntax.string.documentation", "syntax-string-documentation"},
+		semanticMapping{"syntax.label", "syntax-label"},
+		semanticMapping{"syntax.punctuation", "syntax-punctuation"},
+		semanticMapping{"syntax.deprecated", "syntax-deprecated"},
+		semanticMapping{"syntax.macro", "syntax-macro"},
 	)
 
-	// Markup tokens (7 with color, 3 style-only excluded from Stylix)
+	// Markup tokens (13 with color, 3 style-only excluded from Stylix)
 	m = append(m,
 		semanticMapping{"markup.heading", "markup-heading"},
+		semanticMapping{"markup.heading.1", "markup-heading-1"},
+		semanticMapping{"markup.heading.2", "markup-heading-2"},
+		semanticMapping{"markup.heading.3", "markup-heading-3"},
+		semanticMapping{"markup.heading.4", "markup-heading-4"},
+		semanticMapping{"markup.heading.5", "markup-heading-5"},
+		semanticMapping{"markup.heading.6", "markup-heading-6"},
 		semanticMapping{"markup.link", "markup-link"},
 		semanticMapping{"markup.code", "markup-code"},
 		semanticMapping{"markup.quote", "markup-quote"},
 		semanticMapping{"markup.list.bullet", "markup-list-bullet"},
 		semanticMapping{"markup.list.checked", "markup-list-checked"},
 		semanticMapping{"markup.list.unchecked", "markup-list-unchecked"},
+	)
+
+	// Comment annotation tokens (6)
+	m = append(m,
+		semanticMapping{"comment.error", "comment-error"},
+		semanticMapping{"comment.warning", "comment-warning"},
+		semanticMapping{"comment.info", "comment-info"},
+		semanticMapping{"comment.hint", "comment-hint"},
+		semanticMapping{"comment.note", "comment-note"},
+		semanticMapping{"comment.todo", "comment-todo"},
 	)
 
 	// Accent tokens (3)

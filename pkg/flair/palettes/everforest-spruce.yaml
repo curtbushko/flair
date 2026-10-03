@@ -21,12 +21,12 @@ palette:
   base0F: "A78B6D"
   base10: "232A2E"
   base11: "1E2326"
-  base12: "EF9697"
-  base13: "E4CA94"
-  base14: "B8CE96"
-  base15: "98CCA4"
-  base16: "94C7C0"
-  base17: "E0ABC5"
+  base12: "f28b82" # bright red - warm coral
+  base13: "ebd078" # bright yellow - golden straw
+  base14: "bbd47b" # bright green - sunlit moss
+  base15: "86d69c" # bright cyan - vivid leafy green
+  base16: "80cfc3" # bright blue - clear forest teal
+  base17: "e5a1ca" # bright magenta - richer orchid pink
 overrides:
   statusline_a_bg: # base0B
     color: "A7C080"

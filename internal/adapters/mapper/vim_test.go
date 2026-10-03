@@ -204,9 +204,9 @@ func TestVimMapper_TreesitterHighlights(t *testing.T) {
 		{"@constructor", colorPtr("#c8acf8"), false, false, ""},
 		{"@function.builtin", colorPtr("#7dcfff"), false, false, ""}, // syntax.function.builtin = base0C
 		{"@type.builtin", colorPtr("#7dcfff"), false, false, ""},     // syntax.type.builtin = base0C
-		{"@variable.builtin", colorPtr("#f7768e"), false, false, ""},
+		{"@variable.builtin", colorPtr("#ff9e64"), false, false, ""},
 		{"@keyword.return", colorPtr("#bb9af7"), false, false, ""},
-		{"@keyword.function", colorPtr("#bb9af7"), false, false, ""},
+		{"@keyword.function", colorPtr("#7aa2f7"), false, false, ""},
 	}
 
 	for _, tc := range tsTests {
@@ -265,20 +265,20 @@ func TestVimMapper_LSPHighlights(t *testing.T) {
 		{"@lsp.type.variable", "@variable"},
 		{"@lsp.type.keyword", "@keyword"},
 		{"@lsp.type.type", "@type"},
-		{"@lsp.type.property", "@property"},
-		{"@lsp.type.parameter", "@parameter"},
-		{"@lsp.type.method", "@function"},
+		{"@lsp.type.property", "@variable.member"},
+		{"@lsp.type.parameter", "@variable.parameter"},
+		{"@lsp.type.method", "@function.method"},
 		{"@lsp.type.string", "@string"},
 		{"@lsp.type.number", "@number"},
 		{"@lsp.type.operator", "@operator"},
 		{"@lsp.type.comment", "@comment"},
-		{"@lsp.type.namespace", "@type"},
+		{"@lsp.type.namespace", "@module"},
 		{"@lsp.type.enum", "@type"},
 		{"@lsp.type.enumMember", "@constant"},
 		{"@lsp.type.struct", "@type"},
 		{"@lsp.type.class", "@type"},
 		{"@lsp.type.interface", "@type"},
-		{"@lsp.type.decorator", "@function"},
+		{"@lsp.type.decorator", "@attribute"},
 		{"@lsp.type.macro", "@function.macro"},
 	}
 
